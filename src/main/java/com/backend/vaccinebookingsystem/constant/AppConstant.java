@@ -36,6 +36,6 @@ public class AppConstant {
     public enum ProfileRole {
         USER,
         HEALTH_ADMIN,
-        ADMIN;
+        ADMIN
     }
 }

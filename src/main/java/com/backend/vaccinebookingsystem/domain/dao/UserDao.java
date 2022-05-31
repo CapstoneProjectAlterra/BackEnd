@@ -28,4 +28,5 @@ public class UserDao extends BaseDao {
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private ProfileDao profile;
+
 }

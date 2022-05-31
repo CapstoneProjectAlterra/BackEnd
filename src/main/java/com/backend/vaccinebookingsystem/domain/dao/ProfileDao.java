@@ -1,5 +1,6 @@
 package com.backend.vaccinebookingsystem.domain.dao;
 
+import com.backend.vaccinebookingsystem.constant.AppConstant;
 import com.backend.vaccinebookingsystem.domain.common.BaseDao;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,7 +22,8 @@ public class ProfileDao extends BaseDao {
     private Long userId;
 
     @Column(name = "role", nullable = false)
-    private String role;
+    @Enumerated()
+    private AppConstant.ProfileRole role;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
