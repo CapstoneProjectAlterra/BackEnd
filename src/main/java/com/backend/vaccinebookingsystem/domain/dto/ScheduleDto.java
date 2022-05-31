@@ -8,15 +8,23 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class ProfileDto {
+public class ScheduleDto {
 
-    private Long userId;
+    private Long id;
 
-    private AppConstant.ProfileRole role;
+    private LocalTime vaccinationDate;
+
+    private LocalTime operationalHour;
+
+    private Integer quota;
+
+    private AppConstant.Dose dose;
 
 }

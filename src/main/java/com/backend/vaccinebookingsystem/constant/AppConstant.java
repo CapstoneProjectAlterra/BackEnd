@@ -38,4 +38,21 @@ public class AppConstant {
         HEALTH_ADMIN,
         ADMIN
     }
+
+    public enum FamilyStatus {
+        AYAH,
+        IBU,
+        ANAK
+    }
+
+    public enum Gander {
+        LAKI_LAKI,
+        PEREMPUAN
+    }
+
+    public enum Dose {
+        DOSIS_1,
+        DOSIS_2,
+        BOOSTER
+    }
 }

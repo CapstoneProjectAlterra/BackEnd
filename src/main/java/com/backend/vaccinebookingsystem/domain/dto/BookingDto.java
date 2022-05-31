@@ -1,6 +1,5 @@
 package com.backend.vaccinebookingsystem.domain.dto;
 
-import com.backend.vaccinebookingsystem.constant.AppConstant;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -8,15 +7,20 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+import java.util.Date;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class ProfileDto {
+public class BookingDto {
 
-    private Long userId;
+    private Long id;
 
-    private AppConstant.ProfileRole role;
+    private String bookingPass;
+
+    private LocalDate bookingDate;
 
 }
