@@ -15,11 +15,11 @@ import java.util.Objects;
 @Embeddable
 public class FamilyBookingKey implements Serializable {
 
-    @Column(name = "family_id")
-    private Long familyId;
-
     @Column(name = "booking_id")
     private Long bookingId;
+
+    @Column(name = "family_id")
+    private Long familyId;
 
     @Override
     public boolean equals(Object o) {

@@ -7,8 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDate;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -27,7 +26,7 @@ public class BookingDao extends BaseDao {
     private String bookingPass;
 
     @Column(name = "booking_date", nullable = false)
-    private LocalDate bookingDate;
+    private LocalDateTime bookingDate;
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")

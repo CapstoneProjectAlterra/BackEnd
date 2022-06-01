@@ -1,5 +1,6 @@
 package com.backend.vaccinebookingsystem.domain.dto;
 
+import com.backend.vaccinebookingsystem.constant.AppConstant;
 import com.backend.vaccinebookingsystem.domain.common.FamilyBookingKey;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -17,6 +18,6 @@ public class BookingDetailDto {
 
     private FamilyBookingKey id;
 
-    private String bookingStatus;
+    private AppConstant.BookingStatus bookingStatus;
 
 }

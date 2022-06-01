@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 @Data
@@ -40,7 +39,7 @@ public class FamilyDao extends BaseDao {
     private String phoneNumber;
 
     @Column(name = "gander", nullable = false)
-    private AppConstant.Gander gander;
+    private AppConstant.Gender gender;
 
     @Column(name = "date_of_birth", nullable = false)
     private LocalDate dateOfBirth;

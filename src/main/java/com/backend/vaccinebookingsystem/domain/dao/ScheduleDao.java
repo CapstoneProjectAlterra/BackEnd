@@ -8,8 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Date;
 import java.util.List;
 
 @Data
@@ -25,7 +25,7 @@ public class ScheduleDao extends BaseDao {
     private Long id;
 
     @Column(name = "vaccination_date", nullable = false)
-    private LocalTime vaccinationDate;
+    private LocalDate vaccinationDate;
 
     @Column(name = "operational_hour", nullable = false)
     private LocalTime operationalHour;

@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Data
@@ -19,7 +20,7 @@ public class ScheduleDto {
 
     private Long id;
 
-    private LocalTime vaccinationDate;
+    private LocalDate vaccinationDate;
 
     private LocalTime operationalHour;
 

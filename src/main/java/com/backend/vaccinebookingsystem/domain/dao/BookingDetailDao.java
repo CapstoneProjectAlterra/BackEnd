@@ -1,5 +1,6 @@
 package com.backend.vaccinebookingsystem.domain.dao;
 
+import com.backend.vaccinebookingsystem.constant.AppConstant;
 import com.backend.vaccinebookingsystem.domain.common.BaseDao;
 import com.backend.vaccinebookingsystem.domain.common.FamilyBookingKey;
 import lombok.AllArgsConstructor;
@@ -31,5 +32,5 @@ public class BookingDetailDao extends BaseDao {
     private BookingDao booking;
 
     @Column(name = "booking_status", nullable = false)
-    private String bookingStatus;
+    private AppConstant.BookingStatus bookingStatus;
 }

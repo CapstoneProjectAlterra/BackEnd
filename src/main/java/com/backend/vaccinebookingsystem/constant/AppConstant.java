@@ -45,7 +45,7 @@ public class AppConstant {
         ANAK
     }
 
-    public enum Gander {
+    public enum Gender {
         LAKI_LAKI,
         PEREMPUAN
     }
@@ -54,5 +54,13 @@ public class AppConstant {
         DOSIS_1,
         DOSIS_2,
         BOOSTER
+    }
+
+    public enum BookingStatus {
+        PENDING,
+        CANCELLED_BY_CITIZEN,
+        CANCELLED_BY_FACILITY,
+        DECLINED,
+        COMPLETED
     }
 }

@@ -9,7 +9,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -30,7 +29,7 @@ public class FamilyDto {
 
     private String phoneNumber;
 
-    private AppConstant.Gander gander;
+    private AppConstant.Gender gender;
 
     private LocalDate dateOfBirth;
 
