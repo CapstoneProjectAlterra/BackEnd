@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 
@@ -15,6 +17,8 @@ import javax.persistence.*;
 @Builder
 @Entity
 @Table(name = "FACILITY_VACCINES")
+@SQLDelete(sql = "UPDATE FACILITY_VACCINES SET is_deleted = true WHERE id =?")
+@Where(clause = "is_deleted = false")
 public class FacilityVaccineDao extends BaseDao {
 
     @EmbeddedId

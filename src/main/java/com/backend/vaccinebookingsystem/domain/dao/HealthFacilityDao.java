@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.util.List;
@@ -15,6 +17,8 @@ import java.util.List;
 @Builder
 @Entity
 @Table(name = "HEALTH_FACILITIES")
+@SQLDelete(sql = "UPDATE HEALTH_FACILITIES SET is_deleted = true WHERE id =?")
+@Where(clause = "is_deleted = false")
 public class HealthFacilityDao extends BaseDao {
 
     @Id
@@ -52,7 +56,7 @@ public class HealthFacilityDao extends BaseDao {
     private List<ScheduleDao> scheduleDaoList;
 
     @ManyToOne
-    @JoinColumn(name = "profile_id", referencedColumnName = "id")
+    @JoinColumn(name = "profile_id", referencedColumnName = "userId")
     private ProfileDao profile;
 
     @OneToMany(mappedBy = "facilityVaccine", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
