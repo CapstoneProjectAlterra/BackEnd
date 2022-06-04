@@ -31,8 +31,11 @@ public class ScheduleDao extends BaseDao {
     @Column(name = "vaccination_date", nullable = false)
     private LocalDate vaccinationDate;
 
-    @Column(name = "operational_hour", nullable = false)
-    private LocalTime operationalHour;
+    @Column(name = "operational_hour_start", nullable = false)
+    private LocalTime operationalHourStart;
+
+    @Column(name = "operational_hour_end", nullable = false)
+    private LocalTime operationalHourEnd;
 
     @Column(name = "quota", nullable = false)
     private Integer quota;
