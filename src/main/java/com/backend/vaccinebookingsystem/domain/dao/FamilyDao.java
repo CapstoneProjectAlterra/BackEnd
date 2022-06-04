@@ -27,7 +27,7 @@ public class FamilyDao extends BaseDao {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "status_in_family", nullable = false)
+    @Column(name = "status_in_family")
     private AppConstant.FamilyStatus statusInFamily;
 
     @Column(name = "NIK", nullable = false)
@@ -36,22 +36,22 @@ public class FamilyDao extends BaseDao {
     @Column(name = "full_name", nullable = false)
     private String fullName;
 
-    @Column(name = "email")
+    @Column(name = "email", nullable = false)
     private String email;
 
     @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
 
-    @Column(name = "gander", nullable = false)
+    @Column(name = "gander")
     private AppConstant.Gender gender;
 
-    @Column(name = "date_of_birth", nullable = false)
+    @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
 
-    @Column(name = "residence_address", nullable = false)
+    @Column(name = "residence_address")
     private String residenceAddress;
 
-    @Column(name = "id_card_address", nullable = false)
+    @Column(name = "id_card_address")
     private String idCardAddress;
 
     @ManyToOne
