@@ -19,9 +19,9 @@ public class StockController {
         return stockService.createStock(facilityVaccineDto);
     }
 
-    @GetMapping(value = "/{id}")
-    public ResponseEntity<Object> getAStockById(@PathVariable Long id) {
-        return stockService.getStockById(id);
+    @GetMapping(value = "/search")
+    public ResponseEntity<Object> searchAStockById(@RequestParam(value = "facility_id") Long facilityId, @RequestParam(value = "vaccine_id") Long vaccineId) {
+        return stockService.searchStockById(facilityId, vaccineId);
     }
 
     @GetMapping(value = "")
@@ -29,13 +29,13 @@ public class StockController {
         return stockService.getAllStocks();
     }
 
-    @PutMapping(value = "/{id}")
-    public ResponseEntity<Object> updateAStockById(@PathVariable Long id, @RequestBody FacilityVaccineDto facilityVaccineDto) {
-        return stockService.updateStockById(id, facilityVaccineDto);
+    @PutMapping(value = "/update")
+    public ResponseEntity<Object> updateAStockById(@RequestParam(value = "facility_id") Long facilityId, @RequestParam(value = "vaccine_id") Long vaccineId, @RequestBody FacilityVaccineDto facilityVaccineDto) {
+        return stockService.updateStockById(facilityId, vaccineId, facilityVaccineDto);
     }
 
-    @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Object> deleteAStockById(@PathVariable Long id) {
-        return stockService.deleteStockById(id);
+    @DeleteMapping(value = "/delete")
+    public ResponseEntity<Object> deleteAStockById(@RequestParam(value = "facility_id") Long facilityId, @RequestParam(value = "vaccine_id") Long vaccineId) {
+        return stockService.deleteStockById(facilityId, vaccineId);
     }
 }

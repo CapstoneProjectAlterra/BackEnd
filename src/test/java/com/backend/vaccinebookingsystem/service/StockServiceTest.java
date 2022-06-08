@@ -110,7 +110,7 @@ class StockServiceTest {
         when(stockRepository.findById(anyLong())).thenReturn(Optional.of(facilityVaccineDao));
         when(modelMapper.map(any(), eq(FacilityVaccineDto.class))).thenReturn(vaccineDto);
 
-        ResponseEntity<Object> response = stockService.getStockById(1L);
+        ResponseEntity<Object> response = stockService.searchStockById(1L);
 
         ApiResponse apiResponse = (ApiResponse) response.getBody();
 
@@ -139,7 +139,7 @@ class StockServiceTest {
         when(stockRepository.findById(anyLong())).thenReturn(Optional.of(facilityVaccineDao));
         when(modelMapper.map(any(), eq(FacilityVaccineDto.class))).thenReturn(vaccineDto);
 
-        ResponseEntity<Object> response = stockService.getStockById(null);
+        ResponseEntity<Object> response = stockService.searchStockById(null);
 
         ApiResponse apiResponse = (ApiResponse) response.getBody();
 
@@ -160,7 +160,7 @@ class StockServiceTest {
         when(stockRepository.findById(anyLong())).thenReturn(Optional.of(facilityVaccineDao));
 
         doThrow(NullPointerException.class).when(stockRepository).findById(any());
-        assertThrows(Exception.class, () -> stockService.getStockById(1L));
+        assertThrows(Exception.class, () -> stockService.searchStockById(1L));
     }
 
     @Test

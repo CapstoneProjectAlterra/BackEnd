@@ -3,7 +3,9 @@ package com.backend.vaccinebookingsystem.service;
 import com.backend.vaccinebookingsystem.constant.AppConstant;
 import com.backend.vaccinebookingsystem.domain.dao.FacilityVaccineDao;
 import com.backend.vaccinebookingsystem.domain.dto.FacilityVaccineDto;
+import com.backend.vaccinebookingsystem.repository.HealthFacilityRepository;
 import com.backend.vaccinebookingsystem.repository.StockRepository;
+import com.backend.vaccinebookingsystem.repository.VaccineTypeRepository;
 import com.backend.vaccinebookingsystem.util.ResponseUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -24,15 +26,31 @@ public class StockService {
     private StockRepository stockRepository;
 
     @Autowired
+    private HealthFacilityRepository healthFacilityRepository;
+
+    @Autowired
+    private VaccineTypeRepository vaccineTypeRepository;
+
+    @Autowired
     private ModelMapper modelMapper;
 
     public ResponseEntity<Object> createStock(FacilityVaccineDto facilityVaccineDto) {
         try {
             log.info("Creating new Stock");
-            FacilityVaccineDao facilityVaccineDao = modelMapper.map(facilityVaccineDto, FacilityVaccineDao.class);
+            FacilityVaccineDao facilityVaccineDao = FacilityVaccineDao.builder()
+                    .facilityId(facilityVaccineDto.getFacilityId())
+                    .vaccineId(facilityVaccineDto.getVaccineId())
+                    .stock(facilityVaccineDto.getStock())
+                    .build();
+
             stockRepository.save(facilityVaccineDao);
 
-            FacilityVaccineDto vaccineDto = modelMapper.map(facilityVaccineDao, FacilityVaccineDto.class);
+            FacilityVaccineDto vaccineDto = FacilityVaccineDto.builder()
+                    .facilityId(facilityVaccineDao.getFacilityId())
+                    .vaccineId(facilityVaccineDao.getVaccineId())
+                    .stock(facilityVaccineDao.getStock())
+                    .build();
+
             return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, vaccineDto, HttpStatus.OK);
         } catch (Exception e) {
             log.error("An error occurred in creating new Stock. Error: {}", e.getMessage());
@@ -40,18 +58,23 @@ public class StockService {
         }
     }
 
-    public ResponseEntity<Object> getStockById(Long id) {
+    public ResponseEntity<Object> searchStockById(Long facilityId, Long vaccineId) {
         try {
             log.info("Getting a Stock by id");
-            Optional<FacilityVaccineDao> optionalFacilityVaccineDao = stockRepository.findById(id);
+            Optional<FacilityVaccineDao> optionalFacilityVaccineDaoFacility = stockRepository.findByFacilityId(facilityId);
+            Optional<FacilityVaccineDao> optionalFacilityVaccineDaoVaccine = stockRepository.findByVaccineId(vaccineId);
 
-            if (optionalFacilityVaccineDao.isEmpty()) {
+            if (optionalFacilityVaccineDaoFacility.isEmpty() || optionalFacilityVaccineDaoVaccine.isEmpty()) {
                 log.info("Stock not found");
                 return ResponseUtil.build(AppConstant.ResponseCode.DATA_NOT_FOUND, null, HttpStatus.BAD_REQUEST);
             }
 
             log.info("Stock found");
-            FacilityVaccineDto vaccineDto = modelMapper.map(optionalFacilityVaccineDao.get(), FacilityVaccineDto.class);
+            FacilityVaccineDto vaccineDto = FacilityVaccineDto.builder()
+                    .facilityId(optionalFacilityVaccineDaoFacility.get().getFacilityId())
+                    .vaccineId(optionalFacilityVaccineDaoVaccine.get().getVaccineId())
+                    .stock(optionalFacilityVaccineDaoFacility.get().getStock())
+                    .build();
             return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, vaccineDto, HttpStatus.OK);
         } catch (Exception e) {
             log.error("An error occurred in getting a Stock by id. Error {}", e.getMessage());
@@ -68,7 +91,11 @@ public class StockService {
             facilityVaccineDaoList = stockRepository.findAll();
 
             for (FacilityVaccineDao facilityVaccineDao : facilityVaccineDaoList) {
-                facilityVaccineDtos.add(modelMapper.map(facilityVaccineDao, FacilityVaccineDto.class));
+                facilityVaccineDtos.add(FacilityVaccineDto.builder()
+                                .facilityId(facilityVaccineDao.getFacilityId())
+                                .vaccineId(facilityVaccineDao.getVaccineId())
+                                .stock(facilityVaccineDao.getStock())
+                        .build());
             }
 
             return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, facilityVaccineDtos, HttpStatus.OK);
@@ -78,21 +105,27 @@ public class StockService {
         }
     }
 
-    public ResponseEntity<Object> updateStockById(Long id, FacilityVaccineDto facilityVaccineDto) {
+    public ResponseEntity<Object> updateStockById(Long facilityId, Long vaccineId, FacilityVaccineDto facilityVaccineDto) {
         try {
             log.info("Updating a Stock by id");
-            Optional<FacilityVaccineDao> optionalFacilityVaccineDao = stockRepository.findById(id);
-            if (optionalFacilityVaccineDao.isEmpty()) {
+            Optional<FacilityVaccineDao> optionalFacilityVaccineDaoFacility = stockRepository.findByFacilityId(facilityId);
+            Optional<FacilityVaccineDao> optionalFacilityVaccineDaoVaccine = stockRepository.findByVaccineId(vaccineId);
+
+            if (optionalFacilityVaccineDaoFacility.isEmpty() || optionalFacilityVaccineDaoVaccine.isEmpty()) {
                 log.info("Stock not found");
                 return ResponseUtil.build(AppConstant.ResponseCode.DATA_NOT_FOUND, null, HttpStatus.BAD_REQUEST);
             }
 
             log.info("Stock found");
-            FacilityVaccineDao facilityVaccineDao = optionalFacilityVaccineDao.get();
+            FacilityVaccineDao facilityVaccineDao = optionalFacilityVaccineDaoFacility.get();
             facilityVaccineDao.setStock(facilityVaccineDto.getStock());
             stockRepository.save(facilityVaccineDao);
 
-            FacilityVaccineDto vaccineDto = modelMapper.map(facilityVaccineDao, FacilityVaccineDto.class);
+            FacilityVaccineDto vaccineDto = FacilityVaccineDto.builder()
+                    .facilityId(optionalFacilityVaccineDaoFacility.get().getVaccineId())
+                    .vaccineId(optionalFacilityVaccineDaoVaccine.get().getVaccineId())
+                    .stock(facilityVaccineDao.getStock())
+                    .build();
             return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, vaccineDto, HttpStatus.OK);
         } catch (Exception e) {
             log.error("An error occurred in Updating Stock by id. Error {}", e.getMessage());
@@ -100,17 +133,19 @@ public class StockService {
         }
     }
 
-    public ResponseEntity<Object> deleteStockById(Long id) {
+    public ResponseEntity<Object> deleteStockById(Long facilityId, Long vaccineId) {
         try {
             log.info("Deleting a Stock by id");
-            Optional<FacilityVaccineDao> optionalFacilityVaccineDao = stockRepository.findById(id);
-            if (optionalFacilityVaccineDao.isEmpty()) {
+            Optional<FacilityVaccineDao> optionalFacilityVaccineDaoFacility = stockRepository.findByFacilityId(facilityId);
+            Optional<FacilityVaccineDao> optionalFacilityVaccineDaoVaccine = stockRepository.findByVaccineId(vaccineId);
+
+            if (optionalFacilityVaccineDaoFacility.isEmpty() || optionalFacilityVaccineDaoVaccine.isEmpty()) {
                 log.info("Stock not found");
                 return ResponseUtil.build(AppConstant.ResponseCode.DATA_NOT_FOUND, null, HttpStatus.BAD_REQUEST);
             }
 
             log.info("Stock found");
-            stockRepository.delete(optionalFacilityVaccineDao.get());
+            stockRepository.delete(optionalFacilityVaccineDaoFacility.get());
             return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, null, HttpStatus.OK);
         } catch (Exception e) {
             log.error("An error occurred in deleting Stock by id. Error {}", e.getMessage());
