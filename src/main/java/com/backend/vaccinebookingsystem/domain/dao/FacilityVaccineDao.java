@@ -17,12 +17,18 @@ import javax.persistence.*;
 @Builder
 @Entity
 @Table(name = "FACILITY_VACCINES")
-@SQLDelete(sql = "UPDATE FACILITY_VACCINES SET is_deleted = true WHERE id =?")
+@SQLDelete(sql = "UPDATE FACILITY_VACCINES SET is_deleted = true WHERE facility_id =? AND vaccine_id =?")
 @Where(clause = "is_deleted = false")
+@IdClass(FacilityVaccineKey.class)
 public class FacilityVaccineDao extends BaseDao {
 
-    @EmbeddedId
-    private FacilityVaccineKey id;
+    @Id
+    @Column(name = "facility_id", nullable = false)
+    private Long facilityId;
+
+    @Id
+    @Column(name = "vaccine_id", nullable = false)
+    private Long vaccineId;
 
     @ManyToOne
     @MapsId("facilityId")
