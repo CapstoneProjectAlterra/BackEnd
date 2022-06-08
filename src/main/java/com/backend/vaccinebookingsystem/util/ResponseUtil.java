@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 public class ResponseUtil {
 
-    public ResponseUtil() {
+    private ResponseUtil() {
     }
 
     public static <T> ResponseEntity<Object> build(AppConstant.ResponseCode responseCode, T data, HttpStatus status) {
