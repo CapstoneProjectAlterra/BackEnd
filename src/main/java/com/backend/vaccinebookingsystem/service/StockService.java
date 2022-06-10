@@ -47,6 +47,7 @@ public class StockService {
                 return ResponseUtil.build(AppConstant.ResponseCode.DATA_NOT_FOUND, null, HttpStatus.BAD_REQUEST);
             }
 
+            log.info("Found");
             FacilityVaccineDao facilityVaccineDao = FacilityVaccineDao.builder()
                     .facilityId(facilityVaccineDto.getFacilityId())
                     .vaccineId(facilityVaccineDto.getVaccineId())

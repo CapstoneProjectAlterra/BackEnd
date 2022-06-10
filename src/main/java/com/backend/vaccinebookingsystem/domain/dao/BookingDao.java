@@ -27,7 +27,7 @@ public class BookingDao extends BaseDao {
     private Long id;
 
     @Column(name = "booking_pass", nullable = false)
-    private String bookingPass;
+    private Integer bookingPass;
 
     @Column(name = "booking_date", nullable = false)
     private LocalDateTime bookingDate;

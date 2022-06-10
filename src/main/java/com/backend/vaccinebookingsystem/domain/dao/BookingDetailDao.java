@@ -20,10 +20,16 @@ import javax.persistence.*;
 @Table(name = "BOOKING_DETAIL")
 @SQLDelete(sql = "UPDATE BOOKING_DETAIL SET is_deleted = true WHERE id =?")
 @Where(clause = "is_deleted = false")
+@IdClass(FamilyBookingKey.class)
 public class BookingDetailDao extends BaseDao {
 
-    @EmbeddedId
-    private FamilyBookingKey id;
+    @Id
+    @Column(name = "booking_id", nullable = false)
+    private Long bookingId;
+
+    @Id
+    @Column(name = "family_id", nullable = false)
+    private Long familyId;
 
     @ManyToOne
     @MapsId("familyId")
