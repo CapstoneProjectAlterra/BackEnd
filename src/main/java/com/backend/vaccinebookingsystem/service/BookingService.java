@@ -119,4 +119,15 @@ public class BookingService {
             throw e;
         }
     }
+
+    public ResponseEntity<Object> countBookingByScheduleId(Long scheduleId) {
+        try {
+            log.info("Counting registrant");
+
+            return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, bookingRepository.countBookingByScheduleId(scheduleId), HttpStatus.OK);
+        } catch (Exception e) {
+            log.info("An error occurred in Counting registrant. Error {}", e.getMessage());
+            throw e;
+        }
+    }
 }

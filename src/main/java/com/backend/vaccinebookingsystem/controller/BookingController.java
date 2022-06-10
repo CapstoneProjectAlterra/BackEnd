@@ -38,4 +38,9 @@ public class BookingController {
     public ResponseEntity<Object> deleteABookingById(@PathVariable Long id) {
         return bookingService.deleteBookingById(id);
     }
+
+    @GetMapping(value = "/count")
+    public ResponseEntity<Object> countForBookingByScheduleId(@RequestParam(value = "schedule_id") Long scheduleId) {
+        return bookingService.countBookingByScheduleId(scheduleId);
+    }
 }
