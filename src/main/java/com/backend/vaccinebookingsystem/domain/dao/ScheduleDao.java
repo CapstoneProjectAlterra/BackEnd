@@ -43,9 +43,6 @@ public class ScheduleDao extends BaseDao {
     @Column(name = "dose", nullable = false)
     private AppConstant.Dose dose;
 
-//    @Column(name = "registrant")
-//    private Integer registrant;
-
     @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<BookingDao> bookingDaoList;
 

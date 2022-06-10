@@ -16,7 +16,6 @@ import lombok.NoArgsConstructor;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class FacilityVaccineDto {
 
-//    private FacilityVaccineKey id;
     private Long facilityId;
 
     private Long vaccineId;

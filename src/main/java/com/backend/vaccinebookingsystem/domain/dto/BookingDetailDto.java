@@ -17,7 +17,6 @@ import lombok.NoArgsConstructor;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class BookingDetailDto {
 
-//    private FamilyBookingKey id;
     private Long bookingId;
 
     private Long familyId;

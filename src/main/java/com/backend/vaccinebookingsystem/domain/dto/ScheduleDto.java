@@ -1,6 +1,8 @@
 package com.backend.vaccinebookingsystem.domain.dto;
 
 import com.backend.vaccinebookingsystem.constant.AppConstant;
+import com.backend.vaccinebookingsystem.domain.dao.HealthFacilityDao;
+import com.backend.vaccinebookingsystem.domain.dao.VaccineTypeDao;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -34,6 +36,8 @@ public class ScheduleDto {
 
     private AppConstant.Dose dose;
 
-//    private Integer registrant;
+    private HealthFacilityDto facility;
+
+    private VaccineTypeDto vaccine;
 
 }
