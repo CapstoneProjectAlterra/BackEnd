@@ -18,7 +18,7 @@ import javax.persistence.*;
 @Builder
 @Entity
 @Table(name = "BOOKING_DETAIL")
-@SQLDelete(sql = "UPDATE BOOKING_DETAIL SET is_deleted = true WHERE id =?")
+@SQLDelete(sql = "UPDATE BOOKING_DETAIL SET is_deleted = true WHERE booking_id =? AND family_id =?")
 @Where(clause = "is_deleted = false")
 @IdClass(FamilyBookingKey.class)
 public class BookingDetailDao extends BaseDao {
