@@ -2,6 +2,8 @@ package com.backend.vaccinebookingsystem.service;
 
 import com.backend.vaccinebookingsystem.constant.AppConstant;
 import com.backend.vaccinebookingsystem.domain.dao.FacilityVaccineDao;
+import com.backend.vaccinebookingsystem.domain.dao.HealthFacilityDao;
+import com.backend.vaccinebookingsystem.domain.dao.VaccineTypeDao;
 import com.backend.vaccinebookingsystem.domain.dto.FacilityVaccineDto;
 import com.backend.vaccinebookingsystem.repository.HealthFacilityRepository;
 import com.backend.vaccinebookingsystem.repository.StockRepository;
@@ -37,6 +39,14 @@ public class StockService {
     public ResponseEntity<Object> createStock(FacilityVaccineDto facilityVaccineDto) {
         try {
             log.info("Creating new Stock");
+            Optional<HealthFacilityDao> optionalHealthFacilityDao = healthFacilityRepository.findById(facilityVaccineDto.getFacilityId());
+            Optional<VaccineTypeDao> optionalVaccineTypeDao = vaccineTypeRepository.findById(facilityVaccineDto.getVaccineId());
+
+            if (optionalHealthFacilityDao.isEmpty() || optionalVaccineTypeDao.isEmpty()) {
+                log.info("Not Found");
+                return ResponseUtil.build(AppConstant.ResponseCode.DATA_NOT_FOUND, null, HttpStatus.BAD_REQUEST);
+            }
+
             FacilityVaccineDao facilityVaccineDao = FacilityVaccineDao.builder()
                     .facilityId(facilityVaccineDto.getFacilityId())
                     .vaccineId(facilityVaccineDto.getVaccineId())
