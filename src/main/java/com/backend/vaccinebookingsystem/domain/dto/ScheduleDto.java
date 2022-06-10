@@ -34,4 +34,6 @@ public class ScheduleDto {
 
     private AppConstant.Dose dose;
 
+    private Integer registrant;
+
 }
