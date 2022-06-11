@@ -37,6 +37,6 @@ public class HealthFacilityDto {
 
     private Integer postalCode;
 
-    private ProfileDto profile;
+//    private ProfileDto profile;
 
 }
