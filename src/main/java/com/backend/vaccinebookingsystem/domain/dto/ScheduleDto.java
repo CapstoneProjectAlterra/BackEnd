@@ -36,8 +36,8 @@ public class ScheduleDto {
 
     private AppConstant.Dose dose;
 
-    private HealthFacilityDto facility;
+//    private HealthFacilityDto facility;
 
-    private VaccineTypeDto vaccine;
+//    private VaccineTypeDto vaccine;
 
 }
