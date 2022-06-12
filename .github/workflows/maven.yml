@@ -32,7 +32,7 @@ jobs:
       - name: Build docker image
         uses: docker/build-push-action@v2
         with:
-          file: unit-test.Dockerfile
+          file: Dockerfile
           context: .
           push: true
           tags: dimsen0/capstone-coverage:latest
