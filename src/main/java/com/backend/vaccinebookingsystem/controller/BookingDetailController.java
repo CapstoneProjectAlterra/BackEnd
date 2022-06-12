@@ -22,7 +22,7 @@ public class BookingDetailController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @PostMapping(value = "")
-    public ResponseEntity<Object> createNewStock(@RequestBody BookingDetailDto bookingDetailDto) {
+    public ResponseEntity<Object> createNewBookingDetail(@RequestBody BookingDetailDto bookingDetailDto) {
         return bookingDetailService.createBookingDetail(bookingDetailDto);
     }
 
@@ -32,7 +32,7 @@ public class BookingDetailController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @GetMapping(value = "/search")
-    public ResponseEntity<Object> searchAStockById(@RequestParam(value = "facility_id") Long bookingId, @RequestParam(value = "vaccine_id") Long familyId) {
+    public ResponseEntity<Object> searchABookingDetailById(@RequestParam(value = "facility_id") Long bookingId, @RequestParam(value = "vaccine_id") Long familyId) {
         return bookingDetailService.searchBookingDetailById(bookingId, familyId);
     }
 
@@ -52,7 +52,7 @@ public class BookingDetailController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @PutMapping(value = "/update")
-    public ResponseEntity<Object> updateAStockById(@RequestParam(value = "bookingId") Long bookingId, @RequestParam(value = "familyId") Long familyId, @RequestBody BookingDetailDto bookingDetailDto) {
+    public ResponseEntity<Object> updateABookingDetailById(@RequestParam(value = "bookingId") Long bookingId, @RequestParam(value = "familyId") Long familyId, @RequestBody BookingDetailDto bookingDetailDto) {
         return bookingDetailService.updateBookingDetailById(bookingId, familyId, bookingDetailDto);
     }
 
