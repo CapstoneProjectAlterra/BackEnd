@@ -90,4 +90,4 @@ jobs:
             docker pull dimsen0/capstone-project:latest
             docker pull dimsen0/capstone-coverage:latest
             docker run -d --rm --name capstone-coverage -p 8000:80 dimsen0/capstone-coverage:latest
-            docker run -d --rm --name capstone-project -p 80:8080 --env-file=.dev.env --network capstone_network dimsen0/capstone-project:latest
+            docker run -d --rm --name capstone-project -p 80:8080 --envfile=.dev.env --network capstone_network dimsen0/capstone-project:latest
