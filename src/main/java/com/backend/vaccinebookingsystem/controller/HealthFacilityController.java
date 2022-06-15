@@ -65,4 +65,14 @@ public class HealthFacilityController {
     public ResponseEntity<Object> deleteAHealthFacilityById(@PathVariable Long id) {
         return healthFacilityService.deleteHealthFacilityById(id);
     }
+
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success", response = HealthFacilityDto.class),
+            @ApiResponse(code = 400, message = "Data not found"),
+            @ApiResponse(code = 500, message = "Internal Server Error"),
+    })
+    @GetMapping(value = "/search")
+    public ResponseEntity<Object> searchHealthFacility(@RequestParam(value = "filter") String filter) {
+        return healthFacilityService.searchHealthFacility(filter);
+    }
 }

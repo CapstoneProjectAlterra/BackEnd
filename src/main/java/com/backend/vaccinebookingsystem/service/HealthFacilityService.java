@@ -126,4 +126,48 @@ public class HealthFacilityService {
             throw e;
         }
     }
+
+    public ResponseEntity<Object> searchHealthFacility(String request) {
+        log.info("Searching Health Facility");
+        try {
+            List<HealthFacilityDao> healthFacilityDaoList;
+            List<HealthFacilityDto> facilityDtoList = new ArrayList<>();
+
+            log.info("Search by city");
+            healthFacilityDaoList = healthFacilityRepository.findAllByCity(request);
+            if (!healthFacilityDaoList.isEmpty()) {
+                log.info("Health Facility found by city");
+                for (HealthFacilityDao healthFacilityDao : healthFacilityDaoList) {
+                    facilityDtoList.add(modelMapper.map(healthFacilityDao, HealthFacilityDto.class));
+                }
+                return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, facilityDtoList, HttpStatus.OK);
+            }
+
+            log.info("Search by province");
+            healthFacilityDaoList = healthFacilityRepository.findAllByProvince(request);
+            if (!healthFacilityDaoList.isEmpty()) {
+                log.info("Health Facility found by province");
+                for (HealthFacilityDao healthFacilityDao : healthFacilityDaoList) {
+                    facilityDtoList.add(modelMapper.map(healthFacilityDao, HealthFacilityDto.class));
+                }
+                return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, facilityDtoList, HttpStatus.OK);
+            }
+
+            log.info("Search by postal code");
+            healthFacilityDaoList = healthFacilityRepository.findAllByPostalCode(request);
+            if (!healthFacilityDaoList.isEmpty()) {
+                log.info("Health Facility found by postal code");
+                for (HealthFacilityDao healthFacilityDao : healthFacilityDaoList) {
+                    facilityDtoList.add(modelMapper.map(healthFacilityDao, HealthFacilityDto.class));
+                }
+                return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, facilityDtoList, HttpStatus.OK);
+            }
+
+            log.info("Health Facility not found");
+            return ResponseUtil.build(AppConstant.ResponseCode.DATA_NOT_FOUND, null, HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            log.error("An error occurred in searching Health Facility by city, province, or postal code. Error {}", e.getMessage());
+            throw e;
+        }
+    }
 }
