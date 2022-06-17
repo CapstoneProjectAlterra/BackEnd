@@ -10,7 +10,6 @@ import com.backend.vaccinebookingsystem.repository.StockRepository;
 import com.backend.vaccinebookingsystem.repository.VaccineTypeRepository;
 import com.backend.vaccinebookingsystem.util.ResponseUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,9 +31,6 @@ public class StockService {
 
     @Autowired
     private VaccineTypeRepository vaccineTypeRepository;
-
-    @Autowired
-    private ModelMapper modelMapper;
 
     public ResponseEntity<Object> createStock(FacilityVaccineDto facilityVaccineDto) {
         try {
@@ -65,7 +61,7 @@ public class StockService {
             return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, vaccineDto, HttpStatus.OK);
         } catch (Exception e) {
             log.error("An error occurred in creating new Stock. Error: {}", e.getMessage());
-            return ResponseUtil.build(AppConstant.ResponseCode.UNKNOWN_ERROR, null, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw e;
         }
     }
 
