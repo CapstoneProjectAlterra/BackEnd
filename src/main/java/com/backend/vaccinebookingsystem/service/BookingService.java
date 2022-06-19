@@ -2,8 +2,11 @@ package com.backend.vaccinebookingsystem.service;
 
 import com.backend.vaccinebookingsystem.constant.AppConstant;
 import com.backend.vaccinebookingsystem.domain.dao.BookingDao;
+import com.backend.vaccinebookingsystem.domain.dao.ScheduleDao;
 import com.backend.vaccinebookingsystem.domain.dto.BookingDto;
+import com.backend.vaccinebookingsystem.domain.dto.ScheduleDto;
 import com.backend.vaccinebookingsystem.repository.BookingRepository;
+import com.backend.vaccinebookingsystem.repository.ScheduleRepository;
 import com.backend.vaccinebookingsystem.util.ResponseUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -24,16 +27,74 @@ public class BookingService {
     private BookingRepository bookingRepository;
 
     @Autowired
+    private ScheduleRepository scheduleRepository;
+
+    @Autowired
     private ModelMapper modelMapper;
 
     public ResponseEntity<Object> createBooking(BookingDto bookingDto) {
         try {
-            log.info("Creating new Booking");
-            BookingDao bookingDao = modelMapper.map(bookingDto, BookingDao.class);
+            log.info("Creating new Booking. Value {}", bookingDto);
+
+            Optional<BookingDao> optionalBookingDaoScheduleId = bookingRepository.findFirstByScheduleIdOrderByIdDesc(bookingDto.getSchedule().getId());
+            log.info("Request Schedule Value {}", bookingDto.getSchedule().getId());
+            log.info("Find first booking dao. Value {}", optionalBookingDaoScheduleId);
+
+            Optional<ScheduleDao> optionalScheduleDao = scheduleRepository.findById(bookingDto.getSchedule().getId());
+            log.info("Find schedule dao. Value {}", optionalScheduleDao);
+
+            if (optionalBookingDaoScheduleId.isEmpty()) {
+                log.info("Find first empty");
+                BookingDao bookingDao = BookingDao.builder()
+                        .id(bookingDto.getId())
+                        .bookingPass(1)
+                        .bookingDate(bookingDto.getBookingDate())
+                        .schedule(optionalScheduleDao.get())
+                        .build();
+
+                bookingRepository.save(bookingDao);
+
+                BookingDto dto = BookingDto.builder()
+                        .id(bookingDao.getId())
+                        .bookingPass(bookingDao.getBookingPass())
+                        .bookingDate(bookingDao.getBookingDate())
+                        .schedule(ScheduleDto.builder()
+                                .id(bookingDao.getSchedule().getId())
+                                .vaccinationDate(bookingDao.getSchedule().getVaccinationDate())
+                                .operationalHourStart(bookingDao.getSchedule().getOperationalHourStart())
+                                .operationalHourEnd(bookingDao.getSchedule().getOperationalHourEnd())
+                                .quota(bookingDao.getSchedule().getQuota())
+                                .dose(bookingDao.getSchedule().getDose())
+                                .build())
+                        .build();
+
+                return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, dto, HttpStatus.OK);
+            }
+
+            log.info("Find first present");
+            BookingDao bookingDao = BookingDao.builder()
+                    .id(bookingDto.getId())
+                    .bookingPass(optionalBookingDaoScheduleId.get().getBookingPass() + 1)
+                    .bookingDate(bookingDto.getBookingDate())
+                    .schedule(optionalScheduleDao.get())
+                    .build();
 
             bookingRepository.save(bookingDao);
 
-            BookingDto dto = modelMapper.map(bookingDao, BookingDto.class);
+            BookingDto dto = BookingDto.builder()
+                    .id(bookingDao.getId())
+                    .bookingPass(bookingDao.getBookingPass())
+                    .bookingDate(bookingDao.getBookingDate())
+                    .schedule(ScheduleDto.builder()
+                            .id(bookingDao.getSchedule().getId())
+                            .vaccinationDate(bookingDao.getSchedule().getVaccinationDate())
+                            .operationalHourStart(bookingDao.getSchedule().getOperationalHourStart())
+                            .operationalHourEnd(bookingDao.getSchedule().getOperationalHourEnd())
+                            .quota(bookingDao.getSchedule().getQuota())
+                            .dose(bookingDao.getSchedule().getDose())
+                            .build())
+                    .build();
+
             return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, dto, HttpStatus.OK);
         } catch (Exception e) {
             log.error("An error occurred in creating new Booking. Error: {}", e.getMessage());

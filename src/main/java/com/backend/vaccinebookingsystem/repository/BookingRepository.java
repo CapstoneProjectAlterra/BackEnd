@@ -10,6 +10,9 @@ import java.util.Optional;
 @Repository
 public interface BookingRepository extends JpaRepository<BookingDao, Long> {
 
-    @Query("SELECT COUNT(u) FROM BookingDao u WHERE u.schedule.id=:scheduleId")
+    @Query(value = "SELECT COUNT(u) FROM BookingDao u WHERE u.schedule.id=:scheduleId")
     Optional<Long> countBookingByScheduleId(Long scheduleId);
+
+    Optional<BookingDao> findFirstByScheduleIdOrderByIdDesc(Long scheduleId);
+
 }

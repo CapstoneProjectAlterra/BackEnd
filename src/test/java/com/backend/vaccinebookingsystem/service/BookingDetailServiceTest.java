@@ -122,7 +122,7 @@ class BookingDetailServiceTest {
 
         BookingDao bookingDao = new BookingDao();
         bookingDao.setBookingDate(LocalDateTime.of(1, 1, 1, 1, 1));
-        bookingDao.setFamilyDaoList(new ArrayList<>());
+        bookingDao.setBookingDetailDaos(new ArrayList<>());
         bookingDao.setId(123L);
         bookingDao.setSchedule(scheduleDao);
         bookingDao.setUser(userDao);
@@ -190,7 +190,7 @@ class BookingDetailServiceTest {
 
         BookingDao bookingDao1 = new BookingDao();
         bookingDao1.setBookingDate(LocalDateTime.of(1, 1, 1, 1, 1));
-        bookingDao1.setFamilyDaoList(new ArrayList<>());
+        bookingDao1.setBookingDetailDaos(new ArrayList<>());
         bookingDao1.setId(123L);
         bookingDao1.setSchedule(scheduleDao1);
         bookingDao1.setUser(userDao2);
@@ -278,7 +278,7 @@ class BookingDetailServiceTest {
 
         BookingDao bookingDao = new BookingDao();
         bookingDao.setBookingDate(LocalDateTime.of(1, 1, 1, 1, 1));
-        bookingDao.setFamilyDaoList(new ArrayList<>());
+        bookingDao.setBookingDetailDaos(new ArrayList<>());
         bookingDao.setId(123L);
         bookingDao.setSchedule(scheduleDao);
         bookingDao.setUser(userDao);

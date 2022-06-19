@@ -2,10 +2,9 @@ package com.backend.vaccinebookingsystem.domain.dao;
 
 import com.backend.vaccinebookingsystem.constant.AppConstant;
 import com.backend.vaccinebookingsystem.domain.common.BaseDao;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -28,29 +27,32 @@ public class ScheduleDao extends BaseDao {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "vaccination_date", nullable = false)
+    @Column(name = "vaccination_date")
     private LocalDate vaccinationDate;
 
-    @Column(name = "operational_hour_start", nullable = false)
+    @Column(name = "operational_hour_start")
     private LocalTime operationalHourStart;
 
-    @Column(name = "operational_hour_end", nullable = false)
+    @Column(name = "operational_hour_end")
     private LocalTime operationalHourEnd;
 
-    @Column(name = "quota", nullable = false)
+    @Column(name = "quota")
     private Integer quota;
 
-    @Column(name = "dose", nullable = false)
+    @Column(name = "dose")
+    @Enumerated(EnumType.STRING)
     private AppConstant.Dose dose;
 
-    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL)
     private List<BookingDao> bookingDaoList;
 
     @ManyToOne
     @JoinColumn(name = "facility_id", referencedColumnName = "id")
+    @ToString.Exclude
     private HealthFacilityDao facility;
 
     @ManyToOne
     @JoinColumn(name = "vaccine_id", referencedColumnName = "id")
+    @ToString.Exclude
     private VaccineTypeDao vaccine;
 }

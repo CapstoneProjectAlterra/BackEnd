@@ -1,6 +1,7 @@
 package com.backend.vaccinebookingsystem.domain.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -28,7 +29,7 @@ public class BookingDto {
 
 //    private UserDto user;
 //
-//    private ScheduleDto schedule;
+    private ScheduleDto schedule;
 
 
 }

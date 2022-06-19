@@ -1,10 +1,7 @@
 package com.backend.vaccinebookingsystem.domain.dao;
 
 import com.backend.vaccinebookingsystem.domain.common.BaseDao;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -29,6 +26,7 @@ public class VaccineTypeDao extends BaseDao {
     private String vaccineName;
 
     @OneToMany(mappedBy = "vaccine", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
     private List<ScheduleDao> scheduleDaoList;
 
     @OneToMany(mappedBy = "vaccineFacility", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
