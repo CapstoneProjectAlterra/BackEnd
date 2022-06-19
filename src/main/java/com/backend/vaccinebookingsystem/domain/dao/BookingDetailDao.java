@@ -42,5 +42,6 @@ public class BookingDetailDao extends BaseDao {
     private BookingDao booking;
 
     @Column(name = "booking_status", nullable = false)
+    @Enumerated(EnumType.STRING)
     private AppConstant.BookingStatus bookingStatus;
 }

@@ -1,10 +1,12 @@
 package com.backend.vaccinebookingsystem.domain.dao;
 
 import com.backend.vaccinebookingsystem.domain.common.BaseDao;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -26,7 +28,7 @@ public class BookingDao extends BaseDao {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "booking_pass", nullable = false)
+    @Column(name = "booking_pass")
     private Integer bookingPass;
 
     @Column(name = "booking_date", nullable = false)
@@ -37,9 +39,9 @@ public class BookingDao extends BaseDao {
     private UserDao user;
 
     @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<BookingDetailDao> familyDaoList;
+    private List<BookingDetailDao> bookingDetailDaos;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "schedule_id", referencedColumnName = "id")
     private ScheduleDao schedule;
 }

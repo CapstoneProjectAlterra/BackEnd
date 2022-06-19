@@ -27,7 +27,7 @@ public class ProfileDao extends BaseDao {
     private Long userId;
 
     @Column(name = "role", nullable = false)
-    @Enumerated()
+    @Enumerated(EnumType.STRING)
     private AppConstant.ProfileRole role;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)

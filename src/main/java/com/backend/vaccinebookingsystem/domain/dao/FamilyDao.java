@@ -28,6 +28,7 @@ public class FamilyDao extends BaseDao {
     private Long id;
 
     @Column(name = "status_in_family")
+    @Enumerated(EnumType.STRING)
     private AppConstant.FamilyStatus statusInFamily;
 
     @Column(name = "NIK", nullable = false)
@@ -43,6 +44,7 @@ public class FamilyDao extends BaseDao {
     private String phoneNumber;
 
     @Column(name = "gander")
+    @Enumerated(EnumType.STRING)
     private AppConstant.Gender gender;
 
     @Column(name = "date_of_birth")
