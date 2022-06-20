@@ -27,7 +27,7 @@ jobs:
       - name: Build docker image
         uses: docker/build-push-action@v2
         with:
-          file: Dockerfile
+          file: unit-test.Dockerfile
           context: .
           push: true
           tags: dimsen0/capstone-coverage:latest
@@ -86,3 +86,4 @@ jobs:
             docker pull dimsen0/capstone-coverage:latest
             docker run -d --rm --name capstone-coverage -p 8000:80 dimsen0/capstone-coverage:latest
             docker run -d --rm --name capstone-project -p 80:8080 --env-file=.dev.env --network capstone_network dimsen0/capstone-project:latest
+            docker run -d --rm --name capstone-project-dev -p 8080:8080 --env-file=.sit.env --network capstone_network dimsen0/capstone-project:latest

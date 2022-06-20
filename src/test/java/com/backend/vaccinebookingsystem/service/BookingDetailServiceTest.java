@@ -47,7 +47,7 @@ class BookingDetailServiceTest {
     private ModelMapper modelMapper;
 
     @Test
-    void createBookingDetail_Test() {
+    void createBookingDetailSuccess_Test() {
 
         FamilyDao familyDao = FamilyDao.builder()
                 .id(123L)
@@ -86,7 +86,7 @@ class BookingDetailServiceTest {
     }
 
     @Test
-    void searchBookingDetailById_Test() {
+    void searchBookingDetailByIdSuccess_Test() {
         HealthFacilityDao healthFacilityDao = new HealthFacilityDao();
         healthFacilityDao.setFacilityName("Facility Name");
         healthFacilityDao.setFacilityVaccineDaoList(new ArrayList<>());
@@ -242,7 +242,7 @@ class BookingDetailServiceTest {
     }
 
     @Test
-    void getAllBookingDetails_Test() {
+    void getAllBookingDetailsSuccess_Test() {
         HealthFacilityDao healthFacilityDao = new HealthFacilityDao();
         healthFacilityDao.setFacilityName("Getting all of Booking Details");
         healthFacilityDao.setFacilityVaccineDaoList(new ArrayList<>());
