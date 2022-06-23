@@ -28,6 +28,9 @@ public class UserDao extends BaseDao {
     @Column(name = "username", nullable = false)
     private String username;
 
+    @Column(name = "full_name", nullable = false)
+    private String fullName;
+
     @Column(name = "email", nullable = false)
     private String email;
 

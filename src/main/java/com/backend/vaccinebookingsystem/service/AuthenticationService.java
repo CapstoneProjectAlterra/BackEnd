@@ -48,6 +48,7 @@ public class AuthenticationService {
             log.info("Creating n new user");
             UserDao userDao = UserDao.builder()
                     .username(userDto.getUsername())
+                    .fullName(userDto.getFullName())
                     .email(userDto.getEmail())
                     .password(passwordEncoder.encode(userDto.getPassword()))
                     .profile(ProfileDao.builder()
@@ -58,6 +59,7 @@ public class AuthenticationService {
 
             FamilyDao familyDao = FamilyDao.builder()
                     .NIK(userDao.getUsername())
+                    .fullName(userDao.getFullName())
                     .email(userDao.getEmail())
                     .profile(userDao.getProfile())
                     .build();
@@ -68,6 +70,7 @@ public class AuthenticationService {
             UserDto dto = UserDto.builder()
                     .id(userDao.getId())
                     .username(userDao.getUsername())
+                    .fullName(userDao.getFullName())
                     .email(userDao.getEmail())
                     .password(userDao.getPassword())
                     .profile(ProfileDto.builder()
