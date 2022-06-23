@@ -207,7 +207,7 @@ class AuthenticationServiceTest {
         ArrayList<GrantedAuthority> grantedAuthorityList = new ArrayList<>();
 
         when(authenticationManager.authenticate((Authentication) any())).thenReturn(new TestingAuthenticationToken(
-                new UserDetailsDao(123L, "dimas", "email@email.com", "iloveyou", grantedAuthorityList), "Credentials"));
+                new UserDetailsDao(123L, "dimas", "full", "email@email.com", "iloveyou", grantedAuthorityList), "Credentials"));
 
         ResponseEntity<Object> actualAuthenticateUserResult = authenticationService
                 .authenticateUser(new UsernamePassword("dimas", "iloveyou"));
