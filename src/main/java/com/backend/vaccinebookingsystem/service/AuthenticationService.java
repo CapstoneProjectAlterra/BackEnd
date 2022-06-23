@@ -32,9 +32,6 @@ public class AuthenticationService {
     private UserRepository userRepository;
 
     @Autowired
-    private FamilyRepository familyRepository;
-
-    @Autowired
     private AuthenticationManager authenticationManager;
 
     @Autowired
@@ -55,18 +52,8 @@ public class AuthenticationService {
                             .role(userDto.getProfile().getRole())
                             .build())
                     .build();
-            log.info("User: {}", userDao);
-
-            FamilyDao familyDao = FamilyDao.builder()
-                    .NIK(userDao.getUsername())
-                    .email(userDao.getEmail())
-                    .profile(userDao.getProfile())
-                    .build();
-
-            log.info("Family: {}", familyDao);
 
             userRepository.save(userDao);
-            familyRepository.save(familyDao);
 
             UserDto dto = UserDto.builder()
                     .id(userDao.getId())
