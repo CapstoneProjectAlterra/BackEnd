@@ -59,7 +59,6 @@ public class FamilyService {
                     .id(optionalFamilyDao.get().getId())
                     .statusInFamily(optionalFamilyDao.get().getStatusInFamily())
                     .NIK(optionalFamilyDao.get().getNIK())
-                    .fullName(optionalFamilyDao.get().getFullName())
                     .email(optionalFamilyDao.get().getEmail())
                     .phoneNumber(optionalFamilyDao.get().getPhoneNumber())
                     .gender(optionalFamilyDao.get().getGender())
@@ -107,7 +106,6 @@ public class FamilyService {
             FamilyDao familyDao = optionalFamilyDao.get();
             familyDao.setStatusInFamily(familyDto.getStatusInFamily());
             familyDao.setNIK(familyDto.getNIK());
-            familyDao.setFullName(familyDto.getFullName());
             familyDao.setEmail(familyDto.getEmail());
             familyDao.setPhoneNumber(familyDto.getPhoneNumber());
             familyDao.setGender(familyDto.getGender());
