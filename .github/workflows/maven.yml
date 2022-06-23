@@ -80,7 +80,7 @@ jobs:
           username: ${{ secrets.EC2_SSH_USERNAME }}
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           script: |
-            docker stop capstone-project capstone-coverage
+            docker stop capstone-project capstone-coverage capstone-project-dev
             docker rmi dimsen0/capstone-project:latest dimsen0/capstone-coverage:latest
             docker pull dimsen0/capstone-project:latest
             docker pull dimsen0/capstone-coverage:latest
