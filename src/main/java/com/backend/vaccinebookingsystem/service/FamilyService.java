@@ -2,8 +2,11 @@ package com.backend.vaccinebookingsystem.service;
 
 import com.backend.vaccinebookingsystem.constant.AppConstant;
 import com.backend.vaccinebookingsystem.domain.dao.FamilyDao;
+import com.backend.vaccinebookingsystem.domain.dao.ProfileDao;
 import com.backend.vaccinebookingsystem.domain.dto.FamilyDto;
+import com.backend.vaccinebookingsystem.domain.dto.ProfileDto;
 import com.backend.vaccinebookingsystem.repository.FamilyRepository;
+import com.backend.vaccinebookingsystem.repository.ProfileRepository;
 import com.backend.vaccinebookingsystem.util.ResponseUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -51,7 +54,20 @@ public class FamilyService {
             }
 
             log.info("Family found");
-            FamilyDto dto = modelMapper.map(optionalFamilyDao.get(), FamilyDto.class);
+
+            FamilyDto dto = FamilyDto.builder()
+                    .id(optionalFamilyDao.get().getId())
+                    .statusInFamily(optionalFamilyDao.get().getStatusInFamily())
+                    .NIK(optionalFamilyDao.get().getNIK())
+                    .fullName(optionalFamilyDao.get().getFullName())
+                    .email(optionalFamilyDao.get().getEmail())
+                    .phoneNumber(optionalFamilyDao.get().getPhoneNumber())
+                    .gender(optionalFamilyDao.get().getGender())
+                    .dateOfBirth(optionalFamilyDao.get().getDateOfBirth())
+                    .residenceAddress(optionalFamilyDao.get().getResidenceAddress())
+                    .idCardAddress(optionalFamilyDao.get().getIdCardAddress())
+                    .build();
+
             return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, dto, HttpStatus.OK);
         } catch (Exception e) {
             log.error("An error occurred in getting a Family by id. Error {}", e.getMessage());

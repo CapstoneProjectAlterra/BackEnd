@@ -31,16 +31,16 @@ public class FamilyDao extends BaseDao {
     @Enumerated(EnumType.STRING)
     private AppConstant.FamilyStatus statusInFamily;
 
-    @Column(name = "NIK", nullable = false)
+    @Column(name = "NIK")
     private String NIK;
 
-    @Column(name = "full_name", nullable = false)
+    @Column(name = "full_name")
     private String fullName;
 
     @Column(name = "email", nullable = false)
     private String email;
 
-    @Column(name = "phone_number", nullable = false)
+    @Column(name = "phone_number")
     private String phoneNumber;
 
     @Column(name = "gander")

@@ -42,6 +42,6 @@ public class FamilyDto {
 
     private String idCardAddress;
 
-//    private ProfileDto profile;
+    private ProfileDto profile;
 
 }

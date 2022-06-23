@@ -81,65 +81,6 @@ class FamilyServiceTest {
     }
 
     @Test
-    void getFamilyByIdSuccess_Test() {
-        FamilyDao facilityDao = FamilyDao.builder()
-                .id(1L)
-                .fullName("Patient Name")
-                .build();
-
-        FamilyDto familyDto = FamilyDto.builder()
-                .id(1L)
-                .fullName("Patient Name")
-                .build();
-
-        when(familyRepository.findById(anyLong())).thenReturn(Optional.of(facilityDao));
-        when(modelMapper.map(any(), eq(FamilyDto.class))).thenReturn(familyDto);
-
-        ResponseEntity<Object> response = familyService.getFamilyById(1L);
-
-        ApiResponse apiResponse = (ApiResponse) response.getBody();
-
-        assertEquals(AppConstant.ResponseCode.SUCCESS.getCode(), Objects.requireNonNull(apiResponse).getStatus().getCode());
-        assertEquals(HttpStatus.OK.value(), response.getStatusCodeValue());
-    }
-
-    @Test
-    void getFamilyByIdIsNull_Test() {
-        FamilyDao facilityDao = FamilyDao.builder()
-                .id(1L)
-                .fullName("Patient Name")
-                .build();
-
-        FamilyDto familyDto = FamilyDto.builder()
-                .id(1L)
-                .fullName("Patient Name")
-                .build();
-
-        when(familyRepository.findById(anyLong())).thenReturn(Optional.of(facilityDao));
-        when(modelMapper.map(any(), eq(FamilyDto.class))).thenReturn(familyDto);
-
-        ResponseEntity<Object> response = familyService.getFamilyById(null);
-
-        ApiResponse apiResponse = (ApiResponse) response.getBody();
-
-        assertEquals(AppConstant.ResponseCode.DATA_NOT_FOUND.getCode(), Objects.requireNonNull(apiResponse).getStatus().getCode());
-        assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCodeValue());
-    }
-
-    @Test
-    void getFamilyByIdException_Test() {
-        FamilyDao facilityDao = FamilyDao.builder()
-                .id(1L)
-                .fullName("Patient Name")
-                .build();
-
-        when(familyRepository.findById(anyLong())).thenReturn(Optional.of(facilityDao));
-
-        doThrow(NullPointerException.class).when(familyRepository).findById(any());
-        assertThrows(Exception.class, () -> familyService.getFamilyById(1L));
-    }
-
-    @Test
     void getAllFamiliesSuccess_Test() {
         FamilyDao facilityDao = FamilyDao.builder()
                 .id(1L)

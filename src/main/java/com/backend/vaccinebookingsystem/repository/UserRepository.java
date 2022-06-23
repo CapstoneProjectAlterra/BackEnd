@@ -1,13 +1,13 @@
 package com.backend.vaccinebookingsystem.repository;
 
-import com.backend.vaccinebookingsystem.domain.dao.FamilyDao;
-import com.backend.vaccinebookingsystem.domain.dto.FamilyDto;
+import com.backend.vaccinebookingsystem.domain.dao.UserDao;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface FamilyRepository extends JpaRepository<FamilyDao, Long> {
+public interface UserRepository extends JpaRepository<UserDao, Long> {
 
+    Optional<UserDao> findByUsername(String username);
 }
