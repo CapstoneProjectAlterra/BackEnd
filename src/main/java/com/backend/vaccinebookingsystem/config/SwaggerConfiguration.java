@@ -1,4 +1,4 @@
-package com.backend.vaccinebookingsystem.constant;
+package com.backend.vaccinebookingsystem.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
