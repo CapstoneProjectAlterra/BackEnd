@@ -34,10 +34,7 @@ public class FamilyDao extends BaseDao {
     @Column(name = "NIK")
     private String NIK;
 
-    @Column(name = "full_name")
-    private String fullName;
-
-    @Column(name = "email", nullable = false)
+    @Column(name = "email")
     private String email;
 
     @Column(name = "phone_number")
