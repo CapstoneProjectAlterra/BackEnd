@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,6 +23,7 @@ public class FamilyController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @PostMapping(value = "")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Object> createNewFamily(@RequestBody FamilyDto familyDto) {
         return familyService.createFamily(familyDto);
     }
@@ -32,6 +34,7 @@ public class FamilyController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @GetMapping(value = "/{id}")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Object> getAFamilyById(@PathVariable Long id) {
         return familyService.getFamilyById(id);
     }
@@ -42,6 +45,7 @@ public class FamilyController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @GetMapping(value = "")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Object> getAllOfFamilies() {
         return familyService.getAllFamilies();
     }
@@ -52,6 +56,7 @@ public class FamilyController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @PutMapping(value = "/{id}")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Object> updateAFamilyById(@PathVariable Long id, @RequestBody FamilyDto familyDto) {
         return familyService.updateFamilyById(id, familyDto);
     }
@@ -62,6 +67,7 @@ public class FamilyController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @DeleteMapping(value = "/{id}")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Object> deleteAFamilyById(@PathVariable Long id) {
         return familyService.deleteFamilyById(id);
     }
