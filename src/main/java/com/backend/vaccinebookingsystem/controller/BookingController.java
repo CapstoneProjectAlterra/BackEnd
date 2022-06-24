@@ -23,7 +23,7 @@ public class BookingController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @PostMapping(value = "")
-    @PreAuthorize("hasRole('USER') or hasRole('HEALTH_ADMIN') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('HEALTH_ADMIN') or hasAuthority('ADMIN')")
     public ResponseEntity<Object> createNewBooking(@RequestBody BookingDto bookingDto) {
         return bookingService.createBooking(bookingDto);
     }
@@ -34,7 +34,7 @@ public class BookingController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @GetMapping(value = "/{id}")
-    @PreAuthorize("hasRole('HEALTH_ADMIN') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('HEALTH_ADMIN') or hasAuthority('ADMIN')")
     public ResponseEntity<Object> getABookingById(@PathVariable Long id) {
         return bookingService.getBookingById(id);
     }
@@ -45,7 +45,7 @@ public class BookingController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @GetMapping(value = "")
-    @PreAuthorize("hasRole('HEALTH_ADMIN') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('HEALTH_ADMIN') or hasAuthority('ADMIN')")
     public ResponseEntity<Object> getAllOfBookings() {
         return bookingService.getAllBookings();
     }
@@ -56,7 +56,7 @@ public class BookingController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @PutMapping(value = "/{id}")
-    @PreAuthorize("hasRole('HEALTH_ADMIN') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('HEALTH_ADMIN') or hasAuthority('ADMIN')")
     public ResponseEntity<Object> updateABookingById(@PathVariable Long id, @RequestBody BookingDto bookingDto) {
         return bookingService.updateBookingById(id, bookingDto);
     }
@@ -67,7 +67,7 @@ public class BookingController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @DeleteMapping(value = "/{id}")
-    @PreAuthorize("hasRole('HEALTH_ADMIN') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('HEALTH_ADMIN') or hasAuthority('ADMIN')")
     public ResponseEntity<Object> deleteABookingById(@PathVariable Long id) {
         return bookingService.deleteBookingById(id);
     }
@@ -78,7 +78,7 @@ public class BookingController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @GetMapping(value = "/count")
-    @PreAuthorize("hasRole('HEALTH_ADMIN') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('HEALTH_ADMIN') or hasAuthority('ADMIN')")
     public ResponseEntity<Object> countForBookingByScheduleId(@RequestParam(value = "schedule_id") Long scheduleId) {
         return bookingService.countBookingByScheduleId(scheduleId);
     }

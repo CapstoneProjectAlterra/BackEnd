@@ -37,6 +37,9 @@ public class UserDao extends BaseDao {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private ProfileDao profile;
 
+//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+//    private List<ProfileDao> profile;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<BookingDao> bookingDaoList;
 }

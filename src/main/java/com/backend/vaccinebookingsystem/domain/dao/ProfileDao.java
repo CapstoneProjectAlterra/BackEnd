@@ -34,6 +34,10 @@ public class ProfileDao extends BaseDao {
     @JoinColumn(name = "user_id", nullable = false)
     private UserDao user;
 
+//    @ManyToOne(cascade = CascadeType.ALL)
+//    @JoinColumn(name = "user_id", referencedColumnName = "id")
+//    private UserDao user;
+
     @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<FamilyDao> familyDaoList;
 

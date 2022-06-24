@@ -57,7 +57,6 @@ public class AuthenticationService {
                     .email(userDto.getEmail())
                     .password(passwordEncoder.encode(userDto.getPassword()))
                     .profile(ProfileDao.builder()
-                            .userId(userDto.getProfile().getUserId())
                             .role(userDto.getProfile().getRole())
                             .build())
                     .build();
