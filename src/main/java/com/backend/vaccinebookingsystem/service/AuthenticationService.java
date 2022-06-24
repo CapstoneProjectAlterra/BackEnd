@@ -22,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -43,6 +44,14 @@ public class AuthenticationService {
     public ResponseEntity<Object> register(UserDto userDto) {
         try {
             log.info("Creating a new user");
+
+            Optional<UserDao> optionalUserDao = userRepository.findByUsername(userDto.getUsername());
+
+            if (optionalUserDao.isPresent()) {
+                log.info("Username already exists");
+                return ResponseUtil.build(AppConstant.ResponseCode.ALREADY_EXISTS, null, HttpStatus.CONFLICT);
+            }
+
             UserDao userDao = UserDao.builder()
                     .username(userDto.getUsername())
                     .email(userDto.getEmail())

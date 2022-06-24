@@ -1,9 +1,9 @@
 name: Spring Boot Capstone
 
 on:
-  push:
+  pull_request:
     branches:
-      - feature/JWT
+      - development
 
 jobs:
   run_test:
