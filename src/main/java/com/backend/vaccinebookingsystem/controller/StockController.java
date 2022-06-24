@@ -23,7 +23,7 @@ public class StockController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @PostMapping(value = "")
-    @PreAuthorize("hasRole('HEALTH_ADMIN') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('HEALTH_ADMIN') or hasAuthority('ADMIN')")
     public ResponseEntity<Object> createNewStock(@RequestBody FacilityVaccineDto facilityVaccineDto) {
         return stockService.createStock(facilityVaccineDto);
     }
@@ -34,7 +34,7 @@ public class StockController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @GetMapping(value = "/search")
-    @PreAuthorize("hasRole('HEALTH_ADMIN') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('HEALTH_ADMIN') or hasAuthority('ADMIN')")
     public ResponseEntity<Object> searchAStockById(@RequestParam(value = "facility_id") Long facilityId, @RequestParam(value = "vaccine_id") Long vaccineId) {
         return stockService.searchStockById(facilityId, vaccineId);
     }
@@ -45,7 +45,7 @@ public class StockController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @GetMapping(value = "")
-    @PreAuthorize("hasRole('HEALTH_ADMIN') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('HEALTH_ADMIN') or hasAuthority('ADMIN')")
     public ResponseEntity<Object> getAllOfStocks() {
         return stockService.getAllStocks();
     }
@@ -56,7 +56,7 @@ public class StockController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @PutMapping(value = "/update")
-    @PreAuthorize("hasRole('HEALTH_ADMIN') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('HEALTH_ADMIN') or hasAuthority('ADMIN')")
     public ResponseEntity<Object> updateAStockById(@RequestParam(value = "facility_id") Long facilityId, @RequestParam(value = "vaccine_id") Long vaccineId, @RequestBody FacilityVaccineDto facilityVaccineDto) {
         return stockService.updateStockById(facilityId, vaccineId, facilityVaccineDto);
     }
@@ -67,7 +67,7 @@ public class StockController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @DeleteMapping(value = "/delete")
-    @PreAuthorize("hasRole('HEALTH_ADMIN') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('HEALTH_ADMIN') or hasAuthority('ADMIN')")
     public ResponseEntity<Object> deleteAStockById(@RequestParam(value = "facility_id") Long facilityId, @RequestParam(value = "vaccine_id") Long vaccineId) {
         return stockService.deleteStockById(facilityId, vaccineId);
     }

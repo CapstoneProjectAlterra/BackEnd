@@ -23,7 +23,7 @@ public class VaccineTypeController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @PostMapping(value = "")
-    @PreAuthorize("hasRole('HEALTH_ADMIN') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('HEALTH_ADMIN') or hasAuthority('ADMIN')")
     public ResponseEntity<Object> createNewVaccineType(@RequestBody VaccineTypeDto vaccineTypeDto) {
         return vaccineTypeService.createVaccineType(vaccineTypeDto);
     }
@@ -34,7 +34,7 @@ public class VaccineTypeController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @GetMapping(value = "/{id}")
-    @PreAuthorize("hasRole('HEALTH_ADMIN') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('HEALTH_ADMIN') or hasAuthority('ADMIN')")
     public ResponseEntity<Object> getAVaccineTypeById(@PathVariable Long id) {
         return vaccineTypeService.getVaccineTypeById(id);
     }
@@ -45,7 +45,7 @@ public class VaccineTypeController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @GetMapping(value = "")
-    @PreAuthorize("hasRole('HEALTH_ADMIN') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('HEALTH_ADMIN') or hasAuthority('ADMIN')")
     public ResponseEntity<Object> getAllOfVaccineTypes() {
         return vaccineTypeService.getAllVaccineTypes();
     }
@@ -56,7 +56,7 @@ public class VaccineTypeController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @PutMapping(value = "/{id}")
-    @PreAuthorize("hasRole('HEALTH_ADMIN') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('HEALTH_ADMIN') or hasAuthority('ADMIN')")
     public ResponseEntity<Object> updateAVaccineTypeById(@PathVariable Long id, @RequestBody VaccineTypeDto vaccineTypeDto) {
         return vaccineTypeService.updateVaccineTypeById(id, vaccineTypeDto);
     }
@@ -67,7 +67,7 @@ public class VaccineTypeController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @DeleteMapping(value = "/{id}")
-    @PreAuthorize("hasRole('HEALTH_ADMIN') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('HEALTH_ADMIN') or hasAuthority('ADMIN')")
     public ResponseEntity<Object> deleteAVaccineTypeById(@PathVariable Long id) {
         return vaccineTypeService.deleteVaccineTypeById(id);
     }

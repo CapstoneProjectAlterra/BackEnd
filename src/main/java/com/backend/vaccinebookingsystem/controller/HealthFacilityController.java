@@ -23,7 +23,7 @@ public class HealthFacilityController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @PostMapping(value = "")
-    @PreAuthorize("hasRole('HEALTH_ADMIN') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('HEALTH_ADMIN') or hasAuthority('ADMIN')")
     public ResponseEntity<Object> createNewHealthFacility(@RequestBody HealthFacilityDto healthFacilityDto) {
         return healthFacilityService.createHealthFacility(healthFacilityDto);
     }
@@ -34,7 +34,7 @@ public class HealthFacilityController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @GetMapping(value = "/{id}")
-    @PreAuthorize("hasRole('HEALTH_ADMIN') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('HEALTH_ADMIN') or hasAuthority('ADMIN')")
     public ResponseEntity<Object> getAHealthFacilityById(@PathVariable Long id) {
         return healthFacilityService.getHealthFacilityById(id);
     }
@@ -45,7 +45,7 @@ public class HealthFacilityController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @GetMapping(value = "")
-    @PreAuthorize("hasRole('HEALTH_ADMIN') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('HEALTH_ADMIN') or hasAuthority('ADMIN')")
     public ResponseEntity<Object> getAllOfHealthFacilities() {
         return healthFacilityService.getAllHealthFacilities();
     }
@@ -56,7 +56,7 @@ public class HealthFacilityController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @PutMapping(value = "/{id}")
-    @PreAuthorize("hasRole('HEALTH_ADMIN') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('HEALTH_ADMIN') or hasAuthority('ADMIN')")
     public ResponseEntity<Object> updateAHealthFacilityById(@PathVariable Long id, @RequestBody HealthFacilityDto healthFacilityDto) {
         return healthFacilityService.updateHealthFacilityById(id, healthFacilityDto);
     }
@@ -67,7 +67,7 @@ public class HealthFacilityController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @DeleteMapping(value = "/{id}")
-    @PreAuthorize("hasRole('HEALTH_ADMIN') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('HEALTH_ADMIN') or hasAuthority('ADMIN')")
     public ResponseEntity<Object> deleteAHealthFacilityById(@PathVariable Long id) {
         return healthFacilityService.deleteHealthFacilityById(id);
     }
@@ -78,7 +78,7 @@ public class HealthFacilityController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @GetMapping(value = "/search")
-    @PreAuthorize("hasRole('HEALTH_ADMIN') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('HEALTH_ADMIN') or hasAuthority('ADMIN')")
     public ResponseEntity<Object> searchHealthFacility(@RequestParam(value = "filter") String filter) {
         return healthFacilityService.searchHealthFacility(filter);
     }
