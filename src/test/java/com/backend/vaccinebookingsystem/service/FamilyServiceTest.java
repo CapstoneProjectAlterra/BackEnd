@@ -41,19 +41,19 @@ class FamilyServiceTest {
     void createFamilySuccess_Test() {
         FamilyDao facilityDao = FamilyDao.builder()
                 .id(1L)
-                .fullName("Patient Name")
+                .NIK("NIK")
                 .build();
 
         FamilyDto familyDto = FamilyDto.builder()
                 .id(1L)
-                .fullName("Patient Name")
+                .NIK("NIK")
                 .build();
 
         when(modelMapper.map(any(), eq(FamilyDao.class))).thenReturn(facilityDao);
         when(modelMapper.map(any(), eq(FamilyDto.class))).thenReturn(familyDto);
 
         ResponseEntity<Object> response = familyService.createFamily(FamilyDto.builder()
-                .fullName("Patient Name")
+                .NIK("NIK")
                 .build());
 
         ApiResponse apiResponse = (ApiResponse) response.getBody();
@@ -61,14 +61,14 @@ class FamilyServiceTest {
         FamilyDto dto = (FamilyDto) Objects.requireNonNull(apiResponse).getData();
 
         assertEquals(1L, dto.getId());
-        assertEquals("Patient Name", dto.getFullName());
+        assertEquals("NIK", dto.getNIK());
     }
 
     @Test
     void createFamilyException_Test() {
         FamilyDto familyDto = FamilyDto.builder()
                 .id(1L)
-                .fullName("Patient Name")
+                .NIK("NIK")
                 .build();
 
         when(familyRepository.save(any())).thenReturn(NullPointerException.class);
@@ -84,12 +84,12 @@ class FamilyServiceTest {
     void getAllFamiliesSuccess_Test() {
         FamilyDao facilityDao = FamilyDao.builder()
                 .id(1L)
-                .fullName("Patient Name")
+                .NIK("NIK")
                 .build();
 
         FamilyDto familyDto = FamilyDto.builder()
                 .id(1L)
-                .fullName("Patient Name")
+                .NIK("NIK")
                 .build();
 
         when(familyRepository.findAll()).thenReturn(List.of(facilityDao));
@@ -118,19 +118,19 @@ class FamilyServiceTest {
     void updateFamilyByIdSuccess_Test() {
         FamilyDao facilityDao = FamilyDao.builder()
                 .id(1L)
-                .fullName("Patient Name")
+                .NIK("NIK")
                 .build();
 
         FamilyDto familyDto = FamilyDto.builder()
                 .id(1L)
-                .fullName("Patient Name")
+                .NIK("NIK")
                 .build();
 
         when(familyRepository.findById(anyLong())).thenReturn(Optional.of(facilityDao));
         when(modelMapper.map(any(), eq(FamilyDto.class))).thenReturn(familyDto);
 
         ResponseEntity<Object> response = familyService.updateFamilyById(1L, FamilyDto.builder()
-                .fullName("Patient Name")
+                .NIK("NIK")
                 .build());
 
         ApiResponse apiResponse = (ApiResponse) response.getBody();
@@ -143,12 +143,12 @@ class FamilyServiceTest {
     void updateFamilyByIdIsNull_Test() {
         FamilyDao facilityDao = FamilyDao.builder()
                 .id(1L)
-                .fullName("Patient Name")
+                .NIK("NIK")
                 .build();
 
         FamilyDto familyDto = FamilyDto.builder()
                 .id(1L)
-                .fullName("Patient Name")
+                .NIK("NIK")
                 .build();
 
         when(familyRepository.findById(anyLong())).thenReturn(Optional.of(facilityDao));
@@ -166,14 +166,14 @@ class FamilyServiceTest {
     void updateFamilyByIdException_Test() {
         FamilyDao facilityDao = FamilyDao.builder()
                 .id(1L)
-                .fullName("Patient Name")
+                .NIK("NIK")
                 .build();
 
         when(familyRepository.findById(anyLong())).thenReturn(Optional.of(facilityDao));
 
         doThrow(NullPointerException.class).when(familyRepository).findById(any());
         assertThrows(Exception.class, () -> familyService.updateFamilyById(1L, FamilyDto.builder()
-                .fullName("Patient Name")
+                .NIK("NIK")
                 .build()));
     }
 
@@ -181,7 +181,7 @@ class FamilyServiceTest {
     void deleteFamilyByIdSuccess_Test() {
         FamilyDao facilityDao = FamilyDao.builder()
                 .id(1L)
-                .fullName("Patient Name")
+                .NIK("NIK")
                 .build();
 
         when(familyRepository.findById(anyLong())).thenReturn(Optional.of(facilityDao));
@@ -201,7 +201,7 @@ class FamilyServiceTest {
     void deleteFamilyByIdIsNull_Test() {
         FamilyDao facilityDao = FamilyDao.builder()
                 .id(1L)
-                .fullName("Patient Name")
+                .NIK("NIK")
                 .build();
 
         when(familyRepository.findById(anyLong())).thenReturn(Optional.of(facilityDao));
@@ -220,7 +220,7 @@ class FamilyServiceTest {
     void deleteFamilyByIdException_Test() {
         FamilyDao facilityDao = FamilyDao.builder()
                 .id(1L)
-                .fullName("Patient Name")
+                .NIK("NIK")
                 .build();
 
         when(familyRepository.findById(anyLong())).thenReturn(Optional.of(facilityDao));

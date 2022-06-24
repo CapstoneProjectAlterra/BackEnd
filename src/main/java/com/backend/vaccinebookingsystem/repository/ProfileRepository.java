@@ -10,5 +10,4 @@ import java.util.Optional;
 @Repository
 public interface ProfileRepository extends JpaRepository<ProfileDao, Long> {
 
-    Optional<ProfileDao> findByUserId(Long userId);
 }

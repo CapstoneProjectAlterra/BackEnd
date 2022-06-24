@@ -21,8 +21,6 @@ public class UserDetailsDao implements UserDetails {
 
     private String username;
 
-    private String fullName;
-
     private String email;
 
     private String password;
@@ -34,7 +32,7 @@ public class UserDetailsDao implements UserDetails {
                 .map(role -> new SimpleGrantedAuthority(role.name()))
                 .collect(Collectors.toList());
 
-        return new UserDetailsDao(userDao.getId(), userDao.getUsername(), userDao.getFullName(), userDao.getEmail(), userDao.getPassword(), grantedAuthorities);
+        return new UserDetailsDao(userDao.getId(), userDao.getUsername(), userDao.getEmail(), userDao.getPassword(), grantedAuthorities);
     }
 
     @Override

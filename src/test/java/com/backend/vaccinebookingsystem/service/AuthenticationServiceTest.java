@@ -1,36 +1,19 @@
 package com.backend.vaccinebookingsystem.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import com.backend.vaccinebookingsystem.constant.AppConstant;
 import com.backend.vaccinebookingsystem.domain.common.ApiResponse;
 import com.backend.vaccinebookingsystem.domain.common.ApiResponseStatus;
-import com.backend.vaccinebookingsystem.domain.dao.FamilyDao;
 import com.backend.vaccinebookingsystem.domain.dao.ProfileDao;
 import com.backend.vaccinebookingsystem.domain.dao.UserDao;
 import com.backend.vaccinebookingsystem.domain.dao.UserDetailsDao;
-import com.backend.vaccinebookingsystem.domain.dto.JwtResponse;
+import com.backend.vaccinebookingsystem.domain.dto.*;
 import com.backend.vaccinebookingsystem.domain.dto.JwtTokenProvider;
-import com.backend.vaccinebookingsystem.domain.dto.ProfileDto;
 import com.backend.vaccinebookingsystem.domain.dto.UserDto;
-import com.backend.vaccinebookingsystem.domain.dto.UsernamePassword;
-import com.backend.vaccinebookingsystem.repository.FamilyRepository;
 import com.backend.vaccinebookingsystem.repository.UserRepository;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +29,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.ArrayList;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 @ContextConfiguration(classes = {AuthenticationService.class})
 @ExtendWith(SpringExtension.class)
 class AuthenticationServiceTest {
@@ -54,9 +48,6 @@ class AuthenticationServiceTest {
 
     @Autowired
     private AuthenticationService authenticationService;
-
-    @MockBean
-    private FamilyRepository familyRepository;
 
     @MockBean
     private JwtTokenProvider jwtTokenProvider;
@@ -85,42 +76,6 @@ class AuthenticationServiceTest {
 
     @Test
     void registerSuccess_Test() {
-        UserDao userDao = new UserDao();
-        userDao.setBookingDaoList(new ArrayList<>());
-        userDao.setId(123L);
-        userDao.setPassword("iloveyou");
-        userDao.setProfile(new ProfileDao());
-        userDao.setUpdatedAt(null);
-
-        ProfileDao profileDao = new ProfileDao();
-        profileDao.setFamilyDaoList(new ArrayList<>());
-        profileDao.setHealthFacilityDaoList(new ArrayList<>());
-        profileDao.setRole(AppConstant.ProfileRole.USER);
-        profileDao.setUser(userDao);
-        profileDao.setUserId(123L);
-
-        UserDao userDao1 = new UserDao();
-        userDao1.setBookingDaoList(new ArrayList<>());
-        userDao1.setId(123L);
-        userDao1.setPassword("iloveyou");
-        userDao1.setProfile(profileDao);
-
-        ProfileDao profileDao1 = new ProfileDao();
-        profileDao1.setFamilyDaoList(new ArrayList<>());
-        profileDao1.setHealthFacilityDaoList(new ArrayList<>());
-        profileDao1.setRole(AppConstant.ProfileRole.USER);
-        profileDao1.setUser(userDao1);
-        profileDao1.setUserId(123L);
-
-        FamilyDao familyDao = new FamilyDao();
-        familyDao.setBookingDaoList(new ArrayList<>());
-        familyDao.setGender(AppConstant.Gender.LAKI_LAKI);
-        familyDao.setId(123L);
-        familyDao.setNIK("NIK");
-        familyDao.setProfile(profileDao1);
-
-        when(familyRepository.save((FamilyDao) any())).thenReturn(familyDao);
-
         UserDao userDao2 = new UserDao();
         userDao2.setBookingDaoList(new ArrayList<>());
         userDao2.setId(123L);
@@ -182,9 +137,50 @@ class AuthenticationServiceTest {
         assertNull(profile.getUserId());
         assertNull(profile.getRole());
 
-        verify(familyRepository).save((FamilyDao) any());
         verify(userRepository).save((UserDao) any());
         verify(passwordEncoder).encode((CharSequence) any());
+    }
+    @Test
+    void registerIsPresent_Test() {
+        ProfileDao profileDao = new ProfileDao();
+        profileDao.setFamilyDaoList(new ArrayList<>());
+        profileDao.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao.setRole(AppConstant.ProfileRole.USER);
+        profileDao.setUser(new UserDao());
+        profileDao.setUserId(123L);
+
+        UserDao userDao = new UserDao();
+        userDao.setBookingDaoList(new ArrayList<>());
+        userDao.setId(123L);
+        userDao.setPassword("iloveyou");
+        userDao.setProfile(profileDao);
+
+        ProfileDao profileDao1 = new ProfileDao();
+        profileDao1.setFamilyDaoList(new ArrayList<>());
+        profileDao1.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao1.setRole(AppConstant.ProfileRole.USER);
+        profileDao1.setUser(userDao);
+        profileDao1.setUserId(123L);
+
+        UserDao userDao1 = new UserDao();
+        userDao1.setBookingDaoList(new ArrayList<>());
+        userDao1.setId(123L);
+        userDao1.setPassword("iloveyou");
+        userDao1.setProfile(profileDao1);
+
+        Optional<UserDao> ofResult = Optional.of(userDao1);
+        when(userRepository.findByUsername((String) any())).thenReturn(ofResult);
+
+        ResponseEntity<Object> actualRegisterResult = authenticationService.register(new UserDto());
+
+        assertEquals(HttpStatus.CONFLICT, actualRegisterResult.getStatusCode());
+
+        ApiResponseStatus status = ((ApiResponse<Object>) actualRegisterResult.getBody()).getStatus();
+
+        assertEquals("Already Exists", status.getMessage());
+        assertEquals("ALREADY_EXISTS", status.getCode());
+
+        verify(userRepository).findByUsername((String) any());
     }
 
 
@@ -201,13 +197,13 @@ class AuthenticationServiceTest {
     }
 
     @Test
-    void authenticateUser_Test3() throws AuthenticationException {
+    void authenticateUserSuccess_Test() throws AuthenticationException {
         when(jwtTokenProvider.generateJwtToken((Authentication) any())).thenReturn("ABC123");
 
         ArrayList<GrantedAuthority> grantedAuthorityList = new ArrayList<>();
 
         when(authenticationManager.authenticate((Authentication) any())).thenReturn(new TestingAuthenticationToken(
-                new UserDetailsDao(123L, "dimas", "full", "email@email.com", "iloveyou", grantedAuthorityList), "Credentials"));
+                new UserDetailsDao(123L, "dimas", "email@email.com", "iloveyou", grantedAuthorityList), "Credentials"));
 
         ResponseEntity<Object> actualAuthenticateUserResult = authenticationService
                 .authenticateUser(new UsernamePassword("dimas", "iloveyou"));

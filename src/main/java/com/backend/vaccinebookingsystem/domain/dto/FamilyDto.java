@@ -27,8 +27,6 @@ public class FamilyDto {
 
     private String NIK;
 
-    private String fullName;
-
     private String email;
 
     private String phoneNumber;

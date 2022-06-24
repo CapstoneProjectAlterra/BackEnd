@@ -22,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -30,9 +31,6 @@ public class AuthenticationService {
 
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private FamilyRepository familyRepository;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -45,10 +43,17 @@ public class AuthenticationService {
 
     public ResponseEntity<Object> register(UserDto userDto) {
         try {
-            log.info("Creating n new user");
+            log.info("Creating a new user");
+
+            Optional<UserDao> optionalUserDao = userRepository.findByUsername(userDto.getUsername());
+
+            if (optionalUserDao.isPresent()) {
+                log.info("Username already exists");
+                return ResponseUtil.build(AppConstant.ResponseCode.ALREADY_EXISTS, null, HttpStatus.CONFLICT);
+            }
+
             UserDao userDao = UserDao.builder()
                     .username(userDto.getUsername())
-                    .fullName(userDto.getFullName())
                     .email(userDto.getEmail())
                     .password(passwordEncoder.encode(userDto.getPassword()))
                     .profile(ProfileDao.builder()
@@ -57,20 +62,11 @@ public class AuthenticationService {
                             .build())
                     .build();
 
-            FamilyDao familyDao = FamilyDao.builder()
-                    .NIK(userDao.getUsername())
-                    .fullName(userDao.getFullName())
-                    .email(userDao.getEmail())
-                    .profile(userDao.getProfile())
-                    .build();
-
             userRepository.save(userDao);
-            familyRepository.save(familyDao);
 
             UserDto dto = UserDto.builder()
                     .id(userDao.getId())
                     .username(userDao.getUsername())
-                    .fullName(userDao.getFullName())
                     .email(userDao.getEmail())
                     .password(userDao.getPassword())
                     .profile(ProfileDto.builder()

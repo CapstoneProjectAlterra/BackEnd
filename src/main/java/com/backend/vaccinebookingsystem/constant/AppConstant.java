@@ -13,7 +13,8 @@ public class AppConstant {
         DATA_NOT_FOUND("DATA_NOT_FOUND", "Data Not Found"),
         INTERNAL_SERVER_ERROR("INTERNAL_SERVER_ERROR", "Internal Server Error"),
         UNKNOWN_ERROR("UNKNOWN_ERROR", "Unknown Error"),
-        BAD_CREDENTIALS("BAD_CREDENTIALS", "Bad Credentials");
+        BAD_CREDENTIALS("BAD_CREDENTIALS", "Bad Credentials"),
+        ALREADY_EXISTS("ALREADY_EXISTS", "Already Exists");
 
         private final String code;
 
