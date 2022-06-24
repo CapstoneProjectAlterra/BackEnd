@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,6 +23,7 @@ public class ScheduleController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @PostMapping(value = "")
+    @PreAuthorize("hasRole('HEALTH_ADMIN') or hasRole('ADMIN')")
     public ResponseEntity<Object> createSchedule(@RequestBody ScheduleDto scheduleDto) {
         return scheduleService.createSchedule(scheduleDto);
     }
@@ -32,6 +34,7 @@ public class ScheduleController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @GetMapping(value = "/{id}")
+    @PreAuthorize("hasRole('HEALTH_ADMIN') or hasRole('ADMIN')")
     public ResponseEntity<Object> getAScheduleById(@PathVariable Long id) {
         return scheduleService.getScheduleById(id);
     }
@@ -42,6 +45,7 @@ public class ScheduleController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @GetMapping(value = "")
+    @PreAuthorize("hasRole('HEALTH_ADMIN') or hasRole('ADMIN')")
     public ResponseEntity<Object> getAllOfSchedules() {
         return scheduleService.getAllSchedules();
     }
@@ -52,6 +56,7 @@ public class ScheduleController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @PutMapping(value = "/{id}")
+    @PreAuthorize("hasRole('HEALTH_ADMIN') or hasRole('ADMIN')")
     public ResponseEntity<Object> updateAScheduleById(@PathVariable Long id, @RequestBody ScheduleDto scheduleDto) {
         return scheduleService.updateScheduleById(id, scheduleDto);
     }
@@ -62,6 +67,7 @@ public class ScheduleController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @DeleteMapping(value = "/{id}")
+    @PreAuthorize("hasRole('HEALTH_ADMIN') or hasRole('ADMIN')")
     public ResponseEntity<Object> deleteAScheduleById(@PathVariable Long id) {
         return scheduleService.deleteScheduleById(id);
     }

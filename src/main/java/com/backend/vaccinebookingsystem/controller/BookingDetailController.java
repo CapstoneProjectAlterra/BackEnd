@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,6 +23,7 @@ public class BookingDetailController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @PostMapping(value = "")
+    @PreAuthorize("hasRole('HEALTH_ADMIN') or hasRole('ADMIN')")
     public ResponseEntity<Object> createNewBookingDetail(@RequestBody BookingDetailDto bookingDetailDto) {
         return bookingDetailService.createBookingDetail(bookingDetailDto);
     }
@@ -32,6 +34,7 @@ public class BookingDetailController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @GetMapping(value = "/search")
+    @PreAuthorize("hasRole('HEALTH_ADMIN') or hasRole('ADMIN')")
     public ResponseEntity<Object> searchABookingDetailById(@RequestParam(value = "booking_id") Long bookingId, @RequestParam(value = "family_id") Long familyId) {
         return bookingDetailService.searchBookingDetailById(bookingId, familyId);
     }
@@ -42,6 +45,7 @@ public class BookingDetailController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @GetMapping(value = "")
+    @PreAuthorize("hasRole('HEALTH_ADMIN') or hasRole('ADMIN')")
     public ResponseEntity<Object> getAllOfStocks() {
         return bookingDetailService.getAllBookingDetails();
     }
@@ -52,6 +56,7 @@ public class BookingDetailController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @PutMapping(value = "/update")
+    @PreAuthorize("hasRole('HEALTH_ADMIN') or hasRole('ADMIN')")
     public ResponseEntity<Object> updateABookingDetailById(@RequestParam(value = "booking_id") Long bookingId, @RequestParam(value = "family_id") Long familyId, @RequestBody BookingDetailDto bookingDetailDto) {
         return bookingDetailService.updateBookingDetailById(bookingId, familyId, bookingDetailDto);
     }
@@ -62,6 +67,7 @@ public class BookingDetailController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @DeleteMapping(value = "/delete")
+    @PreAuthorize("hasRole('HEALTH_ADMIN') or hasRole('ADMIN')")
     public ResponseEntity<Object> deleteAStockById(@RequestParam(value = "booking_id") Long bookingId, @RequestParam(value = "family_id") Long familyId) {
         return bookingDetailService.deleteBookingDetailById(bookingId, familyId);
     }
