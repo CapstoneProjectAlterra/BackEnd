@@ -34,7 +34,7 @@ public class ScheduleController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @GetMapping(value = "/{id}")
-    @PreAuthorize("hasAuthority('HEALTH_ADMIN') or hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('HEALTH_ADMIN') or hasAuthority('ADMIN')")
     public ResponseEntity<Object> getAScheduleById(@PathVariable Long id) {
         return scheduleService.getScheduleById(id);
     }
@@ -45,7 +45,7 @@ public class ScheduleController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @GetMapping(value = "")
-    @PreAuthorize("hasAuthority('HEALTH_ADMIN') or hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('HEALTH_ADMIN') or hasAuthority('ADMIN')")
     public ResponseEntity<Object> getAllOfSchedules() {
         return scheduleService.getAllSchedules();
     }
