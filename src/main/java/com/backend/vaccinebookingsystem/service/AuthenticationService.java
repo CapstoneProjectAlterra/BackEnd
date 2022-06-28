@@ -68,14 +68,15 @@ public class AuthenticationService {
 
             userRepository.save(userDao);
 
-//            log.info("Creating Some Family Data when register");
-//            FamilyDao familyDao = FamilyDao.builder()
-//                    .NIK(userDto.getUsername())
-//                    .name(userDto.getName())
-//                    .email(userDto.getEmail())
-//                    .build();
-//
-//            familyRepository.save(familyDao);
+            log.info("Creating Some Family Data when register");
+            FamilyDao familyDao = FamilyDao.builder()
+                    .NIK(userDto.getUsername())
+                    .name(userDto.getName())
+                    .email(userDto.getEmail())
+                    .profile(userDao.getProfile())
+                    .build();
+
+            familyRepository.save(familyDao);
 
             UserDto dto = UserDto.builder()
                     .id(userDao.getId())
