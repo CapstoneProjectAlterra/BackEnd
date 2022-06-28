@@ -9,7 +9,6 @@ import com.backend.vaccinebookingsystem.repository.FamilyRepository;
 import com.backend.vaccinebookingsystem.repository.ProfileRepository;
 import com.backend.vaccinebookingsystem.util.ResponseUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,15 +26,52 @@ public class FamilyService {
     private FamilyRepository familyRepository;
 
     @Autowired
-    private ModelMapper modelMapper;
+    private ProfileRepository profileRepository;
 
     public ResponseEntity<Object> createFamily(FamilyDto familyDto) {
         try {
             log.info("Creating new Family");
-            FamilyDao facilityDao = modelMapper.map(familyDto, FamilyDao.class);
-            familyRepository.save(facilityDao);
+            Optional<ProfileDao> optionalProfileDao = profileRepository.findById(familyDto.getProfile().getUserId());
 
-            FamilyDto dto = modelMapper.map(facilityDao, FamilyDto.class);
+            if (optionalProfileDao.isEmpty()) {
+                log.info("Profile not found");
+                return ResponseUtil.build(AppConstant.ResponseCode.DATA_NOT_FOUND, null, HttpStatus.BAD_REQUEST);
+            }
+
+            log.info("Profile found");
+
+            FamilyDao familyDao = FamilyDao.builder()
+                    .statusInFamily(familyDto.getStatusInFamily())
+                    .NIK(familyDto.getNIK())
+                    .name(familyDto.getName())
+                    .email(familyDto.getEmail())
+                    .phoneNumber(familyDto.getPhoneNumber())
+                    .gender(familyDto.getGender())
+                    .dateOfBirth(familyDto.getDateOfBirth())
+                    .residenceAddress(familyDto.getResidenceAddress())
+                    .idCardAddress(familyDto.getIdCardAddress())
+                    .profile(optionalProfileDao.get())
+                    .build();
+            familyRepository.save(familyDao);
+
+            ProfileDto profileDto = ProfileDto.builder()
+                    .userId(optionalProfileDao.get().getUserId())
+                    .role(optionalProfileDao.get().getRole())
+                    .build();
+
+            FamilyDto dto = FamilyDto.builder()
+                    .id(familyDao.getId())
+                    .statusInFamily(familyDao.getStatusInFamily())
+                    .NIK(familyDao.getNIK())
+                    .name(familyDao.getName())
+                    .email(familyDao.getEmail())
+                    .phoneNumber(familyDao.getPhoneNumber())
+                    .gender(familyDao.getGender())
+                    .dateOfBirth(familyDao.getDateOfBirth())
+                    .residenceAddress(familyDao.getResidenceAddress())
+                    .idCardAddress(familyDao.getIdCardAddress())
+                    .profile(profileDto)
+                    .build();
             return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, dto, HttpStatus.OK);
         } catch (Exception e) {
             log.error("An error occurred in creating new Family. Error: {}", e.getMessage());
@@ -48,12 +84,19 @@ public class FamilyService {
             log.info("Getting a Family by id");
             Optional<FamilyDao> optionalFamilyDao = familyRepository.findById(id);
 
-            if (optionalFamilyDao.isEmpty()) {
+            Optional<ProfileDao> optionalProfileDao = profileRepository.findById(optionalFamilyDao.get().getProfile().getUserId());
+
+            if (optionalFamilyDao.isEmpty() || optionalProfileDao.isEmpty()) {
                 log.info("Family not found");
                 return ResponseUtil.build(AppConstant.ResponseCode.DATA_NOT_FOUND, null, HttpStatus.BAD_REQUEST);
             }
 
             log.info("Family found");
+
+            ProfileDto profileDto = ProfileDto.builder()
+                    .userId(optionalProfileDao.get().getUserId())
+                    .role(optionalProfileDao.get().getRole())
+                    .build();
 
             FamilyDto dto = FamilyDto.builder()
                     .id(optionalFamilyDao.get().getId())
@@ -65,6 +108,7 @@ public class FamilyService {
                     .dateOfBirth(optionalFamilyDao.get().getDateOfBirth())
                     .residenceAddress(optionalFamilyDao.get().getResidenceAddress())
                     .idCardAddress(optionalFamilyDao.get().getIdCardAddress())
+                    .profile(profileDto)
                     .build();
 
             return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, dto, HttpStatus.OK);
@@ -83,7 +127,25 @@ public class FamilyService {
             familyDaoList = familyRepository.findAll();
 
             for (FamilyDao familyDao : familyDaoList) {
-                familyDtos.add(modelMapper.map(familyDao, FamilyDto.class));
+                Optional<ProfileDao> optionalProfileDao = profileRepository.findById(familyDao.getProfile().getUserId());
+
+                ProfileDto profileDto = ProfileDto.builder()
+                        .userId(optionalProfileDao.get().getUserId())
+                        .role(optionalProfileDao.get().getRole())
+                        .build();
+
+                familyDtos.add(FamilyDto.builder()
+                                .id(familyDao.getId())
+                                .statusInFamily(familyDao.getStatusInFamily())
+                                .NIK(familyDao.getNIK())
+                                .name(familyDao.getName())
+                                .phoneNumber(familyDao.getPhoneNumber())
+                                .gender(familyDao.getGender())
+                                .dateOfBirth(familyDao.getDateOfBirth())
+                                .residenceAddress(familyDao.getResidenceAddress())
+                                .idCardAddress(familyDao.getIdCardAddress())
+                                .profile(profileDto)
+                        .build());
             }
 
             return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, familyDtos, HttpStatus.OK);
@@ -97,7 +159,10 @@ public class FamilyService {
         try {
             log.info("Updating a Family by id");
             Optional<FamilyDao> optionalFamilyDao = familyRepository.findById(id);
-            if (optionalFamilyDao.isEmpty()) {
+
+            Optional<ProfileDao> optionalProfileDao = profileRepository.findById(familyDto.getProfile().getUserId());
+
+            if (optionalFamilyDao.isEmpty() || optionalProfileDao.isEmpty()) {
                 log.info("Family not found");
                 return ResponseUtil.build(AppConstant.ResponseCode.DATA_NOT_FOUND, null, HttpStatus.BAD_REQUEST);
             }
@@ -106,15 +171,34 @@ public class FamilyService {
             FamilyDao familyDao = optionalFamilyDao.get();
             familyDao.setStatusInFamily(familyDto.getStatusInFamily());
             familyDao.setNIK(familyDto.getNIK());
+            familyDao.setName(familyDto.getName());
             familyDao.setEmail(familyDto.getEmail());
             familyDao.setPhoneNumber(familyDto.getPhoneNumber());
             familyDao.setGender(familyDto.getGender());
             familyDao.setDateOfBirth(familyDto.getDateOfBirth());
             familyDao.setResidenceAddress(familyDto.getResidenceAddress());
             familyDao.setIdCardAddress(familyDto.getIdCardAddress());
+            familyDao.setProfile(optionalProfileDao.get());
             familyRepository.save(familyDao);
 
-            FamilyDto dto = modelMapper.map(familyDao, FamilyDto.class);
+            ProfileDto profileDto = ProfileDto.builder()
+                    .userId(optionalProfileDao.get().getUserId())
+                    .role(optionalProfileDao.get().getRole())
+                    .build();
+
+            FamilyDto dto = FamilyDto.builder()
+                    .id(familyDao.getId())
+                    .statusInFamily(familyDao.getStatusInFamily())
+                    .NIK(familyDao.getNIK())
+                    .name(familyDao.getName())
+                    .email(familyDao.getEmail())
+                    .phoneNumber(familyDao.getPhoneNumber())
+                    .gender(familyDao.getGender())
+                    .dateOfBirth(familyDao.getDateOfBirth())
+                    .residenceAddress(familyDao.getResidenceAddress())
+                    .idCardAddress(familyDao.getIdCardAddress())
+                    .profile(profileDto)
+                    .build();
             return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, dto, HttpStatus.OK);
         } catch (Exception e) {
             log.error("An error occurred in Updating Family by id. Error {}", e.getMessage());

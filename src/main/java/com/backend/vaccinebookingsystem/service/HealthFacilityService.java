@@ -2,11 +2,13 @@ package com.backend.vaccinebookingsystem.service;
 
 import com.backend.vaccinebookingsystem.constant.AppConstant;
 import com.backend.vaccinebookingsystem.domain.dao.HealthFacilityDao;
+import com.backend.vaccinebookingsystem.domain.dao.ProfileDao;
 import com.backend.vaccinebookingsystem.domain.dto.HealthFacilityDto;
+import com.backend.vaccinebookingsystem.domain.dto.ProfileDto;
 import com.backend.vaccinebookingsystem.repository.HealthFacilityRepository;
+import com.backend.vaccinebookingsystem.repository.ProfileRepository;
 import com.backend.vaccinebookingsystem.util.ResponseUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,16 +26,60 @@ public class HealthFacilityService {
     private HealthFacilityRepository healthFacilityRepository;
 
     @Autowired
-    private ModelMapper modelMapper;
+    private ProfileRepository profileRepository;
 
 
     public ResponseEntity<Object> createHealthFacility(HealthFacilityDto healthFacilityDto) {
         try {
             log.info("Creating new health facility");
-            HealthFacilityDao healthFacilityDao = modelMapper.map(healthFacilityDto, HealthFacilityDao.class);
+            Optional<HealthFacilityDao> optionalHealthFacilityDao = healthFacilityRepository.findHealthFacilityDaoByFacilityName(healthFacilityDto.getFacilityName());
+
+            if (optionalHealthFacilityDao.isPresent()) {
+                log.info("Health Facility already exists");
+                return ResponseUtil.build(AppConstant.ResponseCode.ALREADY_EXISTS, null, HttpStatus.CONFLICT);
+            }
+
+            Optional<ProfileDao> optionalProfileDao = profileRepository.findById(healthFacilityDto.getProfile().getUserId());
+
+            if (optionalProfileDao.isEmpty()) {
+                log.info("Profile not found");
+                return ResponseUtil.build(AppConstant.ResponseCode.DATA_NOT_FOUND, null, HttpStatus.BAD_REQUEST);
+            }
+
+            log.info("Profile found");
+
+            HealthFacilityDao healthFacilityDao = HealthFacilityDao.builder()
+                    .facilityName(healthFacilityDto.getFacilityName())
+                    .imgUrl(healthFacilityDto.getImgUrl())
+                    .streetName(healthFacilityDto.getStreetName())
+                    .officeNumber(healthFacilityDto.getOfficeNumber())
+                    .villageName(healthFacilityDto.getVillageName())
+                    .district(healthFacilityDto.getDistrict())
+                    .city(healthFacilityDto.getCity())
+                    .province(healthFacilityDto.getProvince())
+                    .postalCode(healthFacilityDto.getPostalCode())
+                    .profile(optionalProfileDao.get())
+                    .build();
             healthFacilityRepository.save(healthFacilityDao);
 
-            HealthFacilityDto facilityDto = modelMapper.map(healthFacilityDao, HealthFacilityDto.class);
+            ProfileDto profileDto = ProfileDto.builder()
+                    .userId(healthFacilityDao.getProfile().getUserId())
+                    .role(healthFacilityDao.getProfile().getRole())
+                    .build();
+
+            HealthFacilityDto facilityDto = HealthFacilityDto.builder()
+                    .id(healthFacilityDao.getId())
+                    .facilityName(healthFacilityDao.getFacilityName())
+                    .imgUrl(healthFacilityDao.getImgUrl())
+                    .streetName(healthFacilityDao.getStreetName())
+                    .officeNumber(healthFacilityDao.getOfficeNumber())
+                    .villageName(healthFacilityDao.getVillageName())
+                    .district(healthFacilityDao.getDistrict())
+                    .city(healthFacilityDao.getCity())
+                    .province(healthFacilityDao.getProvince())
+                    .postalCode(healthFacilityDao.getPostalCode())
+                    .profile(profileDto)
+                    .build();
             return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, facilityDto, HttpStatus.OK);
         } catch (Exception e) {
             log.error("An error occurred in creating new Health Facility. Error: {}", e.getMessage());
@@ -46,13 +92,32 @@ public class HealthFacilityService {
             log.info("Getting a Health Facility by id");
             Optional<HealthFacilityDao> optionalHealthFacilityDao = healthFacilityRepository.findById(id);
 
-            if (optionalHealthFacilityDao.isEmpty()) {
+            Optional<ProfileDao> optionalProfileDao = profileRepository.findById(optionalHealthFacilityDao.get().getProfile().getUserId());
+
+            if (optionalHealthFacilityDao.isEmpty() || optionalProfileDao.isEmpty()) {
                 log.info("Health Facility not found");
                 return ResponseUtil.build(AppConstant.ResponseCode.DATA_NOT_FOUND, null, HttpStatus.BAD_REQUEST);
             }
 
             log.info("Health Facility found");
-            HealthFacilityDto facilityDto = modelMapper.map(optionalHealthFacilityDao.get(), HealthFacilityDto.class);
+            ProfileDto profileDto = ProfileDto.builder()
+                    .userId(optionalProfileDao.get().getUserId())
+                    .role(optionalProfileDao.get().getRole())
+                    .build();
+
+            HealthFacilityDto facilityDto = HealthFacilityDto.builder()
+                    .id(optionalHealthFacilityDao.get().getId())
+                    .facilityName(optionalHealthFacilityDao.get().getFacilityName())
+                    .imgUrl(optionalHealthFacilityDao.get().getImgUrl())
+                    .streetName(optionalHealthFacilityDao.get().getStreetName())
+                    .officeNumber(optionalHealthFacilityDao.get().getOfficeNumber())
+                    .villageName(optionalHealthFacilityDao.get().getVillageName())
+                    .district(optionalHealthFacilityDao.get().getDistrict())
+                    .city(optionalHealthFacilityDao.get().getCity())
+                    .province(optionalHealthFacilityDao.get().getProvince())
+                    .postalCode(optionalHealthFacilityDao.get().getPostalCode())
+                    .profile(profileDto)
+                    .build();
             return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, facilityDto, HttpStatus.OK);
         } catch (Exception e) {
             log.error("An error occurred in getting a Health Facility by id. Error {}", e.getMessage());
@@ -69,7 +134,26 @@ public class HealthFacilityService {
             healthFacilityDaoList = healthFacilityRepository.findAll();
 
             for (HealthFacilityDao healthFacilityDao : healthFacilityDaoList) {
-                healthFacilityDtos.add(modelMapper.map(healthFacilityDao, HealthFacilityDto.class));
+                Optional<ProfileDao> optionalProfileDao = profileRepository.findById(healthFacilityDao.getProfile().getUserId());
+
+                ProfileDto profileDto = ProfileDto.builder()
+                        .userId(optionalProfileDao.get().getUserId())
+                        .role(optionalProfileDao.get().getRole())
+                        .build();
+
+                healthFacilityDtos.add(HealthFacilityDto.builder()
+                        .id(healthFacilityDao.getId())
+                        .facilityName(healthFacilityDao.getFacilityName())
+                        .imgUrl(healthFacilityDao.getImgUrl())
+                        .streetName(healthFacilityDao.getStreetName())
+                        .officeNumber(healthFacilityDao.getOfficeNumber())
+                        .villageName(healthFacilityDao.getVillageName())
+                        .district(healthFacilityDao.getDistrict())
+                        .city(healthFacilityDao.getCity())
+                        .province(healthFacilityDao.getProvince())
+                        .postalCode(healthFacilityDao.getPostalCode())
+                        .profile(profileDto)
+                        .build());
             }
 
             return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, healthFacilityDtos, HttpStatus.OK);
@@ -83,7 +167,10 @@ public class HealthFacilityService {
         try {
             log.info("Updating a Health Facility by id");
             Optional<HealthFacilityDao> optionalHealthFacilityDao = healthFacilityRepository.findById(id);
-            if (optionalHealthFacilityDao.isEmpty()) {
+
+            Optional<ProfileDao> optionalProfileDao = profileRepository.findById(healthFacilityDto.getProfile().getUserId());
+
+            if (optionalHealthFacilityDao.isEmpty() || optionalProfileDao.isEmpty()) {
                 log.info("Health Facility not found");
                 return ResponseUtil.build(AppConstant.ResponseCode.DATA_NOT_FOUND, null, HttpStatus.BAD_REQUEST);
             }
@@ -99,9 +186,27 @@ public class HealthFacilityService {
             healthFacilityDao.setCity(healthFacilityDto.getCity());
             healthFacilityDao.setProvince(healthFacilityDto.getProvince());
             healthFacilityDao.setPostalCode(healthFacilityDto.getPostalCode());
+            healthFacilityDao.setProfile(optionalProfileDao.get());
             healthFacilityRepository.save(healthFacilityDao);
 
-            HealthFacilityDto facilityDto = modelMapper.map(healthFacilityDao, HealthFacilityDto.class);
+            ProfileDto profileDto = ProfileDto.builder()
+                    .userId(optionalProfileDao.get().getUserId())
+                    .role(optionalProfileDao.get().getRole())
+                    .build();
+
+            HealthFacilityDto facilityDto = HealthFacilityDto.builder()
+                    .id(healthFacilityDao.getId())
+                    .facilityName(healthFacilityDao.getFacilityName())
+                    .imgUrl(healthFacilityDao.getImgUrl())
+                    .streetName(healthFacilityDao.getStreetName())
+                    .officeNumber(healthFacilityDao.getOfficeNumber())
+                    .villageName(healthFacilityDao.getVillageName())
+                    .district(healthFacilityDao.getDistrict())
+                    .city(healthFacilityDao.getCity())
+                    .province(healthFacilityDao.getProvince())
+                    .postalCode(healthFacilityDao.getPostalCode())
+                    .profile(profileDto)
+                    .build();
             return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, facilityDto, HttpStatus.OK);
         } catch (Exception e) {
             log.error("An error occurred in Updating Health Facility by id. Error {}", e.getMessage());
@@ -123,50 +228,6 @@ public class HealthFacilityService {
             return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, null, HttpStatus.OK);
         } catch (Exception e) {
             log.error("An error occurred in deleting Health Facility by id. Error {}", e.getMessage());
-            throw e;
-        }
-    }
-
-    public ResponseEntity<Object> searchHealthFacility(String request) {
-        log.info("Searching Health Facility");
-        try {
-            List<HealthFacilityDao> healthFacilityDaoList;
-            List<HealthFacilityDto> facilityDtoList = new ArrayList<>();
-
-            log.info("Search by city");
-            healthFacilityDaoList = healthFacilityRepository.findAllByCity(request);
-            if (!healthFacilityDaoList.isEmpty()) {
-                log.info("Health Facility found by city");
-                for (HealthFacilityDao healthFacilityDao : healthFacilityDaoList) {
-                    facilityDtoList.add(modelMapper.map(healthFacilityDao, HealthFacilityDto.class));
-                }
-                return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, facilityDtoList, HttpStatus.OK);
-            }
-
-            log.info("Search by province");
-            healthFacilityDaoList = healthFacilityRepository.findAllByProvince(request);
-            if (!healthFacilityDaoList.isEmpty()) {
-                log.info("Health Facility found by province");
-                for (HealthFacilityDao healthFacilityDao : healthFacilityDaoList) {
-                    facilityDtoList.add(modelMapper.map(healthFacilityDao, HealthFacilityDto.class));
-                }
-                return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, facilityDtoList, HttpStatus.OK);
-            }
-
-            log.info("Search by postal code");
-            healthFacilityDaoList = healthFacilityRepository.findAllByPostalCode(request);
-            if (!healthFacilityDaoList.isEmpty()) {
-                log.info("Health Facility found by postal code");
-                for (HealthFacilityDao healthFacilityDao : healthFacilityDaoList) {
-                    facilityDtoList.add(modelMapper.map(healthFacilityDao, HealthFacilityDto.class));
-                }
-                return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, facilityDtoList, HttpStatus.OK);
-            }
-
-            log.info("Health Facility not found");
-            return ResponseUtil.build(AppConstant.ResponseCode.DATA_NOT_FOUND, null, HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            log.error("An error occurred in searching Health Facility by city, province, or postal code. Error {}", e.getMessage());
             throw e;
         }
     }

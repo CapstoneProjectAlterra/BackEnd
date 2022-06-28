@@ -9,7 +9,6 @@ import com.backend.vaccinebookingsystem.repository.ProfileRepository;
 import com.backend.vaccinebookingsystem.repository.UserRepository;
 import com.backend.vaccinebookingsystem.util.ResponseUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,9 +27,6 @@ public class UserService {
 
     @Autowired
     private ProfileRepository profileRepository;
-
-    @Autowired
-    private ModelMapper modelMapper;
 
     public ResponseEntity<Object> getUserById(Long id) {
         try {
@@ -53,6 +49,7 @@ public class UserService {
             UserDto dto = UserDto.builder()
                     .id(optionalUserDao.get().getId())
                     .username(optionalUserDao.get().getUsername())
+                    .name(optionalUserDao.get().getName())
                     .email(optionalUserDao.get().getEmail())
                     .password(optionalUserDao.get().getPassword())
                     .profile(profileDto)
@@ -85,6 +82,7 @@ public class UserService {
                 userDtos.add(UserDto.builder()
                                 .id(userDao.getId())
                                 .username(userDao.getUsername())
+                                .name(userDao.getName())
                                 .email(userDao.getEmail())
                                 .password(userDao.getPassword())
                                 .profile(profileDto)
@@ -119,6 +117,7 @@ public class UserService {
 
             UserDao userDao = optionalUserDao.get();
             userDao.setUsername(userDto.getUsername());
+            userDao.setName(userDto.getName());
             userDao.setEmail(userDto.getEmail());
             userDao.setPassword(userDto.getPassword());
             userDao.setProfile(profileDao);
@@ -133,6 +132,7 @@ public class UserService {
             UserDto dto = UserDto.builder()
                     .id(userDao.getId())
                     .username(userDao.getUsername())
+                    .name(userDao.getName())
                     .email(userDao.getEmail())
                     .password(userDao.getPassword())
                     .profile(profileDto)

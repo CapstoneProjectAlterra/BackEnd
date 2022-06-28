@@ -2,231 +2,467 @@ package com.backend.vaccinebookingsystem.service;
 
 import com.backend.vaccinebookingsystem.constant.AppConstant;
 import com.backend.vaccinebookingsystem.domain.common.ApiResponse;
+import com.backend.vaccinebookingsystem.domain.common.ApiResponseStatus;
 import com.backend.vaccinebookingsystem.domain.dao.FamilyDao;
+import com.backend.vaccinebookingsystem.domain.dao.ProfileDao;
+import com.backend.vaccinebookingsystem.domain.dao.UserDao;
 import com.backend.vaccinebookingsystem.domain.dto.FamilyDto;
+import com.backend.vaccinebookingsystem.domain.dto.ProfileDto;
 import com.backend.vaccinebookingsystem.repository.FamilyRepository;
+import com.backend.vaccinebookingsystem.repository.ProfileRepository;
+
+import java.time.LocalDateTime;
+
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.List;
-import java.util.Objects;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.*;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+@ContextConfiguration(classes = {FamilyService.class})
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = FamilyService.class)
 class FamilyServiceTest {
-
     @MockBean
     private FamilyRepository familyRepository;
-
-    @MockBean
-    private ModelMapper modelMapper;
 
     @Autowired
     private FamilyService familyService;
 
-    @Test
-    void createFamilySuccess_Test() {
-        FamilyDao facilityDao = FamilyDao.builder()
-                .id(1L)
-                .NIK("NIK")
-                .build();
-
-        FamilyDto familyDto = FamilyDto.builder()
-                .id(1L)
-                .NIK("NIK")
-                .build();
-
-        when(modelMapper.map(any(), eq(FamilyDao.class))).thenReturn(facilityDao);
-        when(modelMapper.map(any(), eq(FamilyDto.class))).thenReturn(familyDto);
-
-        ResponseEntity<Object> response = familyService.createFamily(FamilyDto.builder()
-                .NIK("NIK")
-                .build());
-
-        ApiResponse apiResponse = (ApiResponse) response.getBody();
-
-        FamilyDto dto = (FamilyDto) Objects.requireNonNull(apiResponse).getData();
-
-        assertEquals(1L, dto.getId());
-        assertEquals("NIK", dto.getNIK());
-    }
+    @MockBean
+    private ProfileRepository profileRepository;
 
     @Test
     void createFamilyException_Test() {
-        FamilyDto familyDto = FamilyDto.builder()
-                .id(1L)
-                .NIK("NIK")
-                .build();
+        ResponseEntity<Object> actualCreateFamilyResult = familyService.createFamily(new FamilyDto());
 
-        when(familyRepository.save(any())).thenReturn(NullPointerException.class);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, actualCreateFamilyResult.getStatusCode());
 
-        ResponseEntity<Object> response = familyService.createFamily(familyDto);
+        ApiResponseStatus status = ((ApiResponse<Object>) actualCreateFamilyResult.getBody()).getStatus();
 
-        ApiResponse apiResponse = (ApiResponse) response.getBody();
+        assertEquals(AppConstant.ResponseCode.UNKNOWN_ERROR.getCode(), status.getCode());
+    }
 
-        assertEquals(AppConstant.ResponseCode.UNKNOWN_ERROR.getCode(), Objects.requireNonNull(apiResponse).getStatus().getCode());
+    @Test
+    void createFamilySuccess_Test() {
+        UserDao userDao = new UserDao();
+        userDao.setBookingDaoList(new ArrayList<>());
+        userDao.setId(123L);
+        userDao.setName("Name");
+        userDao.setProfile(new ProfileDao());
+
+        ProfileDao profileDao = new ProfileDao();
+        profileDao.setFamilyDaoList(new ArrayList<>());
+        profileDao.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao.setRole(AppConstant.ProfileRole.USER);
+        profileDao.setUser(userDao);
+        profileDao.setUserId(123L);
+
+        UserDao userDao1 = new UserDao();
+        userDao1.setBookingDaoList(new ArrayList<>());
+        userDao1.setId(123L);
+        userDao1.setName("Name");
+        userDao1.setProfile(profileDao);
+
+        ProfileDao profileDao1 = new ProfileDao();
+        profileDao1.setFamilyDaoList(new ArrayList<>());
+        profileDao1.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao1.setRole(AppConstant.ProfileRole.USER);
+        profileDao1.setUser(userDao1);
+        profileDao1.setUserId(123L);
+
+        FamilyDao familyDao = new FamilyDao();
+        familyDao.setBookingDaoList(new ArrayList<>());
+        familyDao.setGender(AppConstant.Gender.LAKI_LAKI);
+        familyDao.setId(123L);
+        familyDao.setNIK("NIK");
+        familyDao.setProfile(profileDao1);
+
+        when(familyRepository.save((FamilyDao) any())).thenReturn(familyDao);
+
+        UserDao userDao2 = new UserDao();
+        userDao2.setBookingDaoList(new ArrayList<>());
+        userDao2.setId(123L);
+        userDao2.setName("Name");
+        userDao2.setProfile(new ProfileDao());
+
+        ProfileDao profileDao2 = new ProfileDao();
+        profileDao2.setFamilyDaoList(new ArrayList<>());
+        profileDao2.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao2.setRole(AppConstant.ProfileRole.USER);
+        profileDao2.setUser(userDao2);
+        profileDao2.setUserId(123L);
+
+        UserDao userDao3 = new UserDao();
+        userDao3.setBookingDaoList(new ArrayList<>());
+        userDao3.setId(123L);
+        userDao3.setName("Name");
+        userDao3.setProfile(profileDao2);
+
+        ProfileDao profileDao3 = new ProfileDao();
+        profileDao3.setFamilyDaoList(new ArrayList<>());
+        profileDao3.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao3.setRole(AppConstant.ProfileRole.USER);
+        profileDao3.setUser(userDao3);
+        profileDao3.setUserId(123L);
+
+        Optional<ProfileDao> ofResult = Optional.of(profileDao3);
+        when(profileRepository.findById((Long) any())).thenReturn(ofResult);
+
+        FamilyDto familyDto = new FamilyDto();
+        familyDto.setProfile(new ProfileDto());
+
+        ResponseEntity<Object> actualCreateFamilyResult = familyService.createFamily(familyDto);
+
+        assertEquals(HttpStatus.OK, actualCreateFamilyResult.getStatusCode());
+
+        Object data = ((ApiResponse<Object>) actualCreateFamilyResult.getBody()).getData();
+
+        ApiResponseStatus status = ((ApiResponse<Object>) actualCreateFamilyResult.getBody()).getStatus();
+
+        assertEquals(AppConstant.ResponseCode.SUCCESS.getCode(), status.getCode());
+
+        ProfileDto profile = ((FamilyDto) data).getProfile();
+
+        assertEquals(AppConstant.ProfileRole.USER, profile.getRole());
+        assertEquals(123L, profile.getUserId().longValue());
+
+        verify(familyRepository).save((FamilyDao) any());
+        verify(profileRepository).findById((Long) any());
+    }
+
+    @Test
+    void getFamilyByIdSuccess_Test() {
+        ProfileDao profileDao = new ProfileDao();
+        profileDao.setFamilyDaoList(new ArrayList<>());
+        profileDao.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao.setRole(AppConstant.ProfileRole.USER);
+        profileDao.setUser(new UserDao());
+        profileDao.setUserId(123L);
+
+        UserDao userDao = new UserDao();
+        userDao.setBookingDaoList(new ArrayList<>());
+        userDao.setId(123L);
+        userDao.setName("Name");
+        userDao.setProfile(profileDao);
+
+        ProfileDao profileDao1 = new ProfileDao();
+        profileDao1.setFamilyDaoList(new ArrayList<>());
+        profileDao1.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao1.setRole(AppConstant.ProfileRole.USER);
+        profileDao1.setUser(userDao);
+        profileDao1.setUserId(123L);
+
+        FamilyDao familyDao = new FamilyDao();
+        familyDao.setBookingDaoList(new ArrayList<>());
+        familyDao.setId(123L);
+        familyDao.setNIK("NIK");
+        familyDao.setProfile(profileDao1);
+
+        Optional<FamilyDao> ofResult = Optional.of(familyDao);
+        when(familyRepository.findById((Long) any())).thenReturn(ofResult);
+
+        UserDao userDao1 = new UserDao();
+        userDao1.setBookingDaoList(new ArrayList<>());
+        userDao1.setId(123L);
+        userDao1.setName("Name");
+        userDao1.setProfile(new ProfileDao());
+
+        ProfileDao profileDao2 = new ProfileDao();
+        profileDao2.setFamilyDaoList(new ArrayList<>());
+        profileDao2.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao2.setRole(AppConstant.ProfileRole.USER);
+        profileDao2.setUser(userDao1);
+        profileDao2.setUserId(123L);
+
+        UserDao userDao2 = new UserDao();
+        userDao2.setBookingDaoList(new ArrayList<>());
+        userDao2.setId(123L);
+        userDao2.setName("Name");
+        userDao2.setProfile(profileDao2);
+
+        ProfileDao profileDao3 = new ProfileDao();
+        profileDao3.setFamilyDaoList(new ArrayList<>());
+        profileDao3.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao3.setRole(AppConstant.ProfileRole.USER);
+        profileDao3.setUser(userDao2);
+        profileDao3.setUserId(123L);
+
+        Optional<ProfileDao> ofResult1 = Optional.of(profileDao3);
+        when(profileRepository.findById((Long) any())).thenReturn(ofResult1);
+
+        ResponseEntity<Object> actualFamilyById = familyService.getFamilyById(123L);
+
+        assertEquals(HttpStatus.OK, actualFamilyById.getStatusCode());
+
+        Object data = ((ApiResponse<Object>) actualFamilyById.getBody()).getData();
+
+        ApiResponseStatus status = ((ApiResponse<Object>) actualFamilyById.getBody()).getStatus();
+
+        assertEquals(AppConstant.ResponseCode.SUCCESS.getCode(), status.getCode());
+
+        ProfileDto profile = ((FamilyDto) data).getProfile();
+
+        assertEquals(AppConstant.ProfileRole.USER, profile.getRole());
+        assertEquals(123L, profile.getUserId().longValue());
+
+        verify(familyRepository).findById((Long) any());
+        verify(profileRepository).findById((Long) any());
     }
 
     @Test
     void getAllFamiliesSuccess_Test() {
-        FamilyDao facilityDao = FamilyDao.builder()
-                .id(1L)
-                .NIK("NIK")
-                .build();
+        ProfileDao profileDao = new ProfileDao();
+        profileDao.setFamilyDaoList(new ArrayList<>());
+        profileDao.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao.setRole(AppConstant.ProfileRole.USER);
+        profileDao.setUser(new UserDao());
+        profileDao.setUserId(123L);
 
-        FamilyDto familyDto = FamilyDto.builder()
-                .id(1L)
-                .NIK("NIK")
-                .build();
+        UserDao userDao = new UserDao();
+        userDao.setBookingDaoList(new ArrayList<>());
+        userDao.setId(123L);
+        userDao.setIsDeleted(true);
+        userDao.setName("Getting all of Families");
+        userDao.setProfile(profileDao);
 
-        when(familyRepository.findAll()).thenReturn(List.of(facilityDao));
-        when(modelMapper.map(any(), eq(FamilyDto.class))).thenReturn(familyDto);
+        ProfileDao profileDao1 = new ProfileDao();
+        profileDao1.setFamilyDaoList(new ArrayList<>());
+        profileDao1.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao1.setRole(AppConstant.ProfileRole.USER);
+        profileDao1.setUser(userDao);
+        profileDao1.setUserId(123L);
 
-        ResponseEntity<Object> response = familyService.getAllFamilies();
+        FamilyDao familyDao = new FamilyDao();
+        familyDao.setBookingDaoList(new ArrayList<>());
+        familyDao.setId(123L);
+        familyDao.setNIK("Getting all of Families");
+        familyDao.setProfile(profileDao1);
 
-        ApiResponse apiResponse = (ApiResponse) response.getBody();
+        ArrayList<FamilyDao> familyDaoList = new ArrayList<>();
+        familyDaoList.add(familyDao);
+        when(familyRepository.findAll()).thenReturn(familyDaoList);
 
-        assertEquals(AppConstant.ResponseCode.SUCCESS.getCode(), Objects.requireNonNull(apiResponse).getStatus().getCode());
-        assertEquals(HttpStatus.OK.value(), response.getStatusCodeValue());
-    }
+        UserDao userDao1 = new UserDao();
+        userDao1.setBookingDaoList(new ArrayList<>());
+        userDao1.setId(123L);
+        userDao1.setName("Name");
+        userDao1.setProfile(new ProfileDao());
 
-    @Test
-    void getAllFamiliesException_Test() {
-        when(familyRepository.findAll()).thenThrow(NullPointerException.class);
+        ProfileDao profileDao2 = new ProfileDao();
+        profileDao2.setFamilyDaoList(new ArrayList<>());
+        profileDao2.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao2.setRole(AppConstant.ProfileRole.USER);
+        profileDao2.setUser(userDao1);
+        profileDao2.setUserId(123L);
 
-        ResponseEntity<Object> response = familyService.getAllFamilies();
+        UserDao userDao2 = new UserDao();
+        userDao2.setBookingDaoList(new ArrayList<>());
+        userDao2.setId(123L);
+        userDao2.setName("Name");
+        userDao2.setProfile(profileDao2);
 
-        ApiResponse apiResponse = (ApiResponse) response.getBody();
+        ProfileDao profileDao3 = new ProfileDao();
+        profileDao3.setFamilyDaoList(new ArrayList<>());
+        profileDao3.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao3.setRole(AppConstant.ProfileRole.USER);
+        profileDao3.setUser(userDao2);
+        profileDao3.setUserId(123L);
 
-        assertEquals(AppConstant.ResponseCode.UNKNOWN_ERROR.getCode(), Objects.requireNonNull(apiResponse).getStatus().getCode());
+        Optional<ProfileDao> ofResult = Optional.of(profileDao3);
+        when(profileRepository.findById((Long) any())).thenReturn(ofResult);
+
+        ResponseEntity<Object> actualAllFamilies = familyService.getAllFamilies();
+
+        assertEquals(HttpStatus.OK, actualAllFamilies.getStatusCode());
+        assertEquals(1, ((Collection<FamilyDto>) ((ApiResponse<Object>) actualAllFamilies.getBody()).getData()).size());
+
+        ApiResponseStatus status = ((ApiResponse<Object>) actualAllFamilies.getBody()).getStatus();
+
+        assertEquals("Success", status.getMessage());
+        assertEquals("SUCCESS", status.getCode());
+
+        verify(familyRepository).findAll();
+        verify(profileRepository).findById((Long) any());
     }
 
     @Test
     void updateFamilyByIdSuccess_Test() {
-        FamilyDao facilityDao = FamilyDao.builder()
-                .id(1L)
-                .NIK("NIK")
-                .build();
+        ProfileDao profileDao = new ProfileDao();
+        profileDao.setFamilyDaoList(new ArrayList<>());
+        profileDao.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao.setRole(AppConstant.ProfileRole.USER);
+        profileDao.setUser(new UserDao());
+        profileDao.setUserId(123L);
 
-        FamilyDto familyDto = FamilyDto.builder()
-                .id(1L)
-                .NIK("NIK")
-                .build();
+        UserDao userDao = new UserDao();
+        userDao.setBookingDaoList(new ArrayList<>());
+        userDao.setId(123L);
+        userDao.setName("Name");
+        userDao.setProfile(profileDao);
 
-        when(familyRepository.findById(anyLong())).thenReturn(Optional.of(facilityDao));
-        when(modelMapper.map(any(), eq(FamilyDto.class))).thenReturn(familyDto);
+        ProfileDao profileDao1 = new ProfileDao();
+        profileDao1.setFamilyDaoList(new ArrayList<>());
+        profileDao1.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao1.setRole(AppConstant.ProfileRole.USER);
+        profileDao1.setUser(userDao);
+        profileDao1.setUserId(123L);
 
-        ResponseEntity<Object> response = familyService.updateFamilyById(1L, FamilyDto.builder()
-                .NIK("NIK")
-                .build());
+        FamilyDao familyDao = new FamilyDao();
+        familyDao.setBookingDaoList(new ArrayList<>());
+        familyDao.setId(123L);
+        familyDao.setNIK("NIK");
+        familyDao.setProfile(profileDao1);
+        familyDao.setStatusInFamily(AppConstant.FamilyStatus.AYAH);
 
-        ApiResponse apiResponse = (ApiResponse) response.getBody();
+        Optional<FamilyDao> ofResult = Optional.of(familyDao);
 
-        assertEquals(AppConstant.ResponseCode.SUCCESS.getCode(), Objects.requireNonNull(apiResponse).getStatus().getCode());
-        assertEquals(HttpStatus.OK.value(), response.getStatusCodeValue());
-    }
+        UserDao userDao1 = new UserDao();
+        userDao1.setBookingDaoList(new ArrayList<>());
+        userDao1.setId(123L);
+        userDao1.setName("Name");
+        userDao1.setProfile(new ProfileDao());
 
-    @Test
-    void updateFamilyByIdIsNull_Test() {
-        FamilyDao facilityDao = FamilyDao.builder()
-                .id(1L)
-                .NIK("NIK")
-                .build();
+        ProfileDao profileDao2 = new ProfileDao();
+        profileDao2.setFamilyDaoList(new ArrayList<>());
+        profileDao2.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao2.setRole(AppConstant.ProfileRole.USER);
+        profileDao2.setUser(userDao1);
+        profileDao2.setUserId(123L);
 
-        FamilyDto familyDto = FamilyDto.builder()
-                .id(1L)
-                .NIK("NIK")
-                .build();
+        UserDao userDao2 = new UserDao();
+        userDao2.setBookingDaoList(new ArrayList<>());
+        userDao2.setId(123L);
+        userDao2.setName("Name");
+        userDao2.setProfile(profileDao2);
 
-        when(familyRepository.findById(anyLong())).thenReturn(Optional.of(facilityDao));
-        when(modelMapper.map(any(), eq(FamilyDto.class))).thenReturn(familyDto);
+        ProfileDao profileDao3 = new ProfileDao();
+        profileDao3.setFamilyDaoList(new ArrayList<>());
+        profileDao3.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao3.setRole(AppConstant.ProfileRole.USER);
+        profileDao3.setUser(userDao2);
+        profileDao3.setUserId(123L);
 
-        ResponseEntity<Object> response = familyService.updateFamilyById(null, null);
+        FamilyDao familyDao1 = new FamilyDao();
+        familyDao1.setBookingDaoList(new ArrayList<>());
+        familyDao1.setId(123L);
+        familyDao1.setIdCardAddress("42 Main St");
+        familyDao1.setNIK("NIK");
+        familyDao1.setProfile(profileDao3);
+        familyDao1.setStatusInFamily(AppConstant.FamilyStatus.AYAH);
 
-        ApiResponse apiResponse = (ApiResponse) response.getBody();
+        when(familyRepository.save((FamilyDao) any())).thenReturn(familyDao1);
+        when(familyRepository.findById((Long) any())).thenReturn(ofResult);
 
-        assertEquals(AppConstant.ResponseCode.DATA_NOT_FOUND.getCode(), Objects.requireNonNull(apiResponse).getStatus().getCode());
-        assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCodeValue());
-    }
+        UserDao userDao3 = new UserDao();
+        userDao3.setBookingDaoList(new ArrayList<>());
+        userDao3.setId(123L);
+        userDao3.setName("Name");
+        userDao3.setProfile(new ProfileDao());
 
-    @Test
-    void updateFamilyByIdException_Test() {
-        FamilyDao facilityDao = FamilyDao.builder()
-                .id(1L)
-                .NIK("NIK")
-                .build();
+        ProfileDao profileDao4 = new ProfileDao();
+        profileDao4.setFamilyDaoList(new ArrayList<>());
+        profileDao4.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao4.setRole(AppConstant.ProfileRole.USER);
+        profileDao4.setUser(userDao3);
+        profileDao4.setUserId(123L);
 
-        when(familyRepository.findById(anyLong())).thenReturn(Optional.of(facilityDao));
+        UserDao userDao4 = new UserDao();
+        userDao4.setBookingDaoList(new ArrayList<>());
+        userDao4.setId(123L);
+        userDao4.setName("Name");
+        userDao4.setProfile(profileDao4);
 
-        doThrow(NullPointerException.class).when(familyRepository).findById(any());
-        assertThrows(Exception.class, () -> familyService.updateFamilyById(1L, FamilyDto.builder()
-                .NIK("NIK")
-                .build()));
+        ProfileDao profileDao5 = new ProfileDao();
+        profileDao5.setFamilyDaoList(new ArrayList<>());
+        profileDao5.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao5.setRole(AppConstant.ProfileRole.USER);
+        profileDao5.setUser(userDao4);
+        profileDao5.setUserId(123L);
+
+        Optional<ProfileDao> ofResult1 = Optional.of(profileDao5);
+        when(profileRepository.findById((Long) any())).thenReturn(ofResult1);
+
+        FamilyDto familyDto = new FamilyDto();
+        familyDto.setProfile(new ProfileDto());
+
+        ResponseEntity<Object> actualUpdateFamilyByIdResult = familyService.updateFamilyById(123L, familyDto);
+
+        assertEquals(HttpStatus.OK, actualUpdateFamilyByIdResult.getStatusCode());
+
+        Object data = ((ApiResponse<Object>) actualUpdateFamilyByIdResult.getBody()).getData();
+
+        assertEquals(123L, ((FamilyDto) data).getId().longValue());
+
+        ApiResponseStatus status = ((ApiResponse<Object>) actualUpdateFamilyByIdResult.getBody()).getStatus();
+
+        assertEquals(AppConstant.ResponseCode.SUCCESS.getCode(), status.getCode());
+
+        verify(familyRepository).save((FamilyDao) any());
+        verify(familyRepository).findById((Long) any());
+        verify(profileRepository).findById((Long) any());
     }
 
     @Test
     void deleteFamilyByIdSuccess_Test() {
-        FamilyDao facilityDao = FamilyDao.builder()
-                .id(1L)
-                .NIK("NIK")
-                .build();
+        ProfileDao profileDao = new ProfileDao();
+        profileDao.setFamilyDaoList(new ArrayList<>());
+        profileDao.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao.setRole(AppConstant.ProfileRole.USER);
+        profileDao.setUser(new UserDao());
+        profileDao.setUserId(123L);
 
-        when(familyRepository.findById(anyLong())).thenReturn(Optional.of(facilityDao));
+        UserDao userDao = new UserDao();
+        userDao.setBookingDaoList(new ArrayList<>());
+        userDao.setId(123L);
+        userDao.setName("Name");
+        userDao.setProfile(profileDao);
 
-        doNothing().when(familyRepository).delete(any());
+        ProfileDao profileDao1 = new ProfileDao();
+        profileDao1.setFamilyDaoList(new ArrayList<>());
+        profileDao1.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao1.setRole(AppConstant.ProfileRole.USER);
+        profileDao1.setUser(userDao);
+        profileDao1.setUserId(123L);
 
-        ResponseEntity<Object> response = familyService.deleteFamilyById(1L);
+        FamilyDao familyDao = new FamilyDao();
+        familyDao.setBookingDaoList(new ArrayList<>());
+        familyDao.setId(123L);
+        familyDao.setNIK("NIK");
+        familyDao.setProfile(profileDao1);
 
-        ApiResponse apiResponse = (ApiResponse) response.getBody();
+        Optional<FamilyDao> ofResult = Optional.of(familyDao);
 
-        assertEquals(AppConstant.ResponseCode.SUCCESS.getCode(), Objects.requireNonNull(apiResponse).getStatus().getCode());
-        assertEquals(HttpStatus.OK.value(), response.getStatusCodeValue());
-        verify(familyRepository, times(1)).delete(any());
+        doNothing().when(familyRepository).delete((FamilyDao) any());
+        when(familyRepository.findById((Long) any())).thenReturn(ofResult);
+
+        ResponseEntity<Object> actualDeleteFamilyByIdResult = familyService.deleteFamilyById(123L);
+
+        assertEquals(HttpStatus.OK, actualDeleteFamilyByIdResult.getStatusCode());
+
+        ApiResponseStatus status = ((ApiResponse<Object>) actualDeleteFamilyByIdResult.getBody()).getStatus();
+
+        assertEquals("Success", status.getMessage());
+        assertEquals("SUCCESS", status.getCode());
+
+        verify(familyRepository).findById((Long) any());
+        verify(familyRepository).delete((FamilyDao) any());
     }
-
-    @Test
-    void deleteFamilyByIdIsNull_Test() {
-        FamilyDao facilityDao = FamilyDao.builder()
-                .id(1L)
-                .NIK("NIK")
-                .build();
-
-        when(familyRepository.findById(anyLong())).thenReturn(Optional.of(facilityDao));
-
-        doNothing().when(familyRepository).delete(any());
-
-        ResponseEntity<Object> response = familyService.deleteFamilyById(null);
-
-        ApiResponse apiResponse = (ApiResponse) response.getBody();
-
-        assertEquals(AppConstant.ResponseCode.DATA_NOT_FOUND.getCode(), Objects.requireNonNull(apiResponse).getStatus().getCode());
-        assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCodeValue());
-    }
-
-    @Test
-    void deleteFamilyByIdException_Test() {
-        FamilyDao facilityDao = FamilyDao.builder()
-                .id(1L)
-                .NIK("NIK")
-                .build();
-
-        when(familyRepository.findById(anyLong())).thenReturn(Optional.of(facilityDao));
-
-        doThrow(NullPointerException.class).when(familyRepository).findById(any());
-        assertThrows(Exception.class, () -> familyService.deleteFamilyById(1L));
-    }
-
 }
+

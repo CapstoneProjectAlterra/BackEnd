@@ -18,6 +18,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -41,6 +42,9 @@ public class AuthenticationService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private FamilyRepository familyRepository;
+
     public ResponseEntity<Object> register(UserDto userDto) {
         try {
             log.info("Creating a new user");
@@ -54,6 +58,7 @@ public class AuthenticationService {
 
             UserDao userDao = UserDao.builder()
                     .username(userDto.getUsername())
+                    .name(userDto.getName())
                     .email(userDto.getEmail())
                     .password(passwordEncoder.encode(userDto.getPassword()))
                     .profile(ProfileDao.builder()
@@ -63,9 +68,19 @@ public class AuthenticationService {
 
             userRepository.save(userDao);
 
+//            log.info("Creating Some Family Data when register");
+//            FamilyDao familyDao = FamilyDao.builder()
+//                    .NIK(userDto.getUsername())
+//                    .name(userDto.getName())
+//                    .email(userDto.getEmail())
+//                    .build();
+//
+//            familyRepository.save(familyDao);
+
             UserDto dto = UserDto.builder()
                     .id(userDao.getId())
                     .username(userDao.getUsername())
+                    .name(userDao.getName())
                     .email(userDao.getEmail())
                     .password(userDao.getPassword())
                     .profile(ProfileDto.builder()
@@ -108,7 +123,9 @@ public class AuthenticationService {
 
             return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, tokenResponse, HttpStatus.OK);
         } catch (Exception badCredentialsException) {
-            throw new RuntimeException(badCredentialsException.getMessage(), badCredentialsException);
+//            throw new RuntimeException(badCredentialsException.getMessage(), badCredentialsException);
+            log.error("An error occurred in Authenticate User. Error {}", badCredentialsException.getMessage());
+            return ResponseUtil.build(AppConstant.ResponseCode.DATA_NOT_FOUND, null, HttpStatus.BAD_REQUEST);
         }
     }
 }
