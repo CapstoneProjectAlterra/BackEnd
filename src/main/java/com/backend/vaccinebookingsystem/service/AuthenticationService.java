@@ -7,6 +7,7 @@ import com.backend.vaccinebookingsystem.domain.dao.UserDao;
 import com.backend.vaccinebookingsystem.domain.dao.UserDetailsDao;
 import com.backend.vaccinebookingsystem.domain.dto.*;
 import com.backend.vaccinebookingsystem.repository.FamilyRepository;
+import com.backend.vaccinebookingsystem.repository.ProfileRepository;
 import com.backend.vaccinebookingsystem.repository.UserRepository;
 import com.backend.vaccinebookingsystem.util.ResponseUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +44,8 @@ public class AuthenticationService {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
+    private ProfileRepository profileRepository;
+    @Autowired
     private FamilyRepository familyRepository;
 
     public ResponseEntity<Object> register(UserDto userDto) {
@@ -68,12 +71,14 @@ public class AuthenticationService {
 
             userRepository.save(userDao);
 
+            Optional<ProfileDao> optionalProfileDao = profileRepository.findById(userDao.getProfile().getUserId());
+
             log.info("Creating Some Family Data when register");
             FamilyDao familyDao = FamilyDao.builder()
                     .NIK(userDto.getUsername())
                     .name(userDto.getName())
                     .email(userDto.getEmail())
-                    .profile(userDao.getProfile())
+                    .profile(optionalProfileDao.get())
                     .build();
 
             familyRepository.save(familyDao);
