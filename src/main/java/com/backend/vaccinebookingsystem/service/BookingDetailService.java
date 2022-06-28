@@ -4,13 +4,12 @@ import com.backend.vaccinebookingsystem.constant.AppConstant;
 import com.backend.vaccinebookingsystem.domain.dao.BookingDao;
 import com.backend.vaccinebookingsystem.domain.dao.BookingDetailDao;
 import com.backend.vaccinebookingsystem.domain.dao.FamilyDao;
-import com.backend.vaccinebookingsystem.domain.dto.BookingDetailDto;
+import com.backend.vaccinebookingsystem.domain.dto.*;
 import com.backend.vaccinebookingsystem.repository.BookingDetailRepository;
 import com.backend.vaccinebookingsystem.repository.BookingRepository;
 import com.backend.vaccinebookingsystem.repository.FamilyRepository;
 import com.backend.vaccinebookingsystem.util.ResponseUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,13 +32,11 @@ public class BookingDetailService {
     @Autowired
     private FamilyRepository familyRepository;
 
-    @Autowired
-    private ModelMapper modelMapper;
-
     public ResponseEntity<Object> createBookingDetail(BookingDetailDto bookingDetailDto) {
         try {
             log.info("Creating new Booking Detail");
             Optional<BookingDao> optionalBookingDao = bookingRepository.findById(bookingDetailDto.getBookingId());
+
             Optional<FamilyDao> optionalFamilyDao = familyRepository.findById(bookingDetailDto.getFamilyId());
 
             if (optionalBookingDao.isEmpty() || optionalFamilyDao.isEmpty()) {
@@ -84,7 +81,7 @@ public class BookingDetailService {
             BookingDetailDto detailDto = BookingDetailDto.builder()
                     .bookingId(optionalBookingDetailDaoBooking.get().getBookingId())
                     .familyId(optionalBookingDetailDaoFamily.get().getFamilyId())
-                    .bookingStatus(optionalBookingDetailDaoBooking.get().getBookingStatus())
+                    .bookingStatus(optionalBookingDetailDaoFamily.get().getBookingStatus())
                     .build();
             return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, detailDto, HttpStatus.OK);
         } catch (Exception e) {
@@ -133,8 +130,8 @@ public class BookingDetailService {
             bookingDetailRepository.save(bookingDetailDao);
 
             BookingDetailDto detailDto = BookingDetailDto.builder()
-                    .bookingId(optionalBookingDetailDaoBooking.get().getBookingId())
-                    .familyId(optionalBookingDetailDaoFamily.get().getFamilyId())
+                    .bookingId(bookingDetailDao.getBookingId())
+                    .familyId(bookingDetailDao.getFamilyId())
                     .bookingStatus(bookingDetailDao.getBookingStatus())
                     .build();
             return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, detailDto, HttpStatus.OK);

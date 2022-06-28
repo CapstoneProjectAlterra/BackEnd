@@ -1,32 +1,48 @@
 package com.backend.vaccinebookingsystem.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.backend.vaccinebookingsystem.constant.AppConstant;
 import com.backend.vaccinebookingsystem.domain.common.ApiResponse;
 import com.backend.vaccinebookingsystem.domain.common.ApiResponseStatus;
-import com.backend.vaccinebookingsystem.domain.dao.*;
+import com.backend.vaccinebookingsystem.domain.dao.BookingDao;
+import com.backend.vaccinebookingsystem.domain.dao.BookingDetailDao;
+import com.backend.vaccinebookingsystem.domain.dao.FamilyDao;
+import com.backend.vaccinebookingsystem.domain.dao.HealthFacilityDao;
+import com.backend.vaccinebookingsystem.domain.dao.ProfileDao;
+import com.backend.vaccinebookingsystem.domain.dao.ScheduleDao;
+import com.backend.vaccinebookingsystem.domain.dao.UserDao;
+import com.backend.vaccinebookingsystem.domain.dao.VaccineTypeDao;
 import com.backend.vaccinebookingsystem.domain.dto.BookingDetailDto;
 import com.backend.vaccinebookingsystem.repository.BookingDetailRepository;
 import com.backend.vaccinebookingsystem.repository.BookingRepository;
 import com.backend.vaccinebookingsystem.repository.FamilyRepository;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+
+import org.junit.jupiter.api.Disabled;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.when;
 
 @ContextConfiguration(classes = {BookingDetailService.class})
 @ExtendWith(SpringExtension.class)
@@ -43,46 +59,192 @@ class BookingDetailServiceTest {
     @MockBean
     private FamilyRepository familyRepository;
 
-    @MockBean
-    private ModelMapper modelMapper;
-
     @Test
-    void createBookingDetailSuccess_Test() {
+    void createBookingDetail_Test() {
+        ProfileDao profileDao = new ProfileDao();
+        profileDao.setFamilyDaoList(new ArrayList<>());
+        profileDao.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao.setRole(AppConstant.ProfileRole.USER);
+        profileDao.setUser(new UserDao());
+        profileDao.setUserId(123L);
 
-        FamilyDao familyDao = FamilyDao.builder()
-                .id(123L)
-                .NIK("NIK")
-                .build();
+        HealthFacilityDao healthFacilityDao = new HealthFacilityDao();
+        healthFacilityDao.setFacilityName("Facility Name");
+        healthFacilityDao.setFacilityVaccineDaoList(new ArrayList<>());
+        healthFacilityDao.setId(123L);
+        healthFacilityDao.setProfile(profileDao);
+        healthFacilityDao.setScheduleDaoList(new ArrayList<>());
 
-        Optional<FamilyDao> ofResult = Optional.of(familyDao);
-        when(this.familyRepository.findById((Long) any())).thenReturn(ofResult);
+        VaccineTypeDao vaccineTypeDao = new VaccineTypeDao();
+        vaccineTypeDao.setFacilityVaccineDaoList(new ArrayList<>());
+        vaccineTypeDao.setId(123L);
+        vaccineTypeDao.setScheduleDaoList(new ArrayList<>());
+        vaccineTypeDao.setVaccineName("Vaccine Name");
 
+        ScheduleDao scheduleDao = new ScheduleDao();
+        scheduleDao.setBookingDaoList(new ArrayList<>());
+        scheduleDao.setFacility(healthFacilityDao);
+        scheduleDao.setId(123L);
+        scheduleDao.setQuota(1);
+        scheduleDao.setVaccine(vaccineTypeDao);
 
-        BookingDao bookingDao = BookingDao.builder()
-                .id(123L)
-                .bookingDate(LocalDateTime.of(1, 1, 1, 1, 1, 1))
-                .build();
+        UserDao userDao = new UserDao();
+        userDao.setBookingDaoList(new ArrayList<>());
+        userDao.setId(123L);
+        userDao.setName("Name");
+        userDao.setProfile(new ProfileDao());
 
-        Optional<BookingDao> ofResult1 = Optional.of(bookingDao);
-        when(this.bookingRepository.findById((Long) any())).thenReturn(ofResult1);
+        ProfileDao profileDao1 = new ProfileDao();
+        profileDao1.setFamilyDaoList(new ArrayList<>());
+        profileDao1.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao1.setRole(AppConstant.ProfileRole.USER);
+        profileDao1.setUser(userDao);
+        profileDao1.setUserId(123L);
 
-        BookingDetailDao bookingDetailDao = BookingDetailDao.builder()
-                .bookingId(123L)
-                .bookingStatus(AppConstant.BookingStatus.PENDING)
-                .build();
+        UserDao userDao1 = new UserDao();
+        userDao1.setBookingDaoList(new ArrayList<>());
+        userDao1.setId(123L);
+        userDao1.setName("Name");
+        userDao1.setProfile(profileDao1);
 
-        when(this.bookingDetailRepository.save(any())).thenReturn(bookingDetailDao);
+        BookingDao bookingDao = new BookingDao();
+        bookingDao.setBookingDetailDaos(new ArrayList<>());
+        bookingDao.setBookingPass(1);
+        bookingDao.setId(123L);
+        bookingDao.setSchedule(scheduleDao);
+        bookingDao.setUser(userDao1);
 
-        ResponseEntity<Object> actualCreateBookingDetailResult = this.bookingDetailService
+        ProfileDao profileDao2 = new ProfileDao();
+        profileDao2.setFamilyDaoList(new ArrayList<>());
+        profileDao2.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao2.setRole(AppConstant.ProfileRole.USER);
+        profileDao2.setUser(new UserDao());
+        profileDao2.setUserId(123L);
+
+        UserDao userDao2 = new UserDao();
+        userDao2.setBookingDaoList(new ArrayList<>());
+        userDao2.setId(123L);
+        userDao2.setName("Name");
+        userDao2.setProfile(profileDao2);
+
+        ProfileDao profileDao3 = new ProfileDao();
+        profileDao3.setFamilyDaoList(new ArrayList<>());
+        profileDao3.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao3.setRole(AppConstant.ProfileRole.USER);
+        profileDao3.setUser(userDao2);
+        profileDao3.setUserId(123L);
+
+        FamilyDao familyDao = new FamilyDao();
+        familyDao.setBookingDaoList(new ArrayList<>());
+        familyDao.setId(123L);
+        familyDao.setNIK("NIK");
+        familyDao.setProfile(profileDao3);
+
+        BookingDetailDao bookingDetailDao = new BookingDetailDao();
+        bookingDetailDao.setBooking(bookingDao);
+        bookingDetailDao.setBookingId(123L);
+        bookingDetailDao.setBookingStatus(AppConstant.BookingStatus.PENDING);
+        bookingDetailDao.setFamily(familyDao);
+        bookingDetailDao.setFamilyId(123L);
+
+        when(bookingDetailRepository.save((BookingDetailDao) any())).thenReturn(bookingDetailDao);
+
+        ProfileDao profileDao4 = new ProfileDao();
+        profileDao4.setFamilyDaoList(new ArrayList<>());
+        profileDao4.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao4.setRole(AppConstant.ProfileRole.USER);
+        profileDao4.setUser(new UserDao());
+        profileDao4.setUserId(123L);
+
+        HealthFacilityDao healthFacilityDao1 = new HealthFacilityDao();
+        healthFacilityDao1.setFacilityName("Facility Name");
+        healthFacilityDao1.setFacilityVaccineDaoList(new ArrayList<>());
+        healthFacilityDao1.setId(123L);
+        healthFacilityDao1.setProfile(profileDao4);
+        healthFacilityDao1.setScheduleDaoList(new ArrayList<>());
+
+        VaccineTypeDao vaccineTypeDao1 = new VaccineTypeDao();
+        vaccineTypeDao1.setFacilityVaccineDaoList(new ArrayList<>());
+        vaccineTypeDao1.setId(123L);
+        vaccineTypeDao1.setScheduleDaoList(new ArrayList<>());
+        vaccineTypeDao1.setVaccineName("Vaccine Name");
+
+        ScheduleDao scheduleDao1 = new ScheduleDao();
+        scheduleDao1.setBookingDaoList(new ArrayList<>());
+        scheduleDao1.setFacility(healthFacilityDao1);
+        scheduleDao1.setId(123L);
+        scheduleDao1.setQuota(1);
+        scheduleDao1.setVaccine(vaccineTypeDao1);
+
+        UserDao userDao3 = new UserDao();
+        userDao3.setBookingDaoList(new ArrayList<>());
+        userDao3.setId(123L);
+        userDao3.setName("Name");
+        userDao3.setProfile(new ProfileDao());
+
+        ProfileDao profileDao5 = new ProfileDao();
+        profileDao5.setFamilyDaoList(new ArrayList<>());
+        profileDao5.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao5.setRole(AppConstant.ProfileRole.USER);
+        profileDao5.setUser(userDao3);
+        profileDao5.setUserId(123L);
+
+        UserDao userDao4 = new UserDao();
+        userDao4.setBookingDaoList(new ArrayList<>());
+        userDao4.setId(123L);
+        userDao4.setName("Name");
+        userDao4.setProfile(profileDao5);
+
+        BookingDao bookingDao1 = new BookingDao();
+        bookingDao1.setBookingDetailDaos(new ArrayList<>());
+        bookingDao1.setBookingPass(1);
+        bookingDao1.setId(123L);
+        bookingDao1.setSchedule(scheduleDao1);
+        bookingDao1.setUser(userDao4);
+
+        Optional<BookingDao> ofResult = Optional.of(bookingDao1);
+        when(bookingRepository.findById((Long) any())).thenReturn(ofResult);
+
+        ProfileDao profileDao6 = new ProfileDao();
+        profileDao6.setFamilyDaoList(new ArrayList<>());
+        profileDao6.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao6.setRole(AppConstant.ProfileRole.USER);
+        profileDao6.setUser(new UserDao());
+        profileDao6.setUserId(123L);
+
+        UserDao userDao5 = new UserDao();
+        userDao5.setBookingDaoList(new ArrayList<>());
+        userDao5.setId(123L);
+        userDao5.setName("Name");
+        userDao5.setProfile(profileDao6);
+
+        ProfileDao profileDao7 = new ProfileDao();
+        profileDao7.setFamilyDaoList(new ArrayList<>());
+        profileDao7.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao7.setRole(AppConstant.ProfileRole.USER);
+        profileDao7.setUser(userDao5);
+        profileDao7.setUserId(123L);
+
+        FamilyDao familyDao1 = new FamilyDao();
+        familyDao1.setBookingDaoList(new ArrayList<>());
+        familyDao1.setId(123L);
+        familyDao1.setNIK("NIK");
+        familyDao1.setProfile(profileDao7);
+
+        Optional<FamilyDao> ofResult1 = Optional.of(familyDao1);
+        when(familyRepository.findById((Long) any())).thenReturn(ofResult1);
+        ResponseEntity<Object> actualCreateBookingDetailResult = bookingDetailService
                 .createBookingDetail(new BookingDetailDto());
 
         assertEquals(HttpStatus.OK, actualCreateBookingDetailResult.getStatusCode());
 
-        Object data = ((ApiResponse<Object>) actualCreateBookingDetailResult.getBody()).getData();
-
         ApiResponseStatus status = ((ApiResponse<Object>) actualCreateBookingDetailResult.getBody()).getStatus();
 
         assertEquals(AppConstant.ResponseCode.SUCCESS.getCode(), status.getCode());
+
+        verify(bookingDetailRepository).save((BookingDetailDao) any());
+        verify(bookingRepository).findById((Long) any());
+        verify(familyRepository).findById((Long) any());
     }
 
     @Test
@@ -105,6 +267,7 @@ class BookingDetailServiceTest {
         scheduleDao.setFacility(healthFacilityDao);
         scheduleDao.setId(123L);
         scheduleDao.setQuota(1);
+        scheduleDao.setVaccinationDate(LocalDate.ofEpochDay(1L));
         scheduleDao.setVaccine(vaccineTypeDao);
 
         ProfileDao profileDao = new ProfileDao();
@@ -117,12 +280,12 @@ class BookingDetailServiceTest {
         UserDao userDao = new UserDao();
         userDao.setBookingDaoList(new ArrayList<>());
         userDao.setId(123L);
-        userDao.setPassword("iloveyou");
+        userDao.setName("Name");
         userDao.setProfile(profileDao);
 
         BookingDao bookingDao = new BookingDao();
-        bookingDao.setBookingDate(LocalDateTime.of(1, 1, 1, 1, 1));
         bookingDao.setBookingDetailDaos(new ArrayList<>());
+        bookingDao.setBookingPass(1);
         bookingDao.setId(123L);
         bookingDao.setSchedule(scheduleDao);
         bookingDao.setUser(userDao);
@@ -130,7 +293,7 @@ class BookingDetailServiceTest {
         UserDao userDao1 = new UserDao();
         userDao1.setBookingDaoList(new ArrayList<>());
         userDao1.setId(123L);
-        userDao1.setPassword("iloveyou");
+        userDao1.setName("Name");
         userDao1.setProfile(new ProfileDao());
 
         ProfileDao profileDao1 = new ProfileDao();
@@ -152,7 +315,6 @@ class BookingDetailServiceTest {
         bookingDetailDao.setBookingStatus(AppConstant.BookingStatus.PENDING);
         bookingDetailDao.setFamily(familyDao);
         bookingDetailDao.setFamilyId(123L);
-
         Optional<BookingDetailDao> ofResult = Optional.of(bookingDetailDao);
 
         HealthFacilityDao healthFacilityDao1 = new HealthFacilityDao();
@@ -169,7 +331,6 @@ class BookingDetailServiceTest {
         vaccineTypeDao1.setVaccineName("Vaccine Name");
 
         ScheduleDao scheduleDao1 = new ScheduleDao();
-        scheduleDao1.setBookingDaoList(new ArrayList<>());
         scheduleDao1.setFacility(healthFacilityDao1);
         scheduleDao1.setId(123L);
         scheduleDao1.setQuota(1);
@@ -185,12 +346,12 @@ class BookingDetailServiceTest {
         UserDao userDao2 = new UserDao();
         userDao2.setBookingDaoList(new ArrayList<>());
         userDao2.setId(123L);
-        userDao2.setPassword("iloveyou");
+        userDao2.setName("Name");
         userDao2.setProfile(profileDao2);
 
         BookingDao bookingDao1 = new BookingDao();
-        bookingDao1.setBookingDate(LocalDateTime.of(1, 1, 1, 1, 1));
         bookingDao1.setBookingDetailDaos(new ArrayList<>());
+        bookingDao1.setBookingPass(1);
         bookingDao1.setId(123L);
         bookingDao1.setSchedule(scheduleDao1);
         bookingDao1.setUser(userDao2);
@@ -198,7 +359,7 @@ class BookingDetailServiceTest {
         UserDao userDao3 = new UserDao();
         userDao3.setBookingDaoList(new ArrayList<>());
         userDao3.setId(123L);
-        userDao3.setPassword("iloveyou");
+        userDao3.setName("Name");
         userDao3.setProfile(new ProfileDao());
 
         ProfileDao profileDao3 = new ProfileDao();
@@ -222,29 +383,32 @@ class BookingDetailServiceTest {
         bookingDetailDao1.setFamilyId(123L);
 
         Optional<BookingDetailDao> ofResult1 = Optional.of(bookingDetailDao1);
+        when(bookingDetailRepository.findByBookingId((Long) any())).thenReturn(ofResult);
+        when(bookingDetailRepository.findByFamilyId((Long) any())).thenReturn(ofResult1);
 
-        when(this.bookingDetailRepository.findByBookingId((Long) any())).thenReturn(ofResult);
-        when(this.bookingDetailRepository.findByFamilyId((Long) any())).thenReturn(ofResult1);
-
-        ResponseEntity<Object> actualSearchBookingDetailByIdResult = this.bookingDetailService.searchBookingDetailById(123L,
+        ResponseEntity<Object> actualSearchBookingDetailByIdResult = bookingDetailService.searchBookingDetailById(123L,
                 123L);
 
         assertEquals(HttpStatus.OK, actualSearchBookingDetailByIdResult.getStatusCode());
 
         Object data = ((ApiResponse<Object>) actualSearchBookingDetailByIdResult.getBody()).getData();
 
-        ApiResponseStatus status = ((ApiResponse<Object>) actualSearchBookingDetailByIdResult.getBody()).getStatus();
-
-        assertEquals(AppConstant.ResponseCode.SUCCESS.getCode(), status.getCode());
         assertEquals(AppConstant.BookingStatus.PENDING, ((BookingDetailDto) data).getBookingStatus());
         assertEquals(123L, ((BookingDetailDto) data).getBookingId().longValue());
         assertEquals(123L, ((BookingDetailDto) data).getFamilyId().longValue());
+
+        ApiResponseStatus status = ((ApiResponse<Object>) actualSearchBookingDetailByIdResult.getBody()).getStatus();
+
+        assertEquals(AppConstant.ResponseCode.SUCCESS.getCode(), status.getCode());
+
+        verify(bookingDetailRepository).findByBookingId((Long) any());
+        verify(bookingDetailRepository).findByFamilyId((Long) any());
     }
 
     @Test
     void getAllBookingDetailsSuccess_Test() {
         HealthFacilityDao healthFacilityDao = new HealthFacilityDao();
-        healthFacilityDao.setFacilityName("Getting all of Booking Details");
+        healthFacilityDao.setFacilityName("Facility");
         healthFacilityDao.setFacilityVaccineDaoList(new ArrayList<>());
         healthFacilityDao.setId(123L);
         healthFacilityDao.setProfile(new ProfileDao());
@@ -254,13 +418,14 @@ class BookingDetailServiceTest {
         vaccineTypeDao.setFacilityVaccineDaoList(new ArrayList<>());
         vaccineTypeDao.setId(123L);
         vaccineTypeDao.setScheduleDaoList(new ArrayList<>());
-        vaccineTypeDao.setVaccineName("Getting all of Booking Details");
+        vaccineTypeDao.setVaccineName("Vaccine");
 
         ScheduleDao scheduleDao = new ScheduleDao();
         scheduleDao.setBookingDaoList(new ArrayList<>());
         scheduleDao.setFacility(healthFacilityDao);
         scheduleDao.setId(123L);
         scheduleDao.setQuota(1);
+        scheduleDao.setVaccinationDate(LocalDate.ofEpochDay(1L));
         scheduleDao.setVaccine(vaccineTypeDao);
 
         ProfileDao profileDao = new ProfileDao();
@@ -273,12 +438,12 @@ class BookingDetailServiceTest {
         UserDao userDao = new UserDao();
         userDao.setBookingDaoList(new ArrayList<>());
         userDao.setId(123L);
-        userDao.setPassword("iloveyou");
+        userDao.setName("Name");
         userDao.setProfile(profileDao);
 
         BookingDao bookingDao = new BookingDao();
-        bookingDao.setBookingDate(LocalDateTime.of(1, 1, 1, 1, 1));
         bookingDao.setBookingDetailDaos(new ArrayList<>());
+        bookingDao.setBookingPass(1);
         bookingDao.setId(123L);
         bookingDao.setSchedule(scheduleDao);
         bookingDao.setUser(userDao);
@@ -286,7 +451,7 @@ class BookingDetailServiceTest {
         UserDao userDao1 = new UserDao();
         userDao1.setBookingDaoList(new ArrayList<>());
         userDao1.setId(123L);
-        userDao1.setPassword("iloveyou");
+        userDao1.setName("Name");
         userDao1.setProfile(new ProfileDao());
 
         ProfileDao profileDao1 = new ProfileDao();
@@ -299,7 +464,7 @@ class BookingDetailServiceTest {
         FamilyDao familyDao = new FamilyDao();
         familyDao.setBookingDaoList(new ArrayList<>());
         familyDao.setId(123L);
-        familyDao.setNIK("Getting all of Booking Details");
+        familyDao.setNIK("NIK");
         familyDao.setProfile(profileDao1);
 
         BookingDetailDao bookingDetailDao = new BookingDetailDao();
@@ -312,9 +477,9 @@ class BookingDetailServiceTest {
         ArrayList<BookingDetailDao> bookingDetailDaoList = new ArrayList<>();
         bookingDetailDaoList.add(bookingDetailDao);
 
-        when(this.bookingDetailRepository.findAll()).thenReturn(bookingDetailDaoList);
+        when(bookingDetailRepository.findAll()).thenReturn(bookingDetailDaoList);
 
-        ResponseEntity<Object> actualAllBookingDetails = this.bookingDetailService.getAllBookingDetails();
+        ResponseEntity<Object> actualAllBookingDetails = bookingDetailService.getAllBookingDetails();
 
         assertEquals(HttpStatus.OK, actualAllBookingDetails.getStatusCode());
 
@@ -324,14 +489,15 @@ class BookingDetailServiceTest {
 
         ApiResponseStatus status = ((ApiResponse<Object>) actualAllBookingDetails.getBody()).getStatus();
 
-        assertEquals("SUCCESS", status.getCode());
-        assertEquals("Success", status.getMessage());
+        assertEquals(AppConstant.ResponseCode.SUCCESS.getCode(), status.getCode());
 
         BookingDetailDto getResult = ((List<BookingDetailDto>) data).get(0);
 
-        assertEquals(AppConstant.BookingStatus.PENDING, getResult.getBookingStatus());
         assertEquals(123L, getResult.getBookingId().longValue());
         assertEquals(123L, getResult.getFamilyId().longValue());
+
+        verify(bookingDetailRepository).findAll();
     }
+
 }
 

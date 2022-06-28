@@ -28,6 +28,9 @@ public class UserDao extends BaseDao {
     @Column(name = "username", nullable = false)
     private String username;
 
+    @Column(name = "name", nullable = false)
+    private String name;
+
     @Column(name = "email", nullable = false)
     private String email;
 
@@ -36,9 +39,6 @@ public class UserDao extends BaseDao {
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private ProfileDao profile;
-
-//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-//    private List<ProfileDao> profile;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<BookingDao> bookingDaoList;

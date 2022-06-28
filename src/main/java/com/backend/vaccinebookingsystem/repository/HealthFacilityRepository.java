@@ -7,16 +7,11 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface HealthFacilityRepository extends JpaRepository<HealthFacilityDao, Long> {
 
-    @Query(value = "SELECT ji FROM HealthFacilityDao ji WHERE UPPER(ji.city) LIKE UPPER(CONCAT('%', :city, '%') ) ")
-    List<HealthFacilityDao> findAllByCity(String city);
+    Optional<HealthFacilityDao> findHealthFacilityDaoByFacilityName(String facilityName);
 
-    @Query(value = "SELECT ji FROM HealthFacilityDao ji WHERE UPPER(ji.province) LIKE UPPER(CONCAT('%', :province, '%') ) ")
-    List<HealthFacilityDao> findAllByProvince(String province);
-
-    @Query(value = "SELECT ji FROM HealthFacilityDao ji WHERE UPPER(ji.postalCode) LIKE UPPER(CONCAT('%', :postalCode, '%') ) ")
-    List<HealthFacilityDao> findAllByPostalCode(String postalCode);
 }

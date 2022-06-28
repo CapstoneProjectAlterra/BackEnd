@@ -27,8 +27,8 @@ public class BookingDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime bookingDate;
 
-//    private UserDto user;
-//
+    private UserDto user;
+
     private ScheduleDto schedule;
 
 
