@@ -7,6 +7,7 @@ import com.backend.vaccinebookingsystem.domain.dao.UserDao;
 import com.backend.vaccinebookingsystem.domain.dao.UserDetailsDao;
 import com.backend.vaccinebookingsystem.domain.dto.*;
 import com.backend.vaccinebookingsystem.repository.FamilyRepository;
+import com.backend.vaccinebookingsystem.repository.ProfileRepository;
 import com.backend.vaccinebookingsystem.repository.UserRepository;
 import com.backend.vaccinebookingsystem.util.ResponseUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +19,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +42,8 @@ public class AuthenticationService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private ProfileRepository profileRepository;
     @Autowired
     private FamilyRepository familyRepository;
 
@@ -68,12 +70,14 @@ public class AuthenticationService {
 
             userRepository.save(userDao);
 
+            Optional<ProfileDao> optionalProfileDao = profileRepository.findById(userDao.getProfile().getUserId());
+
             log.info("Creating Some Family Data when register");
             FamilyDao familyDao = FamilyDao.builder()
                     .NIK(userDto.getUsername())
                     .name(userDto.getName())
                     .email(userDto.getEmail())
-                    .profile(userDao.getProfile())
+                    .profile(optionalProfileDao.get())
                     .build();
 
             familyRepository.save(familyDao);
