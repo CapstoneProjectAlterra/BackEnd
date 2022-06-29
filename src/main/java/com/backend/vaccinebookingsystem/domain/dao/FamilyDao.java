@@ -47,6 +47,9 @@ public class FamilyDao extends BaseDao {
     @Enumerated(EnumType.STRING)
     private AppConstant.Gender gender;
 
+    @Column(name = "place_of_birth")
+    private String placeOfBirth;
+
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
 

@@ -35,6 +35,8 @@ public class FamilyDto {
 
     private AppConstant.Gender gender;
 
+    private String placeOfBirth;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate dateOfBirth;
 

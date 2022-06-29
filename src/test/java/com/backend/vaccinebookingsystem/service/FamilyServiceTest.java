@@ -10,10 +10,6 @@ import com.backend.vaccinebookingsystem.domain.dto.FamilyDto;
 import com.backend.vaccinebookingsystem.domain.dto.ProfileDto;
 import com.backend.vaccinebookingsystem.repository.FamilyRepository;
 import com.backend.vaccinebookingsystem.repository.ProfileRepository;
-
-import java.time.LocalDateTime;
-
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,18 +19,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ContextConfiguration(classes = {FamilyService.class})
 @ExtendWith(SpringExtension.class)

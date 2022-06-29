@@ -47,6 +47,7 @@ public class FamilyService {
                     .email(familyDto.getEmail())
                     .phoneNumber(familyDto.getPhoneNumber())
                     .gender(familyDto.getGender())
+                    .placeOfBirth((familyDto.getPlaceOfBirth()))
                     .dateOfBirth(familyDto.getDateOfBirth())
                     .residenceAddress(familyDto.getResidenceAddress())
                     .idCardAddress(familyDto.getIdCardAddress())
@@ -67,6 +68,7 @@ public class FamilyService {
                     .email(familyDao.getEmail())
                     .phoneNumber(familyDao.getPhoneNumber())
                     .gender(familyDao.getGender())
+                    .placeOfBirth(familyDao.getPlaceOfBirth())
                     .dateOfBirth(familyDao.getDateOfBirth())
                     .residenceAddress(familyDao.getResidenceAddress())
                     .idCardAddress(familyDao.getIdCardAddress())
@@ -105,6 +107,7 @@ public class FamilyService {
                     .email(optionalFamilyDao.get().getEmail())
                     .phoneNumber(optionalFamilyDao.get().getPhoneNumber())
                     .gender(optionalFamilyDao.get().getGender())
+                    .placeOfBirth(optionalFamilyDao.get().getPlaceOfBirth())
                     .dateOfBirth(optionalFamilyDao.get().getDateOfBirth())
                     .residenceAddress(optionalFamilyDao.get().getResidenceAddress())
                     .idCardAddress(optionalFamilyDao.get().getIdCardAddress())
@@ -141,6 +144,7 @@ public class FamilyService {
                                 .name(familyDao.getName())
                                 .phoneNumber(familyDao.getPhoneNumber())
                                 .gender(familyDao.getGender())
+                                .placeOfBirth(familyDao.getPlaceOfBirth())
                                 .dateOfBirth(familyDao.getDateOfBirth())
                                 .residenceAddress(familyDao.getResidenceAddress())
                                 .idCardAddress(familyDao.getIdCardAddress())
@@ -175,6 +179,7 @@ public class FamilyService {
             familyDao.setEmail(familyDto.getEmail());
             familyDao.setPhoneNumber(familyDto.getPhoneNumber());
             familyDao.setGender(familyDto.getGender());
+            familyDao.setPlaceOfBirth(familyDto.getPlaceOfBirth());
             familyDao.setDateOfBirth(familyDto.getDateOfBirth());
             familyDao.setResidenceAddress(familyDto.getResidenceAddress());
             familyDao.setIdCardAddress(familyDto.getIdCardAddress());
@@ -194,6 +199,7 @@ public class FamilyService {
                     .email(familyDao.getEmail())
                     .phoneNumber(familyDao.getPhoneNumber())
                     .gender(familyDao.getGender())
+                    .placeOfBirth(familyDao.getPlaceOfBirth())
                     .dateOfBirth(familyDao.getDateOfBirth())
                     .residenceAddress(familyDao.getResidenceAddress())
                     .idCardAddress(familyDao.getIdCardAddress())
