@@ -13,14 +13,4 @@ public class BeanConfiguration {
     public ModelMapper modelMapper() {
         return new ModelMapper();
     }
-
-    @Bean
-    public WebMvcConfigurer webMvcConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**").allowedOrigins("*");
-            }
-        };
-    }
 }
