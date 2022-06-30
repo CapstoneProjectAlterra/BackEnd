@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -26,14 +25,10 @@ import com.backend.vaccinebookingsystem.repository.BookingRepository;
 import com.backend.vaccinebookingsystem.repository.FamilyRepository;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-
-import org.junit.jupiter.api.Disabled;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -383,8 +378,8 @@ class BookingDetailServiceTest {
         bookingDetailDao1.setFamilyId(123L);
 
         Optional<BookingDetailDao> ofResult1 = Optional.of(bookingDetailDao1);
-        when(bookingDetailRepository.findByBookingId((Long) any())).thenReturn(ofResult);
-        when(bookingDetailRepository.findByFamilyId((Long) any())).thenReturn(ofResult1);
+        when(bookingDetailRepository.findTopByBookingId((Long) any())).thenReturn(ofResult);
+        when(bookingDetailRepository.findTopByFamilyId((Long) any())).thenReturn(ofResult1);
 
         ResponseEntity<Object> actualSearchBookingDetailByIdResult = bookingDetailService.searchBookingDetailById(123L,
                 123L);
@@ -401,8 +396,8 @@ class BookingDetailServiceTest {
 
         assertEquals(AppConstant.ResponseCode.SUCCESS.getCode(), status.getCode());
 
-        verify(bookingDetailRepository).findByBookingId((Long) any());
-        verify(bookingDetailRepository).findByFamilyId((Long) any());
+        verify(bookingDetailRepository).findTopByBookingId((Long) any());
+        verify(bookingDetailRepository).findTopByFamilyId((Long) any());
     }
 
     @Test

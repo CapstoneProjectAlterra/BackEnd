@@ -121,8 +121,8 @@ class StockServiceTest {
 
         Optional<FacilityVaccineDao> ofResult1 = Optional.of(facilityVaccineDao1);
 
-        when(this.stockRepository.findByFacilityId(anyLong())).thenReturn(ofResult);
-        when(this.stockRepository.findByVaccineId(anyLong())).thenReturn(ofResult1);
+        when(this.stockRepository.findTopByFacilityId(anyLong())).thenReturn(ofResult);
+        when(this.stockRepository.findTopByVaccineId(anyLong())).thenReturn(ofResult1);
 
         ResponseEntity<Object> actualSearchStockByIdResult = this.stockService.searchStockById(123L, 123L);
 
@@ -155,8 +155,8 @@ class StockServiceTest {
 
         Optional<FacilityVaccineDao> ofResult1 = Optional.of(facilityVaccineDao1);
 
-        when(this.stockRepository.findByFacilityId(anyLong())).thenReturn(ofResult);
-        when(this.stockRepository.findByVaccineId(anyLong())).thenReturn(ofResult1);
+        when(this.stockRepository.findTopByFacilityId(anyLong())).thenReturn(ofResult);
+        when(this.stockRepository.findTopByVaccineId(anyLong())).thenReturn(ofResult1);
 
         ResponseEntity<Object> actualSearchStockByIdResult = this.stockService.searchStockById(null, null);
 
@@ -178,9 +178,9 @@ class StockServiceTest {
 
         Optional<FacilityVaccineDao> ofResult = Optional.of(facilityVaccineDao);
 
-        when(this.stockRepository.findByFacilityId(anyLong())).thenReturn(ofResult);
+        when(this.stockRepository.findTopByFacilityId(anyLong())).thenReturn(ofResult);
 
-        doThrow(NullPointerException.class).when(stockRepository).findByFacilityId(any());
+        doThrow(NullPointerException.class).when(stockRepository).findTopByFacilityId(any());
         assertThrows(Exception.class, () -> stockService.searchStockById(1L, 1L));
     }
 
@@ -244,8 +244,8 @@ class StockServiceTest {
 
         Optional<FacilityVaccineDao> ofResult1 = Optional.of(facilityVaccineDao1);
 
-        when(this.stockRepository.findByFacilityId((Long) any())).thenReturn(ofResult);
-        when(this.stockRepository.findByVaccineId((Long) any())).thenReturn(ofResult1);
+        when(this.stockRepository.findTopByFacilityId((Long) any())).thenReturn(ofResult);
+        when(this.stockRepository.findTopByVaccineId((Long) any())).thenReturn(ofResult1);
 
         ResponseEntity<Object> actualUpdateStockByIdResult = this.stockService.updateStockById(123L, 123L,
                 new FacilityVaccineDto());
@@ -270,9 +270,9 @@ class StockServiceTest {
 
         Optional<FacilityVaccineDao> ofResult = Optional.of(facilityVaccineDao);
 
-        when(this.stockRepository.findByFacilityId(anyLong())).thenReturn(ofResult);
+        when(this.stockRepository.findTopByFacilityId(anyLong())).thenReturn(ofResult);
 
-        doThrow(NullPointerException.class).when(stockRepository).findByFacilityId(any());
+        doThrow(NullPointerException.class).when(stockRepository).findTopByFacilityId(any());
         assertThrows(Exception.class, () -> stockService.updateStockById(123L, 123L, new FacilityVaccineDto()));
     }
 
@@ -294,8 +294,8 @@ class StockServiceTest {
 
         Optional<FacilityVaccineDao> ofResult1 = Optional.of(facilityVaccineDao1);
         doNothing().when(this.stockRepository).delete((FacilityVaccineDao) any());
-        when(this.stockRepository.findByFacilityId((Long) any())).thenReturn(ofResult);
-        when(this.stockRepository.findByVaccineId((Long) any())).thenReturn(ofResult1);
+        when(this.stockRepository.findTopByFacilityId((Long) any())).thenReturn(ofResult);
+        when(this.stockRepository.findTopByVaccineId((Long) any())).thenReturn(ofResult1);
 
         ResponseEntity<Object> actualDeleteStockByIdResult = this.stockService.deleteStockById(123L, 123L);
 
@@ -319,9 +319,9 @@ class StockServiceTest {
 
         Optional<FacilityVaccineDao> ofResult = Optional.of(facilityVaccineDao);
 
-        when(this.stockRepository.findByFacilityId(anyLong())).thenReturn(ofResult);
+        when(this.stockRepository.findTopByFacilityId(anyLong())).thenReturn(ofResult);
 
-        doThrow(NullPointerException.class).when(stockRepository).findByFacilityId(any());
+        doThrow(NullPointerException.class).when(stockRepository).findTopByFacilityId(any());
         assertThrows(Exception.class, () -> stockService.deleteStockById(1L, 1L));
     }
 

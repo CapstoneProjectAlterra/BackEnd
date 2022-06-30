@@ -10,7 +10,7 @@ import java.util.Optional;
 @Repository
 public interface BookingDetailRepository extends JpaRepository<BookingDetailDao, FamilyBookingKey> {
 
-    Optional<BookingDetailDao> findByBookingId(Long bookingId);
+    Optional<BookingDetailDao> findTopByBookingId(Long bookingId);
 
-    Optional<BookingDetailDao> findByFamilyId(Long familyId);
+    Optional<BookingDetailDao> findTopByFamilyId(Long familyId);
 }
