@@ -69,8 +69,8 @@ public class BookingDetailService {
     public ResponseEntity<Object> searchBookingDetailById(Long bookingId, Long familyId) {
         try {
             log.info("Getting a Booking Detail by id");
-            Optional<BookingDetailDao> optionalBookingDetailDaoBooking = bookingDetailRepository.findByBookingId(bookingId);
-            Optional<BookingDetailDao> optionalBookingDetailDaoFamily = bookingDetailRepository.findByFamilyId(familyId);
+            Optional<BookingDetailDao> optionalBookingDetailDaoBooking = bookingDetailRepository.findTopByBookingId(bookingId);
+            Optional<BookingDetailDao> optionalBookingDetailDaoFamily = bookingDetailRepository.findTopByFamilyId(familyId);
 
             if (optionalBookingDetailDaoBooking.isEmpty() || optionalBookingDetailDaoFamily.isEmpty()) {
                 log.info("Booking Detail not found");
@@ -116,8 +116,8 @@ public class BookingDetailService {
     public ResponseEntity<Object> updateBookingDetailById(Long bookingId, Long familyId, BookingDetailDto bookingDetailDto) {
         try {
             log.info("Updating a Booking Detail by id");
-            Optional<BookingDetailDao> optionalBookingDetailDaoBooking = bookingDetailRepository.findByBookingId(bookingId);
-            Optional<BookingDetailDao> optionalBookingDetailDaoFamily = bookingDetailRepository.findByFamilyId(familyId);
+            Optional<BookingDetailDao> optionalBookingDetailDaoBooking = bookingDetailRepository.findTopByBookingId(bookingId);
+            Optional<BookingDetailDao> optionalBookingDetailDaoFamily = bookingDetailRepository.findTopByFamilyId(familyId);
 
             if (optionalBookingDetailDaoBooking.isEmpty() || optionalBookingDetailDaoFamily.isEmpty()) {
                 log.info("Booking Detail not found");
@@ -144,8 +144,8 @@ public class BookingDetailService {
     public ResponseEntity<Object> deleteBookingDetailById(Long bookingId, Long familyId) {
         try {
             log.info("Deleting a Booking Detail by id");
-            Optional<BookingDetailDao> optionalBookingDetailDaoBooking = bookingDetailRepository.findByBookingId(bookingId);
-            Optional<BookingDetailDao> optionalBookingDetailDaoFamily = bookingDetailRepository.findByFamilyId(familyId);
+            Optional<BookingDetailDao> optionalBookingDetailDaoBooking = bookingDetailRepository.findTopByBookingId(bookingId);
+            Optional<BookingDetailDao> optionalBookingDetailDaoFamily = bookingDetailRepository.findTopByFamilyId(familyId);
 
             if (optionalBookingDetailDaoBooking.isEmpty() || optionalBookingDetailDaoFamily.isEmpty()) {
                 log.info("Booking Detail not found");

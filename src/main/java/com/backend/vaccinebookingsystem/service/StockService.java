@@ -68,8 +68,8 @@ public class StockService {
     public ResponseEntity<Object> searchStockById(Long facilityId, Long vaccineId) {
         try {
             log.info("Getting a Stock by id");
-            Optional<FacilityVaccineDao> optionalFacilityVaccineDaoFacility = stockRepository.findByFacilityId(facilityId);
-            Optional<FacilityVaccineDao> optionalFacilityVaccineDaoVaccine = stockRepository.findByVaccineId(vaccineId);
+            Optional<FacilityVaccineDao> optionalFacilityVaccineDaoFacility = stockRepository.findTopByFacilityId(facilityId);
+            Optional<FacilityVaccineDao> optionalFacilityVaccineDaoVaccine = stockRepository.findTopByVaccineId(vaccineId);
 
             if (optionalFacilityVaccineDaoFacility.isEmpty() || optionalFacilityVaccineDaoVaccine.isEmpty()) {
                 log.info("Stock not found");
@@ -115,8 +115,8 @@ public class StockService {
     public ResponseEntity<Object> updateStockById(Long facilityId, Long vaccineId, FacilityVaccineDto facilityVaccineDto) {
         try {
             log.info("Updating a Stock by id");
-            Optional<FacilityVaccineDao> optionalFacilityVaccineDaoFacility = stockRepository.findByFacilityId(facilityId);
-            Optional<FacilityVaccineDao> optionalFacilityVaccineDaoVaccine = stockRepository.findByVaccineId(vaccineId);
+            Optional<FacilityVaccineDao> optionalFacilityVaccineDaoFacility = stockRepository.findTopByFacilityId(facilityId);
+            Optional<FacilityVaccineDao> optionalFacilityVaccineDaoVaccine = stockRepository.findTopByVaccineId(vaccineId);
 
             if (optionalFacilityVaccineDaoFacility.isEmpty() || optionalFacilityVaccineDaoVaccine.isEmpty()) {
                 log.info("Stock not found");
@@ -143,8 +143,8 @@ public class StockService {
     public ResponseEntity<Object> deleteStockById(Long facilityId, Long vaccineId) {
         try {
             log.info("Deleting a Stock by id");
-            Optional<FacilityVaccineDao> optionalFacilityVaccineDaoFacility = stockRepository.findByFacilityId(facilityId);
-            Optional<FacilityVaccineDao> optionalFacilityVaccineDaoVaccine = stockRepository.findByVaccineId(vaccineId);
+            Optional<FacilityVaccineDao> optionalFacilityVaccineDaoFacility = stockRepository.findTopByFacilityId(facilityId);
+            Optional<FacilityVaccineDao> optionalFacilityVaccineDaoVaccine = stockRepository.findTopByVaccineId(vaccineId);
 
             if (optionalFacilityVaccineDaoFacility.isEmpty() || optionalFacilityVaccineDaoVaccine.isEmpty()) {
                 log.info("Stock not found");
