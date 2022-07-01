@@ -35,6 +35,25 @@ public class StockService {
     public ResponseEntity<Object> createStock(FacilityVaccineDto facilityVaccineDto) {
         try {
             log.info("Creating new Stock");
+
+            Optional<FacilityVaccineDao> optionalFacilityVaccineDaoFacility = stockRepository.findTopByFacilityId(facilityVaccineDto.getFacilityId());
+            Optional<FacilityVaccineDao> optionalFacilityVaccineDaoVaccine = stockRepository.findTopByVaccineId(facilityVaccineDto.getVaccineId());
+
+            if (optionalFacilityVaccineDaoFacility.isPresent() && optionalFacilityVaccineDaoVaccine.isPresent()) {
+                log.info("Stock already exists");
+                FacilityVaccineDao facilityVaccineDao = optionalFacilityVaccineDaoFacility.get();
+                facilityVaccineDao.setStock(facilityVaccineDto.getStock());
+                stockRepository.save(facilityVaccineDao);
+
+                FacilityVaccineDto vaccineDto = FacilityVaccineDto.builder()
+                        .facilityId(optionalFacilityVaccineDaoFacility.get().getVaccineId())
+                        .vaccineId(optionalFacilityVaccineDaoVaccine.get().getVaccineId())
+                        .stock(facilityVaccineDao.getStock())
+                        .build();
+                return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, vaccineDto, HttpStatus.OK);
+            }
+
+            log.info("New Stock");
             Optional<HealthFacilityDao> optionalHealthFacilityDao = healthFacilityRepository.findById(facilityVaccineDto.getFacilityId());
             Optional<VaccineTypeDao> optionalVaccineTypeDao = vaccineTypeRepository.findById(facilityVaccineDto.getVaccineId());
 
@@ -152,7 +171,10 @@ public class StockService {
             }
 
             log.info("Stock found");
-            stockRepository.delete(optionalFacilityVaccineDaoFacility.get());
+            FacilityVaccineDao facilityVaccineDao = optionalFacilityVaccineDaoFacility.get();
+            facilityVaccineDao.setStock(0);
+            stockRepository.save(facilityVaccineDao);
+
             return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, null, HttpStatus.OK);
         } catch (Exception e) {
             log.error("An error occurred in deleting Stock by id. Error {}", e.getMessage());

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/v1/booking", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 public class BookingController {
 
     @Autowired

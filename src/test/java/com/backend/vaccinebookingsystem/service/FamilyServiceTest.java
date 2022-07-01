@@ -10,6 +10,12 @@ import com.backend.vaccinebookingsystem.domain.dto.FamilyDto;
 import com.backend.vaccinebookingsystem.domain.dto.ProfileDto;
 import com.backend.vaccinebookingsystem.repository.FamilyRepository;
 import com.backend.vaccinebookingsystem.repository.ProfileRepository;
+import com.backend.vaccinebookingsystem.repository.UserRepository;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +31,15 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.when;
 
 @ContextConfiguration(classes = {FamilyService.class})
 @ExtendWith(SpringExtension.class)
 class FamilyServiceTest {
+    @MockBean
+    private UserRepository userRepository;
+
     @MockBean
     private FamilyRepository familyRepository;
 
@@ -289,123 +300,6 @@ class FamilyServiceTest {
         assertEquals("SUCCESS", status.getCode());
 
         verify(familyRepository).findAll();
-        verify(profileRepository).findById((Long) any());
-    }
-
-    @Test
-    void updateFamilyByIdSuccess_Test() {
-        ProfileDao profileDao = new ProfileDao();
-        profileDao.setFamilyDaoList(new ArrayList<>());
-        profileDao.setHealthFacilityDaoList(new ArrayList<>());
-        profileDao.setRole(AppConstant.ProfileRole.USER);
-        profileDao.setUser(new UserDao());
-        profileDao.setUserId(123L);
-
-        UserDao userDao = new UserDao();
-        userDao.setBookingDaoList(new ArrayList<>());
-        userDao.setId(123L);
-        userDao.setName("Name");
-        userDao.setProfile(profileDao);
-
-        ProfileDao profileDao1 = new ProfileDao();
-        profileDao1.setFamilyDaoList(new ArrayList<>());
-        profileDao1.setHealthFacilityDaoList(new ArrayList<>());
-        profileDao1.setRole(AppConstant.ProfileRole.USER);
-        profileDao1.setUser(userDao);
-        profileDao1.setUserId(123L);
-
-        FamilyDao familyDao = new FamilyDao();
-        familyDao.setBookingDaoList(new ArrayList<>());
-        familyDao.setId(123L);
-        familyDao.setNIK("NIK");
-        familyDao.setProfile(profileDao1);
-        familyDao.setStatusInFamily(AppConstant.FamilyStatus.AYAH);
-
-        Optional<FamilyDao> ofResult = Optional.of(familyDao);
-
-        UserDao userDao1 = new UserDao();
-        userDao1.setBookingDaoList(new ArrayList<>());
-        userDao1.setId(123L);
-        userDao1.setName("Name");
-        userDao1.setProfile(new ProfileDao());
-
-        ProfileDao profileDao2 = new ProfileDao();
-        profileDao2.setFamilyDaoList(new ArrayList<>());
-        profileDao2.setHealthFacilityDaoList(new ArrayList<>());
-        profileDao2.setRole(AppConstant.ProfileRole.USER);
-        profileDao2.setUser(userDao1);
-        profileDao2.setUserId(123L);
-
-        UserDao userDao2 = new UserDao();
-        userDao2.setBookingDaoList(new ArrayList<>());
-        userDao2.setId(123L);
-        userDao2.setName("Name");
-        userDao2.setProfile(profileDao2);
-
-        ProfileDao profileDao3 = new ProfileDao();
-        profileDao3.setFamilyDaoList(new ArrayList<>());
-        profileDao3.setHealthFacilityDaoList(new ArrayList<>());
-        profileDao3.setRole(AppConstant.ProfileRole.USER);
-        profileDao3.setUser(userDao2);
-        profileDao3.setUserId(123L);
-
-        FamilyDao familyDao1 = new FamilyDao();
-        familyDao1.setBookingDaoList(new ArrayList<>());
-        familyDao1.setId(123L);
-        familyDao1.setIdCardAddress("42 Main St");
-        familyDao1.setNIK("NIK");
-        familyDao1.setProfile(profileDao3);
-        familyDao1.setStatusInFamily(AppConstant.FamilyStatus.AYAH);
-
-        when(familyRepository.save((FamilyDao) any())).thenReturn(familyDao1);
-        when(familyRepository.findById((Long) any())).thenReturn(ofResult);
-
-        UserDao userDao3 = new UserDao();
-        userDao3.setBookingDaoList(new ArrayList<>());
-        userDao3.setId(123L);
-        userDao3.setName("Name");
-        userDao3.setProfile(new ProfileDao());
-
-        ProfileDao profileDao4 = new ProfileDao();
-        profileDao4.setFamilyDaoList(new ArrayList<>());
-        profileDao4.setHealthFacilityDaoList(new ArrayList<>());
-        profileDao4.setRole(AppConstant.ProfileRole.USER);
-        profileDao4.setUser(userDao3);
-        profileDao4.setUserId(123L);
-
-        UserDao userDao4 = new UserDao();
-        userDao4.setBookingDaoList(new ArrayList<>());
-        userDao4.setId(123L);
-        userDao4.setName("Name");
-        userDao4.setProfile(profileDao4);
-
-        ProfileDao profileDao5 = new ProfileDao();
-        profileDao5.setFamilyDaoList(new ArrayList<>());
-        profileDao5.setHealthFacilityDaoList(new ArrayList<>());
-        profileDao5.setRole(AppConstant.ProfileRole.USER);
-        profileDao5.setUser(userDao4);
-        profileDao5.setUserId(123L);
-
-        Optional<ProfileDao> ofResult1 = Optional.of(profileDao5);
-        when(profileRepository.findById((Long) any())).thenReturn(ofResult1);
-
-        FamilyDto familyDto = new FamilyDto();
-        familyDto.setProfile(new ProfileDto());
-
-        ResponseEntity<Object> actualUpdateFamilyByIdResult = familyService.updateFamilyById(123L, familyDto);
-
-        assertEquals(HttpStatus.OK, actualUpdateFamilyByIdResult.getStatusCode());
-
-        Object data = ((ApiResponse<Object>) actualUpdateFamilyByIdResult.getBody()).getData();
-
-        assertEquals(123L, ((FamilyDto) data).getId().longValue());
-
-        ApiResponseStatus status = ((ApiResponse<Object>) actualUpdateFamilyByIdResult.getBody()).getStatus();
-
-        assertEquals(AppConstant.ResponseCode.SUCCESS.getCode(), status.getCode());
-
-        verify(familyRepository).save((FamilyDao) any());
-        verify(familyRepository).findById((Long) any());
         verify(profileRepository).findById((Long) any());
     }
 

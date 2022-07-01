@@ -3,9 +3,7 @@ package com.backend.vaccinebookingsystem.service;
 import com.backend.vaccinebookingsystem.constant.AppConstant;
 import com.backend.vaccinebookingsystem.domain.common.ApiResponse;
 import com.backend.vaccinebookingsystem.domain.common.ApiResponseStatus;
-import com.backend.vaccinebookingsystem.domain.dao.FacilityVaccineDao;
-import com.backend.vaccinebookingsystem.domain.dao.HealthFacilityDao;
-import com.backend.vaccinebookingsystem.domain.dao.VaccineTypeDao;
+import com.backend.vaccinebookingsystem.domain.dao.*;
 import com.backend.vaccinebookingsystem.domain.dto.FacilityVaccineDto;
 import com.backend.vaccinebookingsystem.repository.HealthFacilityRepository;
 import com.backend.vaccinebookingsystem.repository.StockRepository;
@@ -23,7 +21,8 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ContextConfiguration(classes = {StockService.class})
@@ -42,65 +41,175 @@ class StockServiceTest {
     private VaccineTypeRepository vaccineTypeRepository;
 
     @Test
-    void createStockSuccess_Test() {
-        VaccineTypeDao vaccineTypeDao = VaccineTypeDao.builder()
-                .id(123L)
-                .vaccineName("Vaccine Name")
-                .build();
+    void createStockAlreadyExistsSuccess_Test() {
+        ProfileDao profileDao = new ProfileDao();
+        profileDao.setFamilyDaoList(new ArrayList<>());
+        profileDao.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao.setRole(AppConstant.ProfileRole.USER);
+        profileDao.setUser(new UserDao());
+        profileDao.setUserId(123L);
 
-        HealthFacilityDao healthFacilityDao = HealthFacilityDao.builder()
-                .id(123L)
-                .facilityName("Facility Name")
-                .build();
+        UserDao userDao = new UserDao();
+        userDao.setBookingDaoList(new ArrayList<>());
+        userDao.setId(123L);
+        userDao.setName("Name");
+        userDao.setProfile(profileDao);
 
-        FacilityVaccineDao facilityVaccineDao = FacilityVaccineDao.builder()
-                .facilityId(123L)
-                .vaccineId(123L)
-                .stock(1)
-                .build();
+        ProfileDao profileDao1 = new ProfileDao();
+        profileDao1.setFamilyDaoList(new ArrayList<>());
+        profileDao1.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao1.setRole(AppConstant.ProfileRole.USER);
+        profileDao1.setUser(userDao);
+        profileDao1.setUserId(123L);
 
-        Optional<VaccineTypeDao> ofResult = Optional.of(vaccineTypeDao);
-        when(this.vaccineTypeRepository.findById((Long) any())).thenReturn(ofResult);
+        HealthFacilityDao healthFacilityDao = new HealthFacilityDao();
+        healthFacilityDao.setFacilityName("Facility Name");
+        healthFacilityDao.setFacilityVaccineDaoList(new ArrayList<>());
+        healthFacilityDao.setId(123L);
+        healthFacilityDao.setProfile(profileDao1);
+        healthFacilityDao.setScheduleDaoList(new ArrayList<>());
 
-        Optional<HealthFacilityDao> ofResult1 = Optional.of(healthFacilityDao);
-        when(this.healthFacilityRepository.findById((Long) any())).thenReturn(ofResult1);
+        Optional<HealthFacilityDao> ofResult = Optional.of(healthFacilityDao);
+        when(healthFacilityRepository.findById((Long) any())).thenReturn(ofResult);
 
-        when(this.stockRepository.save((FacilityVaccineDao) any())).thenReturn(facilityVaccineDao);
+        ProfileDao profileDao2 = new ProfileDao();
+        profileDao2.setFamilyDaoList(new ArrayList<>());
+        profileDao2.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao2.setRole(AppConstant.ProfileRole.USER);
+        profileDao2.setUser(new UserDao());
+        profileDao2.setUserId(123L);
 
-        ResponseEntity<Object> actualCreateStockResult = this.stockService.createStock(new FacilityVaccineDto());
+        UserDao userDao1 = new UserDao();
+        userDao1.setBookingDaoList(new ArrayList<>());
+        userDao1.setId(123L);
+        userDao1.setName("Name");
+        userDao1.setProfile(profileDao2);
+
+        ProfileDao profileDao3 = new ProfileDao();
+        profileDao3.setFamilyDaoList(new ArrayList<>());
+        profileDao3.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao3.setRole(AppConstant.ProfileRole.USER);
+        profileDao3.setUser(userDao1);
+        profileDao3.setUserId(123L);
+
+        HealthFacilityDao healthFacilityDao1 = new HealthFacilityDao();
+        healthFacilityDao1.setFacilityName("Facility Name");
+        healthFacilityDao1.setFacilityVaccineDaoList(new ArrayList<>());
+        healthFacilityDao1.setId(123L);
+        healthFacilityDao1.setProfile(profileDao3);
+        healthFacilityDao1.setScheduleDaoList(new ArrayList<>());
+
+        VaccineTypeDao vaccineTypeDao = new VaccineTypeDao();
+        vaccineTypeDao.setFacilityVaccineDaoList(new ArrayList<>());
+        vaccineTypeDao.setId(123L);
+        vaccineTypeDao.setScheduleDaoList(new ArrayList<>());
+        vaccineTypeDao.setVaccineName("Vaccine Name");
+
+        FacilityVaccineDao facilityVaccineDao = new FacilityVaccineDao();
+        facilityVaccineDao.setFacilityId(123L);
+        facilityVaccineDao.setFacilityVaccine(healthFacilityDao1);
+        facilityVaccineDao.setStock(1);
+        facilityVaccineDao.setVaccineFacility(vaccineTypeDao);
+        facilityVaccineDao.setVaccineId(123L);
+
+        UserDao userDao2 = new UserDao();
+        userDao2.setBookingDaoList(new ArrayList<>());
+        userDao2.setId(123L);
+        userDao2.setName("Name");
+        userDao2.setProfile(new ProfileDao());
+
+        ProfileDao profileDao4 = new ProfileDao();
+        profileDao4.setFamilyDaoList(new ArrayList<>());
+        profileDao4.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao4.setRole(AppConstant.ProfileRole.USER);
+        profileDao4.setUser(userDao2);
+        profileDao4.setUserId(123L);
+
+        HealthFacilityDao healthFacilityDao2 = new HealthFacilityDao();
+        healthFacilityDao2.setFacilityName("Facility Name");
+        healthFacilityDao2.setFacilityVaccineDaoList(new ArrayList<>());
+        healthFacilityDao2.setId(123L);
+        healthFacilityDao2.setProfile(profileDao4);
+        healthFacilityDao2.setScheduleDaoList(new ArrayList<>());
+
+        VaccineTypeDao vaccineTypeDao1 = new VaccineTypeDao();
+        vaccineTypeDao1.setFacilityVaccineDaoList(new ArrayList<>());
+        vaccineTypeDao1.setId(123L);
+        vaccineTypeDao1.setScheduleDaoList(new ArrayList<>());
+        vaccineTypeDao1.setVaccineName("Vaccine Name");
+
+        FacilityVaccineDao facilityVaccineDao1 = new FacilityVaccineDao();
+        facilityVaccineDao1.setFacilityId(123L);
+        facilityVaccineDao1.setFacilityVaccine(healthFacilityDao2);
+        facilityVaccineDao1.setStock(1);
+        facilityVaccineDao1.setVaccineFacility(vaccineTypeDao1);
+        facilityVaccineDao1.setVaccineId(123L);
+
+        Optional<FacilityVaccineDao> ofResult1 = Optional.of(facilityVaccineDao1);
+
+        UserDao userDao3 = new UserDao();
+        userDao3.setBookingDaoList(new ArrayList<>());
+        userDao3.setId(123L);
+        userDao3.setName("Name");
+        userDao3.setProfile(new ProfileDao());
+
+        ProfileDao profileDao5 = new ProfileDao();
+        profileDao5.setFamilyDaoList(new ArrayList<>());
+        profileDao5.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao5.setRole(AppConstant.ProfileRole.USER);
+        profileDao5.setUser(userDao3);
+        profileDao5.setUserId(123L);
+
+        HealthFacilityDao healthFacilityDao3 = new HealthFacilityDao();
+        healthFacilityDao3.setFacilityName("Facility Name");
+        healthFacilityDao3.setFacilityVaccineDaoList(new ArrayList<>());
+        healthFacilityDao3.setId(123L);
+        healthFacilityDao3.setProfile(profileDao5);
+        healthFacilityDao3.setScheduleDaoList(new ArrayList<>());
+
+        VaccineTypeDao vaccineTypeDao2 = new VaccineTypeDao();
+        vaccineTypeDao2.setFacilityVaccineDaoList(new ArrayList<>());
+        vaccineTypeDao2.setId(123L);
+        vaccineTypeDao2.setScheduleDaoList(new ArrayList<>());
+        vaccineTypeDao2.setVaccineName("Vaccine Name");
+
+        FacilityVaccineDao facilityVaccineDao2 = new FacilityVaccineDao();
+        facilityVaccineDao2.setFacilityId(123L);
+        facilityVaccineDao2.setFacilityVaccine(healthFacilityDao3);
+        facilityVaccineDao2.setStock(1);
+        facilityVaccineDao2.setVaccineFacility(vaccineTypeDao2);
+        facilityVaccineDao2.setVaccineId(123L);
+
+        Optional<FacilityVaccineDao> ofResult2 = Optional.of(facilityVaccineDao2);
+        when(stockRepository.save((FacilityVaccineDao) any())).thenReturn(facilityVaccineDao);
+        when(stockRepository.findTopByFacilityId((Long) any())).thenReturn(ofResult1);
+        when(stockRepository.findTopByVaccineId((Long) any())).thenReturn(ofResult2);
+
+        VaccineTypeDao vaccineTypeDao3 = new VaccineTypeDao();
+        vaccineTypeDao3.setFacilityVaccineDaoList(new ArrayList<>());
+        vaccineTypeDao3.setId(123L);
+        vaccineTypeDao3.setScheduleDaoList(new ArrayList<>());
+        vaccineTypeDao3.setVaccineName("Vaccine Name");
+
+        Optional<VaccineTypeDao> ofResult3 = Optional.of(vaccineTypeDao3);
+        when(vaccineTypeRepository.findById((Long) any())).thenReturn(ofResult3);
+
+        ResponseEntity<Object> actualCreateStockResult = stockService.createStock(new FacilityVaccineDto());
+
+        assertEquals(HttpStatus.OK, actualCreateStockResult.getStatusCode());
+
+        Object data = ((ApiResponse<Object>) actualCreateStockResult.getBody()).getData();
 
         ApiResponseStatus status = ((ApiResponse<Object>) actualCreateStockResult.getBody()).getStatus();
 
         assertEquals(AppConstant.ResponseCode.SUCCESS.getCode(), status.getCode());
-        assertEquals(HttpStatus.OK, actualCreateStockResult.getStatusCode());
-    }
 
-    @Test
-    void createStockIsNull_Test() {
-        when(this.vaccineTypeRepository.findById((Long) any())).thenReturn(Optional.empty());
+        assertEquals(123L, ((FacilityVaccineDto) data).getFacilityId().longValue());
+        assertEquals(123L, ((FacilityVaccineDto) data).getVaccineId().longValue());
 
-        FacilityVaccineDao facilityVaccineDao = FacilityVaccineDao.builder()
-                .facilityId(123L)
-                .vaccineId(123L)
-                .stock(1)
-                .build();
-
-        when(this.stockRepository.save((FacilityVaccineDao) any())).thenReturn(facilityVaccineDao);
-
-        HealthFacilityDao healthFacilityDao1 = new HealthFacilityDao();
-        healthFacilityDao1.setFacilityName("Facility Name");
-        healthFacilityDao1.setId(123L);
-
-        Optional<HealthFacilityDao> ofResult = Optional.of(healthFacilityDao1);
-        when(this.healthFacilityRepository.findById((Long) any())).thenReturn(ofResult);
-
-        ResponseEntity<Object> actualCreateStockResult = this.stockService.createStock(new FacilityVaccineDto());
-
-        assertEquals(HttpStatus.BAD_REQUEST, actualCreateStockResult.getStatusCode());
-        assertNull(((ApiResponse<Object>) actualCreateStockResult.getBody()).getData());
-
-        ApiResponseStatus status = ((ApiResponse<Object>) actualCreateStockResult.getBody()).getStatus();
-        assertEquals(AppConstant.ResponseCode.DATA_NOT_FOUND.getCode(), status.getCode());
+        verify(stockRepository).save((FacilityVaccineDao) any());
+        verify(stockRepository).findTopByFacilityId((Long) any());
+        verify(stockRepository).findTopByVaccineId((Long) any());
     }
 
     @Test
@@ -215,6 +324,7 @@ class StockServiceTest {
         assertEquals(AppConstant.ResponseCode.SUCCESS.getCode(), status.getCode());
         assertEquals(HttpStatus.OK, actualAllStocks.getStatusCode());
     }
+
     @Test
     void getAllStocksException_Test() {
         when(stockRepository.findAll()).thenThrow(NullPointerException.class);
@@ -278,51 +388,132 @@ class StockServiceTest {
 
     @Test
     void deleteStockByIdSuccess_Test() {
-        FacilityVaccineDao facilityVaccineDao = FacilityVaccineDao.builder()
-                .facilityId(123L)
-                .vaccineId(123L)
-                .stock(1)
-                .build();
+        UserDao userDao = new UserDao();
+        userDao.setBookingDaoList(new ArrayList<>());
+        userDao.setId(123L);
+        userDao.setName("Name");
+        userDao.setProfile(new ProfileDao());
+
+        ProfileDao profileDao = new ProfileDao();
+        profileDao.setFamilyDaoList(new ArrayList<>());
+        profileDao.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao.setRole(AppConstant.ProfileRole.USER);
+        profileDao.setUser(userDao);
+        profileDao.setUserId(123L);
+
+        HealthFacilityDao healthFacilityDao = new HealthFacilityDao();
+        healthFacilityDao.setFacilityName("Facility Name");
+        healthFacilityDao.setFacilityVaccineDaoList(new ArrayList<>());
+        healthFacilityDao.setId(123L);
+        healthFacilityDao.setProfile(profileDao);
+        healthFacilityDao.setScheduleDaoList(new ArrayList<>());
+
+        VaccineTypeDao vaccineTypeDao = new VaccineTypeDao();
+        vaccineTypeDao.setFacilityVaccineDaoList(new ArrayList<>());
+        vaccineTypeDao.setId(123L);
+        vaccineTypeDao.setScheduleDaoList(new ArrayList<>());
+        vaccineTypeDao.setVaccineName("Vaccine Name");
+
+        FacilityVaccineDao facilityVaccineDao = new FacilityVaccineDao();
+        facilityVaccineDao.setFacilityId(123L);
+        facilityVaccineDao.setFacilityVaccine(healthFacilityDao);
+        facilityVaccineDao.setStock(1);
+        facilityVaccineDao.setVaccineFacility(vaccineTypeDao);
+        facilityVaccineDao.setVaccineId(123L);
 
         Optional<FacilityVaccineDao> ofResult = Optional.of(facilityVaccineDao);
 
-        FacilityVaccineDao facilityVaccineDao1 = FacilityVaccineDao.builder()
-                .facilityId(123L)
-                .vaccineId(123L)
-                .stock(1)
-                .build();
+        UserDao userDao1 = new UserDao();
+        userDao1.setBookingDaoList(new ArrayList<>());
+        userDao1.setId(123L);
+        userDao1.setName("Name");
+        userDao1.setProfile(new ProfileDao());
+
+        ProfileDao profileDao1 = new ProfileDao();
+        profileDao1.setFamilyDaoList(new ArrayList<>());
+        profileDao1.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao1.setRole(AppConstant.ProfileRole.USER);
+        profileDao1.setUser(userDao1);
+        profileDao1.setUserId(123L);
+
+        HealthFacilityDao healthFacilityDao1 = new HealthFacilityDao();
+        healthFacilityDao1.setFacilityName("Facility Name");
+        healthFacilityDao1.setFacilityVaccineDaoList(new ArrayList<>());
+        healthFacilityDao1.setId(123L);
+        healthFacilityDao1.setProfile(profileDao1);
+        healthFacilityDao1.setScheduleDaoList(new ArrayList<>());
+
+        VaccineTypeDao vaccineTypeDao1 = new VaccineTypeDao();
+        vaccineTypeDao1.setFacilityVaccineDaoList(new ArrayList<>());
+        vaccineTypeDao1.setId(123L);
+        vaccineTypeDao1.setScheduleDaoList(new ArrayList<>());
+        vaccineTypeDao1.setVaccineName("Vaccine Name");
+
+        FacilityVaccineDao facilityVaccineDao1 = new FacilityVaccineDao();
+        facilityVaccineDao1.setFacilityId(123L);
+        facilityVaccineDao1.setFacilityVaccine(healthFacilityDao1);
+        facilityVaccineDao1.setIsDeleted(true);
+        facilityVaccineDao1.setStock(1);
+        facilityVaccineDao1.setVaccineFacility(vaccineTypeDao1);
+        facilityVaccineDao1.setVaccineId(123L);
 
         Optional<FacilityVaccineDao> ofResult1 = Optional.of(facilityVaccineDao1);
-        doNothing().when(this.stockRepository).delete((FacilityVaccineDao) any());
-        when(this.stockRepository.findTopByFacilityId((Long) any())).thenReturn(ofResult);
-        when(this.stockRepository.findTopByVaccineId((Long) any())).thenReturn(ofResult1);
 
-        ResponseEntity<Object> actualDeleteStockByIdResult = this.stockService.deleteStockById(123L, 123L);
+        ProfileDao profileDao2 = new ProfileDao();
+        profileDao2.setFamilyDaoList(new ArrayList<>());
+        profileDao2.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao2.setRole(AppConstant.ProfileRole.USER);
+        profileDao2.setUser(new UserDao());
+        profileDao2.setUserId(123L);
+
+        UserDao userDao2 = new UserDao();
+        userDao2.setBookingDaoList(new ArrayList<>());
+        userDao2.setId(123L);
+        userDao2.setName("Name");
+        userDao2.setProfile(profileDao2);
+
+        ProfileDao profileDao3 = new ProfileDao();
+        profileDao3.setFamilyDaoList(new ArrayList<>());
+        profileDao3.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao3.setRole(AppConstant.ProfileRole.USER);
+        profileDao3.setUser(userDao2);
+        profileDao3.setUserId(123L);
+
+        HealthFacilityDao healthFacilityDao2 = new HealthFacilityDao();
+        healthFacilityDao2.setFacilityName("Facility Name");
+        healthFacilityDao2.setFacilityVaccineDaoList(new ArrayList<>());
+        healthFacilityDao2.setId(123L);
+        healthFacilityDao2.setProfile(profileDao3);
+        healthFacilityDao2.setScheduleDaoList(new ArrayList<>());
+
+        VaccineTypeDao vaccineTypeDao2 = new VaccineTypeDao();
+        vaccineTypeDao2.setFacilityVaccineDaoList(new ArrayList<>());
+        vaccineTypeDao2.setId(123L);
+        vaccineTypeDao2.setScheduleDaoList(new ArrayList<>());
+        vaccineTypeDao2.setVaccineName("Vaccine Name");
+
+        FacilityVaccineDao facilityVaccineDao2 = new FacilityVaccineDao();
+        facilityVaccineDao2.setFacilityId(123L);
+        facilityVaccineDao2.setFacilityVaccine(healthFacilityDao2);
+        facilityVaccineDao2.setStock(1);
+        facilityVaccineDao2.setVaccineFacility(vaccineTypeDao2);
+        facilityVaccineDao2.setVaccineId(123L);
+
+        when(stockRepository.save((FacilityVaccineDao) any())).thenReturn(facilityVaccineDao2);
+        when(stockRepository.findTopByFacilityId((Long) any())).thenReturn(ofResult);
+        when(stockRepository.findTopByVaccineId((Long) any())).thenReturn(ofResult1);
+
+        ResponseEntity<Object> actualDeleteStockByIdResult = stockService.deleteStockById(123L, 123L);
 
         assertEquals(HttpStatus.OK, actualDeleteStockByIdResult.getStatusCode());
-        assertNull(((ApiResponse<Object>) actualDeleteStockByIdResult.getBody()).getData());
 
         ApiResponseStatus status = ((ApiResponse<Object>) actualDeleteStockByIdResult.getBody()).getStatus();
 
         assertEquals(AppConstant.ResponseCode.SUCCESS.getCode(), status.getCode());
 
-        verify(this.stockRepository).delete((FacilityVaccineDao) any());
-    }
-
-    @Test
-    void deleteStockByIdException_Test() {
-        FacilityVaccineDao facilityVaccineDao = FacilityVaccineDao.builder()
-                .facilityId(123L)
-                .vaccineId(123L)
-                .stock(1)
-                .build();
-
-        Optional<FacilityVaccineDao> ofResult = Optional.of(facilityVaccineDao);
-
-        when(this.stockRepository.findTopByFacilityId(anyLong())).thenReturn(ofResult);
-
-        doThrow(NullPointerException.class).when(stockRepository).findTopByFacilityId(any());
-        assertThrows(Exception.class, () -> stockService.deleteStockById(1L, 1L));
+        verify(stockRepository).save((FacilityVaccineDao) any());
+        verify(stockRepository).findTopByFacilityId((Long) any());
+        verify(stockRepository).findTopByVaccineId((Long) any());
     }
 
 }

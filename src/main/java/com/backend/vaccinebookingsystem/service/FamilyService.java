@@ -3,10 +3,12 @@ package com.backend.vaccinebookingsystem.service;
 import com.backend.vaccinebookingsystem.constant.AppConstant;
 import com.backend.vaccinebookingsystem.domain.dao.FamilyDao;
 import com.backend.vaccinebookingsystem.domain.dao.ProfileDao;
+import com.backend.vaccinebookingsystem.domain.dao.UserDao;
 import com.backend.vaccinebookingsystem.domain.dto.FamilyDto;
 import com.backend.vaccinebookingsystem.domain.dto.ProfileDto;
 import com.backend.vaccinebookingsystem.repository.FamilyRepository;
 import com.backend.vaccinebookingsystem.repository.ProfileRepository;
+import com.backend.vaccinebookingsystem.repository.UserRepository;
 import com.backend.vaccinebookingsystem.util.ResponseUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,9 @@ public class FamilyService {
 
     @Autowired
     private ProfileRepository profileRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     public ResponseEntity<Object> createFamily(FamilyDto familyDto) {
         try {
@@ -187,6 +192,18 @@ public class FamilyService {
             familyDao.setIdCardAddress(familyDto.getIdCardAddress());
             familyDao.setProfile(optionalProfileDao.get());
             familyRepository.save(familyDao);
+
+            Optional<UserDao> optionalUserDao = userRepository.findByUsername(optionalFamilyDao.get().getNIK());
+
+            if (optionalUserDao.isPresent()) {
+                log.info("User found");
+                UserDao userDao = optionalUserDao.get();
+                userDao.setUsername(familyDto.getNIK());
+                userDao.setName(familyDto.getName());
+                userDao.setEmail(familyDto.getEmail());
+
+                userRepository.save(userDao);
+            }
 
             ProfileDto profileDto = ProfileDto.builder()
                     .userId(optionalProfileDao.get().getUserId())

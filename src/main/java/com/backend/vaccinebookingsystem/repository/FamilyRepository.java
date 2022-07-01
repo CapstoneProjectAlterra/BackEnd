@@ -10,4 +10,6 @@ import java.util.Optional;
 @Repository
 public interface FamilyRepository extends JpaRepository<FamilyDao, Long> {
 
+    Optional<FamilyDao> findTopByNIK(String username);
+
 }

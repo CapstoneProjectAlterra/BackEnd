@@ -1,10 +1,12 @@
 package com.backend.vaccinebookingsystem.service;
 
 import com.backend.vaccinebookingsystem.constant.AppConstant;
+import com.backend.vaccinebookingsystem.domain.dao.FamilyDao;
 import com.backend.vaccinebookingsystem.domain.dao.ProfileDao;
 import com.backend.vaccinebookingsystem.domain.dao.UserDao;
 import com.backend.vaccinebookingsystem.domain.dto.ProfileDto;
 import com.backend.vaccinebookingsystem.domain.dto.UserDto;
+import com.backend.vaccinebookingsystem.repository.FamilyRepository;
 import com.backend.vaccinebookingsystem.repository.ProfileRepository;
 import com.backend.vaccinebookingsystem.repository.UserRepository;
 import com.backend.vaccinebookingsystem.util.ResponseUtil;
@@ -12,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -27,6 +30,12 @@ public class UserService {
 
     @Autowired
     private ProfileRepository profileRepository;
+
+    @Autowired
+    private FamilyRepository familyRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public ResponseEntity<Object> getUserById(Long id) {
         try {
@@ -109,6 +118,13 @@ public class UserService {
                 return ResponseUtil.build(AppConstant.ResponseCode.DATA_NOT_FOUND, null, HttpStatus.BAD_REQUEST);
             }
 
+            Optional<UserDao> userDaoOptional = userRepository.findByUsername(userDto.getUsername());
+
+            if (userDaoOptional.isPresent()) {
+                log.info("Username already exists");
+                return ResponseUtil.build(AppConstant.ResponseCode.ALREADY_EXISTS, null, HttpStatus.CONFLICT);
+            }
+
             log.info("User found");
             ProfileDao profileDao = optionalProfileDao.get();
             profileDao.setRole(userDto.getProfile().getRole());
@@ -119,10 +135,19 @@ public class UserService {
             userDao.setUsername(userDto.getUsername());
             userDao.setName(userDto.getName());
             userDao.setEmail(userDto.getEmail());
-            userDao.setPassword(userDto.getPassword());
+            userDao.setPassword(passwordEncoder.encode(userDto.getPassword()));
             userDao.setProfile(profileDao);
 
             userRepository.save(userDao);
+
+            Optional<FamilyDao> optionalFamilyDao = familyRepository.findTopByNIK(optionalUserDao.get().getUsername());
+
+            FamilyDao familyDao = optionalFamilyDao.get();
+            familyDao.setNIK(userDto.getUsername());
+            familyDao.setName(userDto.getName());
+            familyDao.setEmail(userDto.getEmail());
+
+            familyRepository.save(familyDao);
 
             ProfileDto profileDto = ProfileDto.builder()
                     .userId(profileDao.getUserId())
