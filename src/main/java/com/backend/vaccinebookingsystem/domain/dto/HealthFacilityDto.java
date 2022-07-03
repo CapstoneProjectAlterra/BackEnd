@@ -1,6 +1,5 @@
 package com.backend.vaccinebookingsystem.domain.dto;
 
-import com.backend.vaccinebookingsystem.domain.dao.ProfileDao;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;

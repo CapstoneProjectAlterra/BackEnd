@@ -1,12 +1,5 @@
 package com.backend.vaccinebookingsystem.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import com.backend.vaccinebookingsystem.constant.AppConstant;
 import com.backend.vaccinebookingsystem.domain.common.ApiResponse;
 import com.backend.vaccinebookingsystem.domain.common.ApiResponseStatus;
@@ -17,15 +10,7 @@ import com.backend.vaccinebookingsystem.domain.dto.JwtResponse;
 import com.backend.vaccinebookingsystem.domain.dto.JwtTokenProvider;
 import com.backend.vaccinebookingsystem.domain.dto.UserDto;
 import com.backend.vaccinebookingsystem.domain.dto.UsernamePassword;
-import com.backend.vaccinebookingsystem.repository.FamilyRepository;
-import com.backend.vaccinebookingsystem.repository.ProfileRepository;
 import com.backend.vaccinebookingsystem.repository.UserRepository;
-
-import java.time.LocalDateTime;
-
-import java.util.ArrayList;
-import java.util.Optional;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,9 +22,14 @@ import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.util.ArrayList;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
 
 @ContextConfiguration(classes = {AuthenticationService.class})
 @ExtendWith(SpringExtension.class)

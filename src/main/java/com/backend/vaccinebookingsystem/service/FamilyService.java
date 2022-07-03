@@ -178,6 +178,8 @@ public class FamilyService {
                 return ResponseUtil.build(AppConstant.ResponseCode.DATA_NOT_FOUND, null, HttpStatus.BAD_REQUEST);
             }
 
+            Optional<UserDao> optionalUserDao = userRepository.findByUsername(optionalFamilyDao.get().getNIK());
+
             log.info("Family found");
             FamilyDao familyDao = optionalFamilyDao.get();
             familyDao.setStatusInFamily(familyDto.getStatusInFamily());
@@ -192,8 +194,6 @@ public class FamilyService {
             familyDao.setIdCardAddress(familyDto.getIdCardAddress());
             familyDao.setProfile(optionalProfileDao.get());
             familyRepository.save(familyDao);
-
-            Optional<UserDao> optionalUserDao = userRepository.findByUsername(optionalFamilyDao.get().getNIK());
 
             if (optionalUserDao.isPresent()) {
                 log.info("User found");

@@ -9,7 +9,6 @@ import java.io.Serializable;
 @AllArgsConstructor
 @EqualsAndHashCode
 @Builder
-//@Embeddable
 public class FacilityVaccineKey implements Serializable {
 
     private Long facilityId;
