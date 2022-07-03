@@ -51,16 +51,7 @@ class AuthenticationServiceTest {
     private AuthenticationService authenticationService;
 
     @MockBean
-    private FamilyRepository familyRepository;
-
-    @MockBean
     private JwtTokenProvider jwtTokenProvider;
-
-    @MockBean
-    private PasswordEncoder passwordEncoder;
-
-    @MockBean
-    private ProfileRepository profileRepository;
 
     @MockBean
     private UserRepository userRepository;

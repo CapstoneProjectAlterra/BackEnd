@@ -18,6 +18,8 @@ import java.util.List;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class JwtResponse {
 
+    private Long userId;
+
     private String username;
 
     private String token;

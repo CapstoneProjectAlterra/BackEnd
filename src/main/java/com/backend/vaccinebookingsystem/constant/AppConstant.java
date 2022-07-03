@@ -43,7 +43,8 @@ public class AppConstant {
     public enum FamilyStatus {
         AYAH,
         IBU,
-        ANAK
+        ANAK,
+        SAUDARA
     }
 
     public enum Gender {
