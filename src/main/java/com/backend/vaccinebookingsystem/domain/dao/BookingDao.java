@@ -1,12 +1,10 @@
 package com.backend.vaccinebookingsystem.domain.dao;
 
 import com.backend.vaccinebookingsystem.domain.common.BaseDao;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
