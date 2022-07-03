@@ -2,10 +2,7 @@ package com.backend.vaccinebookingsystem.domain.dao;
 
 import com.backend.vaccinebookingsystem.domain.common.BaseDao;
 import com.backend.vaccinebookingsystem.domain.common.FacilityVaccineKey;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -33,11 +30,13 @@ public class FacilityVaccineDao extends BaseDao {
     @ManyToOne
     @MapsId("facilityId")
     @JoinColumn(name = "facility_id")
+    @ToString.Exclude
     private HealthFacilityDao facilityVaccine;
 
     @ManyToOne
     @MapsId("vaccineId")
     @JoinColumn(name = "vaccine_id")
+    @ToString.Exclude
     private VaccineTypeDao vaccineFacility;
 
     @Column(name = "stock", nullable = false)

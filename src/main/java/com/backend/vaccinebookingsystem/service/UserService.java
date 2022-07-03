@@ -113,16 +113,11 @@ public class UserService {
 
             Optional<ProfileDao> optionalProfileDao = profileRepository.findById(id);
 
-            if (optionalUserDao.isEmpty() || optionalProfileDao.isEmpty()) {
+            Optional<FamilyDao> optionalFamilyDao = familyRepository.findByNIK(optionalUserDao.get().getUsername());
+
+            if (optionalUserDao.isEmpty() || optionalProfileDao.isEmpty() || optionalFamilyDao.isEmpty()) {
                 log.info("User not found");
                 return ResponseUtil.build(AppConstant.ResponseCode.DATA_NOT_FOUND, null, HttpStatus.BAD_REQUEST);
-            }
-
-            Optional<UserDao> userDaoOptional = userRepository.findByUsername(userDto.getUsername());
-
-            if (userDaoOptional.isPresent()) {
-                log.info("Username already exists");
-                return ResponseUtil.build(AppConstant.ResponseCode.ALREADY_EXISTS, null, HttpStatus.CONFLICT);
             }
 
             log.info("User found");
@@ -139,8 +134,6 @@ public class UserService {
             userDao.setProfile(profileDao);
 
             userRepository.save(userDao);
-
-            Optional<FamilyDao> optionalFamilyDao = familyRepository.findTopByNIK(optionalUserDao.get().getUsername());
 
             FamilyDao familyDao = optionalFamilyDao.get();
             familyDao.setNIK(userDto.getUsername());

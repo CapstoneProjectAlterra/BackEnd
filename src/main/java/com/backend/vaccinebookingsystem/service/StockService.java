@@ -35,19 +35,17 @@ public class StockService {
     public ResponseEntity<Object> createStock(FacilityVaccineDto facilityVaccineDto) {
         try {
             log.info("Creating new Stock");
+            Optional<FacilityVaccineDao> optionalFacilityVaccineDao = stockRepository.findByFacilityIdAndAndVaccineId(facilityVaccineDto.getFacilityId(), facilityVaccineDto.getVaccineId());
 
-            Optional<FacilityVaccineDao> optionalFacilityVaccineDaoFacility = stockRepository.findTopByFacilityId(facilityVaccineDto.getFacilityId());
-            Optional<FacilityVaccineDao> optionalFacilityVaccineDaoVaccine = stockRepository.findTopByVaccineId(facilityVaccineDto.getVaccineId());
-
-            if (optionalFacilityVaccineDaoFacility.isPresent() && optionalFacilityVaccineDaoVaccine.isPresent()) {
+            if (optionalFacilityVaccineDao.isPresent()) {
                 log.info("Stock already exists");
-                FacilityVaccineDao facilityVaccineDao = optionalFacilityVaccineDaoFacility.get();
+                FacilityVaccineDao facilityVaccineDao = optionalFacilityVaccineDao.get();
                 facilityVaccineDao.setStock(facilityVaccineDto.getStock());
                 stockRepository.save(facilityVaccineDao);
 
                 FacilityVaccineDto vaccineDto = FacilityVaccineDto.builder()
-                        .facilityId(optionalFacilityVaccineDaoFacility.get().getVaccineId())
-                        .vaccineId(optionalFacilityVaccineDaoVaccine.get().getVaccineId())
+                        .facilityId(optionalFacilityVaccineDao.get().getFacilityId())
+                        .vaccineId(optionalFacilityVaccineDao.get().getVaccineId())
                         .stock(facilityVaccineDao.getStock())
                         .build();
                 return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, vaccineDto, HttpStatus.OK);
@@ -87,19 +85,18 @@ public class StockService {
     public ResponseEntity<Object> searchStockById(Long facilityId, Long vaccineId) {
         try {
             log.info("Getting a Stock by id");
-            Optional<FacilityVaccineDao> optionalFacilityVaccineDaoFacility = stockRepository.findTopByFacilityId(facilityId);
-            Optional<FacilityVaccineDao> optionalFacilityVaccineDaoVaccine = stockRepository.findTopByVaccineId(vaccineId);
+            Optional<FacilityVaccineDao> optionalFacilityVaccineDao = stockRepository.findByFacilityIdAndAndVaccineId(facilityId, vaccineId);
 
-            if (optionalFacilityVaccineDaoFacility.isEmpty() || optionalFacilityVaccineDaoVaccine.isEmpty()) {
+            if (optionalFacilityVaccineDao.isEmpty()) {
                 log.info("Stock not found");
                 return ResponseUtil.build(AppConstant.ResponseCode.DATA_NOT_FOUND, null, HttpStatus.BAD_REQUEST);
             }
 
             log.info("Stock found");
             FacilityVaccineDto vaccineDto = FacilityVaccineDto.builder()
-                    .facilityId(optionalFacilityVaccineDaoFacility.get().getFacilityId())
-                    .vaccineId(optionalFacilityVaccineDaoVaccine.get().getVaccineId())
-                    .stock(optionalFacilityVaccineDaoFacility.get().getStock())
+                    .facilityId(optionalFacilityVaccineDao.get().getFacilityId())
+                    .vaccineId(optionalFacilityVaccineDao.get().getVaccineId())
+                    .stock(optionalFacilityVaccineDao.get().getStock())
                     .build();
             return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, vaccineDto, HttpStatus.OK);
         } catch (Exception e) {
@@ -134,22 +131,21 @@ public class StockService {
     public ResponseEntity<Object> updateStockById(Long facilityId, Long vaccineId, FacilityVaccineDto facilityVaccineDto) {
         try {
             log.info("Updating a Stock by id");
-            Optional<FacilityVaccineDao> optionalFacilityVaccineDaoFacility = stockRepository.findTopByFacilityId(facilityId);
-            Optional<FacilityVaccineDao> optionalFacilityVaccineDaoVaccine = stockRepository.findTopByVaccineId(vaccineId);
+            Optional<FacilityVaccineDao> optionalFacilityVaccineDao = stockRepository.findByFacilityIdAndAndVaccineId(facilityId, vaccineId);
 
-            if (optionalFacilityVaccineDaoFacility.isEmpty() || optionalFacilityVaccineDaoVaccine.isEmpty()) {
+            if (optionalFacilityVaccineDao.isEmpty()) {
                 log.info("Stock not found");
                 return ResponseUtil.build(AppConstant.ResponseCode.DATA_NOT_FOUND, null, HttpStatus.BAD_REQUEST);
             }
 
             log.info("Stock found");
-            FacilityVaccineDao facilityVaccineDao = optionalFacilityVaccineDaoFacility.get();
+            FacilityVaccineDao facilityVaccineDao = optionalFacilityVaccineDao.get();
             facilityVaccineDao.setStock(facilityVaccineDto.getStock());
             stockRepository.save(facilityVaccineDao);
 
             FacilityVaccineDto vaccineDto = FacilityVaccineDto.builder()
-                    .facilityId(optionalFacilityVaccineDaoFacility.get().getVaccineId())
-                    .vaccineId(optionalFacilityVaccineDaoVaccine.get().getVaccineId())
+                    .facilityId(optionalFacilityVaccineDao.get().getFacilityId())
+                    .vaccineId(optionalFacilityVaccineDao.get().getVaccineId())
                     .stock(facilityVaccineDao.getStock())
                     .build();
             return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, vaccineDto, HttpStatus.OK);
@@ -162,20 +158,26 @@ public class StockService {
     public ResponseEntity<Object> deleteStockById(Long facilityId, Long vaccineId) {
         try {
             log.info("Deleting a Stock by id");
-            Optional<FacilityVaccineDao> optionalFacilityVaccineDaoFacility = stockRepository.findTopByFacilityId(facilityId);
-            Optional<FacilityVaccineDao> optionalFacilityVaccineDaoVaccine = stockRepository.findTopByVaccineId(vaccineId);
 
-            if (optionalFacilityVaccineDaoFacility.isEmpty() || optionalFacilityVaccineDaoVaccine.isEmpty()) {
+            Optional<FacilityVaccineDao> optionalFacilityVaccineDao = stockRepository.findByFacilityIdAndAndVaccineId(facilityId, vaccineId);
+
+            if (optionalFacilityVaccineDao.isEmpty()) {
                 log.info("Stock not found");
                 return ResponseUtil.build(AppConstant.ResponseCode.DATA_NOT_FOUND, null, HttpStatus.BAD_REQUEST);
             }
 
             log.info("Stock found");
-            FacilityVaccineDao facilityVaccineDao = optionalFacilityVaccineDaoFacility.get();
+            FacilityVaccineDao facilityVaccineDao = optionalFacilityVaccineDao.get();
             facilityVaccineDao.setStock(0);
             stockRepository.save(facilityVaccineDao);
 
-            return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, null, HttpStatus.OK);
+            FacilityVaccineDto vaccineDto = FacilityVaccineDto.builder()
+                    .facilityId(optionalFacilityVaccineDao.get().getFacilityId())
+                    .vaccineId(optionalFacilityVaccineDao.get().getVaccineId())
+                    .stock(facilityVaccineDao.getStock())
+                    .build();
+
+            return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, vaccineDto, HttpStatus.OK);
         } catch (Exception e) {
             log.error("An error occurred in deleting Stock by id. Error {}", e.getMessage());
             throw e;

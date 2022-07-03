@@ -2,10 +2,7 @@ package com.backend.vaccinebookingsystem.domain.dao;
 
 import com.backend.vaccinebookingsystem.constant.AppConstant;
 import com.backend.vaccinebookingsystem.domain.common.BaseDao;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -61,6 +58,7 @@ public class FamilyDao extends BaseDao {
 
     @ManyToOne
     @JoinColumn(name = "profile_id", referencedColumnName = "userId")
+    @ToString.Exclude
     private ProfileDao profile;
 
     @OneToMany(mappedBy = "family", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

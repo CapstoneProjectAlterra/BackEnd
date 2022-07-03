@@ -2,10 +2,7 @@ package com.backend.vaccinebookingsystem.domain.dao;
 
 import com.backend.vaccinebookingsystem.constant.AppConstant;
 import com.backend.vaccinebookingsystem.domain.common.BaseDao;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -18,7 +15,7 @@ import java.util.List;
 @Builder
 @Entity
 @Table(name = "PROFILES")
-@SQLDelete(sql = "UPDATE PROFILES SET is_deleted = true WHERE id =?")
+@SQLDelete(sql = "UPDATE PROFILES SET is_deleted = true WHERE user_id =?")
 @Where(clause = "is_deleted = false")
 public class ProfileDao extends BaseDao {
 
@@ -32,11 +29,14 @@ public class ProfileDao extends BaseDao {
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
+    @ToString.Exclude
     private UserDao user;
 
     @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
     private List<FamilyDao> familyDaoList;
 
     @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
     private List<HealthFacilityDao> healthFacilityDaoList;
 }

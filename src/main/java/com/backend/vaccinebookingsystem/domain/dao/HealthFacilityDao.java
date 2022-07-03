@@ -56,8 +56,10 @@ public class HealthFacilityDao extends BaseDao {
 
     @ManyToOne
     @JoinColumn(name = "profile_id", referencedColumnName = "userId")
+    @ToString.Exclude
     private ProfileDao profile;
 
     @OneToMany(mappedBy = "facilityVaccine", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
     private List<FacilityVaccineDao> facilityVaccineDaoList;
 }

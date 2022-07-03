@@ -69,19 +69,18 @@ public class BookingDetailService {
     public ResponseEntity<Object> searchBookingDetailById(Long bookingId, Long familyId) {
         try {
             log.info("Getting a Booking Detail by id");
-            Optional<BookingDetailDao> optionalBookingDetailDaoBooking = bookingDetailRepository.findTopByBookingId(bookingId);
-            Optional<BookingDetailDao> optionalBookingDetailDaoFamily = bookingDetailRepository.findTopByFamilyId(familyId);
+            Optional<BookingDetailDao> optionalBookingDetailDao = bookingDetailRepository.findByBookingIdAndFamilyId(bookingId, familyId);
 
-            if (optionalBookingDetailDaoBooking.isEmpty() || optionalBookingDetailDaoFamily.isEmpty()) {
+            if (optionalBookingDetailDao.isEmpty()) {
                 log.info("Booking Detail not found");
                 return ResponseUtil.build(AppConstant.ResponseCode.DATA_NOT_FOUND, null, HttpStatus.BAD_REQUEST);
             }
 
             log.info("Booking Detail found");
             BookingDetailDto detailDto = BookingDetailDto.builder()
-                    .bookingId(optionalBookingDetailDaoBooking.get().getBookingId())
-                    .familyId(optionalBookingDetailDaoFamily.get().getFamilyId())
-                    .bookingStatus(optionalBookingDetailDaoFamily.get().getBookingStatus())
+                    .bookingId(optionalBookingDetailDao.get().getBookingId())
+                    .familyId(optionalBookingDetailDao.get().getFamilyId())
+                    .bookingStatus(optionalBookingDetailDao.get().getBookingStatus())
                     .build();
             return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, detailDto, HttpStatus.OK);
         } catch (Exception e) {
@@ -116,16 +115,16 @@ public class BookingDetailService {
     public ResponseEntity<Object> updateBookingDetailById(Long bookingId, Long familyId, BookingDetailDto bookingDetailDto) {
         try {
             log.info("Updating a Booking Detail by id");
-            Optional<BookingDetailDao> optionalBookingDetailDaoBooking = bookingDetailRepository.findTopByBookingId(bookingId);
-            Optional<BookingDetailDao> optionalBookingDetailDaoFamily = bookingDetailRepository.findTopByFamilyId(familyId);
 
-            if (optionalBookingDetailDaoBooking.isEmpty() || optionalBookingDetailDaoFamily.isEmpty()) {
+            Optional<BookingDetailDao> optionalBookingDetailDao = bookingDetailRepository.findByBookingIdAndFamilyId(bookingId, familyId);
+
+            if (optionalBookingDetailDao.isEmpty()) {
                 log.info("Booking Detail not found");
                 return ResponseUtil.build(AppConstant.ResponseCode.DATA_NOT_FOUND, null, HttpStatus.BAD_REQUEST);
             }
 
             log.info("Booking Detail found");
-            BookingDetailDao bookingDetailDao = optionalBookingDetailDaoBooking.get();
+            BookingDetailDao bookingDetailDao = optionalBookingDetailDao.get();
             bookingDetailDao.setBookingStatus(bookingDetailDto.getBookingStatus());
             bookingDetailRepository.save(bookingDetailDao);
 
@@ -144,16 +143,15 @@ public class BookingDetailService {
     public ResponseEntity<Object> deleteBookingDetailById(Long bookingId, Long familyId) {
         try {
             log.info("Deleting a Booking Detail by id");
-            Optional<BookingDetailDao> optionalBookingDetailDaoBooking = bookingDetailRepository.findTopByBookingId(bookingId);
-            Optional<BookingDetailDao> optionalBookingDetailDaoFamily = bookingDetailRepository.findTopByFamilyId(familyId);
+            Optional<BookingDetailDao> optionalBookingDetailDao = bookingDetailRepository.findByBookingIdAndFamilyId(bookingId, familyId);
 
-            if (optionalBookingDetailDaoBooking.isEmpty() || optionalBookingDetailDaoFamily.isEmpty()) {
+            if (optionalBookingDetailDao.isEmpty()) {
                 log.info("Booking Detail not found");
                 return ResponseUtil.build(AppConstant.ResponseCode.DATA_NOT_FOUND, null, HttpStatus.BAD_REQUEST);
             }
 
             log.info("Stock found");
-            bookingDetailRepository.delete(optionalBookingDetailDaoBooking.get());
+            bookingDetailRepository.delete(optionalBookingDetailDao.get());
             return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, null, HttpStatus.OK);
         } catch (Exception e) {
             log.error("An error occurred in deleting Stock by id. Error {}", e.getMessage());

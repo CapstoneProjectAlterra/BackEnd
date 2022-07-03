@@ -121,6 +121,7 @@ public class AuthenticationService {
                     .collect(Collectors.toList());
 
             JwtResponse tokenResponse = JwtResponse.builder()
+                    .userId(userDetailsDao.getId())
                     .username(usernamePassword.getUsername())
                     .token(jwt)
                     .roles(roles)
