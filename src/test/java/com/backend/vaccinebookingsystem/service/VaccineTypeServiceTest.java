@@ -2,9 +2,14 @@ package com.backend.vaccinebookingsystem.service;
 
 import com.backend.vaccinebookingsystem.constant.AppConstant;
 import com.backend.vaccinebookingsystem.domain.common.ApiResponse;
+import com.backend.vaccinebookingsystem.domain.common.ApiResponseStatus;
 import com.backend.vaccinebookingsystem.domain.dao.VaccineTypeDao;
 import com.backend.vaccinebookingsystem.domain.dto.VaccineTypeDto;
 import com.backend.vaccinebookingsystem.repository.VaccineTypeRepository;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.modelmapper.ModelMapper;
@@ -20,9 +25,16 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.atLeast;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = VaccineTypeService.class)
@@ -62,6 +74,30 @@ class VaccineTypeServiceTest {
 
         assertEquals(1L, vaccineTypeDto.getId());
         assertEquals("Vaccine", vaccineTypeDto.getVaccineName());
+    }
+
+    @Test
+    void createVaccineTypeAlreadyExists_Test() {
+        when(modelMapper.map((Object) any(), (Class<Object>) any())).thenReturn("Map");
+
+        VaccineTypeDao vaccineTypeDao = new VaccineTypeDao();
+        vaccineTypeDao.setFacilityVaccineDaoList(new ArrayList<>());
+        vaccineTypeDao.setId(123L);
+        vaccineTypeDao.setScheduleDaoList(new ArrayList<>());
+        vaccineTypeDao.setVaccineName("Vaccine Name");
+
+        Optional<VaccineTypeDao> ofResult = Optional.of(vaccineTypeDao);
+        when(vaccineTypeRepository.findByVaccineName((String) any())).thenReturn(ofResult);
+
+        ResponseEntity<Object> actualCreateVaccineTypeResult = vaccineTypeService.createVaccineType(new VaccineTypeDto());
+
+        assertEquals(HttpStatus.CONFLICT, actualCreateVaccineTypeResult.getStatusCode());
+
+        ApiResponseStatus status = ((ApiResponse<Object>) actualCreateVaccineTypeResult.getBody()).getStatus();
+
+        assertEquals("ALREADY_EXISTS", status.getCode());
+
+        verify(vaccineTypeRepository).findByVaccineName((String) any());
     }
 
     @Test
