@@ -29,6 +29,13 @@ public class VaccineTypeService {
     public ResponseEntity<Object> createVaccineType(VaccineTypeDto vaccineTypeDto) {
         try {
             log.info("Creating new Vaccine Type");
+            Optional<VaccineTypeDao> optionalVaccineTypeDao = vaccineTypeRepository.findByVaccineName(vaccineTypeDto.getVaccineName());
+
+            if (optionalVaccineTypeDao.isPresent()) {
+                log.info("Vaccine Already Exists");
+                return ResponseUtil.build(AppConstant.ResponseCode.ALREADY_EXISTS, null, HttpStatus.CONFLICT);
+            }
+
             VaccineTypeDao vaccineTypeDao = modelMapper.map(vaccineTypeDto, VaccineTypeDao.class);
             vaccineTypeRepository.save(vaccineTypeDao);
 
@@ -85,6 +92,13 @@ public class VaccineTypeService {
             if (optionalVaccineTypeDao.isEmpty()) {
                 log.info("Vaccine Type not found");
                 return ResponseUtil.build(AppConstant.ResponseCode.DATA_NOT_FOUND, null, HttpStatus.BAD_REQUEST);
+            }
+
+            Optional<VaccineTypeDao> optionalVaccineTypeDaoVaccineName = vaccineTypeRepository.findByVaccineName(vaccineTypeDto.getVaccineName());
+
+            if (optionalVaccineTypeDaoVaccineName.isPresent()) {
+                log.info("Vaccine Already Exists");
+                return ResponseUtil.build(AppConstant.ResponseCode.ALREADY_EXISTS, null, HttpStatus.CONFLICT);
             }
 
             log.info("Vaccine Type found");
