@@ -23,4 +23,8 @@ public class BookingDetailDto {
 
     private AppConstant.BookingStatus bookingStatus;
 
+    private FamilyDto family;
+
+    private BookingDto booking;
+
 }

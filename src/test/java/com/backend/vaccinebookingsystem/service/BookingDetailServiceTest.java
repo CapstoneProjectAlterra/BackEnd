@@ -19,7 +19,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -350,7 +349,6 @@ class BookingDetailServiceTest {
         UserDao userDao = new UserDao();
         userDao.setBookingDaoList(new ArrayList<>());
         userDao.setId(123L);
-        userDao.setIsDeleted(true);
         userDao.setName("Name");
         userDao.setProfile(profileDao);
 
@@ -390,6 +388,76 @@ class BookingDetailServiceTest {
         ArrayList<BookingDetailDao> bookingDetailDaoList = new ArrayList<>();
         bookingDetailDaoList.add(bookingDetailDao);
 
+        HealthFacilityDao healthFacilityDao1 = new HealthFacilityDao();
+        healthFacilityDao1.setFacilityName("Facility Name");
+        healthFacilityDao1.setFacilityVaccineDaoList(new ArrayList<>());
+        healthFacilityDao1.setId(123L);
+        healthFacilityDao1.setPostalCode(1);
+        healthFacilityDao1.setProfile(new ProfileDao());
+        healthFacilityDao1.setScheduleDaoList(new ArrayList<>());
+
+        VaccineTypeDao vaccineTypeDao1 = new VaccineTypeDao();
+        vaccineTypeDao1.setFacilityVaccineDaoList(new ArrayList<>());
+        vaccineTypeDao1.setId(123L);
+        vaccineTypeDao1.setScheduleDaoList(new ArrayList<>());
+        vaccineTypeDao1.setVaccineName("Vaccine Name");
+
+        ScheduleDao scheduleDao1 = new ScheduleDao();
+        scheduleDao1.setBookingDaoList(new ArrayList<>());
+        scheduleDao1.setFacility(healthFacilityDao1);
+        scheduleDao1.setId(123L);
+        scheduleDao1.setQuota(1);
+        scheduleDao1.setVaccine(vaccineTypeDao1);
+
+        ProfileDao profileDao2 = new ProfileDao();
+        profileDao2.setFamilyDaoList(new ArrayList<>());
+        profileDao2.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao2.setRole(AppConstant.ProfileRole.USER);
+        profileDao2.setUser(new UserDao());
+        profileDao2.setUserId(123L);
+
+        UserDao userDao2 = new UserDao();
+        userDao2.setBookingDaoList(new ArrayList<>());
+        userDao2.setId(123L);
+        userDao2.setName("Name");
+        userDao2.setProfile(profileDao2);
+
+        BookingDao bookingDao1 = new BookingDao();
+        bookingDao1.setBookingDetailDaos(new ArrayList<>());
+        bookingDao1.setBookingPass(1);
+        bookingDao1.setId(123L);
+        bookingDao1.setSchedule(scheduleDao1);
+        bookingDao1.setUser(userDao2);
+
+        UserDao userDao3 = new UserDao();
+        userDao3.setBookingDaoList(new ArrayList<>());
+        userDao3.setId(123L);
+        userDao3.setName("Name");
+        userDao3.setProfile(new ProfileDao());
+
+        ProfileDao profileDao3 = new ProfileDao();
+        profileDao3.setFamilyDaoList(new ArrayList<>());
+        profileDao3.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao3.setRole(AppConstant.ProfileRole.USER);
+        profileDao3.setUser(userDao3);
+        profileDao3.setUserId(123L);
+
+        FamilyDao familyDao1 = new FamilyDao();
+        familyDao1.setBookingDaoList(new ArrayList<>());
+        familyDao1.setId(123L);
+        familyDao1.setNIK("NIK");
+        familyDao1.setProfile(profileDao3);
+
+        BookingDetailDao bookingDetailDao1 = new BookingDetailDao();
+        bookingDetailDao1.setBooking(bookingDao1);
+        bookingDetailDao1.setBookingId(123L);
+        bookingDetailDao1.setBookingStatus(AppConstant.BookingStatus.PENDING);
+        bookingDetailDao1.setFamily(familyDao1);
+        bookingDetailDao1.setFamilyId(123L);
+
+        Optional<BookingDetailDao> ofResult = Optional.of(bookingDetailDao1);
+
+        when(bookingDetailRepository.findByBookingIdAndFamilyId((Long) any(), (Long) any())).thenReturn(ofResult);
         when(bookingDetailRepository.findAll()).thenReturn(bookingDetailDaoList);
 
         ResponseEntity<Object> actualAllBookingDetails = bookingDetailService.getAllBookingDetails();
@@ -404,12 +472,8 @@ class BookingDetailServiceTest {
 
         assertEquals(AppConstant.ResponseCode.SUCCESS.getCode(), status.getCode());
 
-        BookingDetailDto getResult = ((List<BookingDetailDto>) data).get(0);
-
-        assertEquals(123L, getResult.getBookingId().longValue());
-        assertEquals(123L, getResult.getFamilyId().longValue());
-
         verify(bookingDetailRepository).findAll();
+        verify(bookingDetailRepository).findByBookingIdAndFamilyId((Long) any(), (Long) any());
     }
 
     @Test
