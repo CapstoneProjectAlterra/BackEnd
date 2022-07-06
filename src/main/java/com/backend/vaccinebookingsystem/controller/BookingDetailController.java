@@ -23,7 +23,7 @@ public class BookingDetailController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @PostMapping(value = "")
-    @PreAuthorize("hasAuthority('HEALTH_ADMIN') or hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('HEALTH_ADMIN') or hasAuthority('ADMIN')")
     public ResponseEntity<Object> createNewBookingDetail(@RequestBody BookingDetailDto bookingDetailDto) {
         return bookingDetailService.createBookingDetail(bookingDetailDto);
     }
@@ -34,7 +34,7 @@ public class BookingDetailController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @GetMapping(value = "/search")
-    @PreAuthorize("hasAuthority('HEALTH_ADMIN') or hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('HEALTH_ADMIN') or hasAuthority('ADMIN')")
     public ResponseEntity<Object> searchABookingDetailById(@RequestParam(value = "booking_id") Long bookingId, @RequestParam(value = "family_id") Long familyId) {
         return bookingDetailService.searchBookingDetailById(bookingId, familyId);
     }
@@ -45,7 +45,7 @@ public class BookingDetailController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @GetMapping(value = "")
-    @PreAuthorize("hasAuthority('HEALTH_ADMIN') or hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('HEALTH_ADMIN') or hasAuthority('ADMIN')")
     public ResponseEntity<Object> getAllOfStocks() {
         return bookingDetailService.getAllBookingDetails();
     }
