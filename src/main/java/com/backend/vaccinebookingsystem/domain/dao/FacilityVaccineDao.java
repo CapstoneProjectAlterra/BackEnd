@@ -31,13 +31,13 @@ public class FacilityVaccineDao extends BaseDao {
     @MapsId("facilityId")
     @JoinColumn(name = "facility_id")
     @ToString.Exclude
-    private HealthFacilityDao facilityVaccine;
+    private HealthFacilityDao facility;
 
     @ManyToOne
     @MapsId("vaccineId")
     @JoinColumn(name = "vaccine_id")
     @ToString.Exclude
-    private VaccineTypeDao vaccineFacility;
+    private VaccineTypeDao vaccine;
 
     @Column(name = "stock", nullable = false)
     private Integer stock;

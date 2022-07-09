@@ -21,6 +21,4 @@ public class ProfileDto {
 
     private AppConstant.ProfileRole role;
 
-//    private UserDto user;
-
 }

@@ -22,4 +22,8 @@ public class FacilityVaccineDto {
 
     private Integer stock;
 
+    private HealthFacilityDto facility;
+
+    private VaccineTypeDto vaccine;
+
 }
