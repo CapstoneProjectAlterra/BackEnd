@@ -14,28 +14,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class HealthFacilityDto {
+public class HealthFacilityImageDto {
 
-    private Long id;
+    private Long facilityId;
 
-    private String facilityName;
+    private String base64;
 
-    private String streetName;
-
-    private String officeNumber;
-
-    private String villageName;
-
-    private String district;
-
-    private String city;
-
-    private String province;
-
-    private Integer postalCode;
-
-    private HealthFacilityImageDto image;
-
-    private ProfileDto profile;
+    private String contentType;
 
 }

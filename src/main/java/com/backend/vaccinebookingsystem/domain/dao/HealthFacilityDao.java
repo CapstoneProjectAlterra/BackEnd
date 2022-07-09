@@ -25,9 +25,6 @@ public class HealthFacilityDao extends BaseDao {
     @Column(name = "facility_name", nullable = false)
     private String facilityName;
 
-    @Column(name = "img_url")
-    private String imgUrl;
-
     @Column(name = "street_name", nullable = false)
     private String streetName;
 
@@ -53,12 +50,16 @@ public class HealthFacilityDao extends BaseDao {
     @ToString.Exclude
     private List<ScheduleDao> scheduleDaoList;
 
+    @OneToOne(mappedBy = "facility", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
+    private HealthFacilityImageDao image;
+
     @ManyToOne
     @JoinColumn(name = "profile_id", referencedColumnName = "userId")
     @ToString.Exclude
     private ProfileDao profile;
 
-    @OneToMany(mappedBy = "facilityVaccine", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "facility", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
     private List<FacilityVaccineDao> facilityVaccineDaoList;
 }

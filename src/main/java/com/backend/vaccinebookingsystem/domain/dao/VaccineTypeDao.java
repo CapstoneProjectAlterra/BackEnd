@@ -29,7 +29,7 @@ public class VaccineTypeDao extends BaseDao {
     @ToString.Exclude
     private List<ScheduleDao> scheduleDaoList;
 
-    @OneToMany(mappedBy = "vaccineFacility", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "vaccine", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
     private List<FacilityVaccineDao> facilityVaccineDaoList;
 }

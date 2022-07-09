@@ -2,9 +2,12 @@ package com.backend.vaccinebookingsystem.service;
 
 import com.backend.vaccinebookingsystem.constant.AppConstant;
 import com.backend.vaccinebookingsystem.domain.dao.HealthFacilityDao;
+import com.backend.vaccinebookingsystem.domain.dao.HealthFacilityImageDao;
 import com.backend.vaccinebookingsystem.domain.dao.ProfileDao;
 import com.backend.vaccinebookingsystem.domain.dto.HealthFacilityDto;
+import com.backend.vaccinebookingsystem.domain.dto.HealthFacilityImageDto;
 import com.backend.vaccinebookingsystem.domain.dto.ProfileDto;
+import com.backend.vaccinebookingsystem.repository.HealthFacilityImageRepository;
 import com.backend.vaccinebookingsystem.repository.HealthFacilityRepository;
 import com.backend.vaccinebookingsystem.repository.ProfileRepository;
 import com.backend.vaccinebookingsystem.util.ResponseUtil;
@@ -28,6 +31,9 @@ public class HealthFacilityService {
     @Autowired
     private ProfileRepository profileRepository;
 
+    @Autowired
+    private HealthFacilityImageRepository healthFacilityImageRepository;
+
 
     public ResponseEntity<Object> createHealthFacility(HealthFacilityDto healthFacilityDto) {
         try {
@@ -50,7 +56,6 @@ public class HealthFacilityService {
 
             HealthFacilityDao healthFacilityDao = HealthFacilityDao.builder()
                     .facilityName(healthFacilityDto.getFacilityName())
-                    .imgUrl(healthFacilityDto.getImgUrl())
                     .streetName(healthFacilityDto.getStreetName())
                     .officeNumber(healthFacilityDto.getOfficeNumber())
                     .villageName(healthFacilityDto.getVillageName())
@@ -58,6 +63,10 @@ public class HealthFacilityService {
                     .city(healthFacilityDto.getCity())
                     .province(healthFacilityDto.getProvince())
                     .postalCode(healthFacilityDto.getPostalCode())
+                    .image(HealthFacilityImageDao.builder()
+                            .base64(healthFacilityDto.getImage().getBase64())
+                            .contentType(healthFacilityDto.getImage().getContentType())
+                            .build())
                     .profile(optionalProfileDao.get())
                     .build();
             healthFacilityRepository.save(healthFacilityDao);
@@ -67,10 +76,15 @@ public class HealthFacilityService {
                     .role(healthFacilityDao.getProfile().getRole())
                     .build();
 
+            HealthFacilityImageDto healthFacilityImageDto = HealthFacilityImageDto.builder()
+                    .facilityId(healthFacilityDao.getImage().getFacilityId())
+                    .base64(healthFacilityDao.getImage().getBase64())
+                    .contentType(healthFacilityDao.getImage().getContentType())
+                    .build();
+
             HealthFacilityDto facilityDto = HealthFacilityDto.builder()
                     .id(healthFacilityDao.getId())
                     .facilityName(healthFacilityDao.getFacilityName())
-                    .imgUrl(healthFacilityDao.getImgUrl())
                     .streetName(healthFacilityDao.getStreetName())
                     .officeNumber(healthFacilityDao.getOfficeNumber())
                     .villageName(healthFacilityDao.getVillageName())
@@ -78,6 +92,7 @@ public class HealthFacilityService {
                     .city(healthFacilityDao.getCity())
                     .province(healthFacilityDao.getProvince())
                     .postalCode(healthFacilityDao.getPostalCode())
+                    .image(healthFacilityImageDto)
                     .profile(profileDto)
                     .build();
             return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, facilityDto, HttpStatus.OK);
@@ -105,10 +120,15 @@ public class HealthFacilityService {
                     .role(optionalProfileDao.get().getRole())
                     .build();
 
+            HealthFacilityImageDto healthFacilityImageDto = HealthFacilityImageDto.builder()
+                    .facilityId(optionalHealthFacilityDao.get().getImage().getFacilityId())
+                    .base64(optionalHealthFacilityDao.get().getImage().getBase64())
+                    .contentType(optionalHealthFacilityDao.get().getImage().getContentType())
+                    .build();
+
             HealthFacilityDto facilityDto = HealthFacilityDto.builder()
                     .id(optionalHealthFacilityDao.get().getId())
                     .facilityName(optionalHealthFacilityDao.get().getFacilityName())
-                    .imgUrl(optionalHealthFacilityDao.get().getImgUrl())
                     .streetName(optionalHealthFacilityDao.get().getStreetName())
                     .officeNumber(optionalHealthFacilityDao.get().getOfficeNumber())
                     .villageName(optionalHealthFacilityDao.get().getVillageName())
@@ -116,6 +136,7 @@ public class HealthFacilityService {
                     .city(optionalHealthFacilityDao.get().getCity())
                     .province(optionalHealthFacilityDao.get().getProvince())
                     .postalCode(optionalHealthFacilityDao.get().getPostalCode())
+                    .image(healthFacilityImageDto)
                     .profile(profileDto)
                     .build();
             return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, facilityDto, HttpStatus.OK);
@@ -141,10 +162,15 @@ public class HealthFacilityService {
                         .role(optionalProfileDao.get().getRole())
                         .build();
 
+                HealthFacilityImageDto healthFacilityImageDto = HealthFacilityImageDto.builder()
+                        .facilityId(healthFacilityDao.getImage().getFacilityId())
+                        .base64(healthFacilityDao.getImage().getBase64())
+                        .contentType(healthFacilityDao.getImage().getContentType())
+                        .build();
+
                 healthFacilityDtos.add(HealthFacilityDto.builder()
                         .id(healthFacilityDao.getId())
                         .facilityName(healthFacilityDao.getFacilityName())
-                        .imgUrl(healthFacilityDao.getImgUrl())
                         .streetName(healthFacilityDao.getStreetName())
                         .officeNumber(healthFacilityDao.getOfficeNumber())
                         .villageName(healthFacilityDao.getVillageName())
@@ -152,6 +178,7 @@ public class HealthFacilityService {
                         .city(healthFacilityDao.getCity())
                         .province(healthFacilityDao.getProvince())
                         .postalCode(healthFacilityDao.getPostalCode())
+                        .image(healthFacilityImageDto)
                         .profile(profileDto)
                         .build());
             }
@@ -168,17 +195,23 @@ public class HealthFacilityService {
             log.info("Updating a Health Facility by id");
             Optional<HealthFacilityDao> optionalHealthFacilityDao = healthFacilityRepository.findById(id);
 
-            Optional<ProfileDao> optionalProfileDao = profileRepository.findById(healthFacilityDto.getProfile().getUserId());
+            Optional<ProfileDao> optionalProfileDao = profileRepository.findById(optionalHealthFacilityDao.get().getProfile().getUserId());
 
-            if (optionalHealthFacilityDao.isEmpty() || optionalProfileDao.isEmpty()) {
+            Optional<HealthFacilityImageDao> optionalHealthFacilityImageDao = healthFacilityImageRepository.findById(optionalHealthFacilityDao.get().getImage().getFacilityId());
+
+            if (optionalProfileDao.isEmpty() || optionalHealthFacilityImageDao.isEmpty()) {
                 log.info("Health Facility not found");
                 return ResponseUtil.build(AppConstant.ResponseCode.DATA_NOT_FOUND, null, HttpStatus.BAD_REQUEST);
             }
 
             log.info("Health Facility found");
+
+            HealthFacilityImageDao healthFacilityImageDao = optionalHealthFacilityImageDao.get();
+            healthFacilityImageDao.setBase64(healthFacilityDto.getImage().getBase64());
+            healthFacilityImageDao.setContentType(healthFacilityDto.getImage().getContentType());
+
             HealthFacilityDao healthFacilityDao = optionalHealthFacilityDao.get();
             healthFacilityDao.setFacilityName(healthFacilityDto.getFacilityName());
-            healthFacilityDao.setImgUrl(healthFacilityDto.getImgUrl());
             healthFacilityDao.setStreetName(healthFacilityDto.getStreetName());
             healthFacilityDao.setOfficeNumber(healthFacilityDto.getOfficeNumber());
             healthFacilityDao.setVillageName(healthFacilityDto.getVillageName());
@@ -186,6 +219,7 @@ public class HealthFacilityService {
             healthFacilityDao.setCity(healthFacilityDto.getCity());
             healthFacilityDao.setProvince(healthFacilityDto.getProvince());
             healthFacilityDao.setPostalCode(healthFacilityDto.getPostalCode());
+            healthFacilityDao.setImage(healthFacilityImageDao);
             healthFacilityDao.setProfile(optionalProfileDao.get());
             healthFacilityRepository.save(healthFacilityDao);
 
@@ -194,10 +228,15 @@ public class HealthFacilityService {
                     .role(optionalProfileDao.get().getRole())
                     .build();
 
+            HealthFacilityImageDto healthFacilityImageDto = HealthFacilityImageDto.builder()
+                    .facilityId(healthFacilityDao.getImage().getFacilityId())
+                    .base64(healthFacilityDao.getImage().getBase64())
+                    .contentType(healthFacilityDao.getImage().getContentType())
+                    .build();
+
             HealthFacilityDto facilityDto = HealthFacilityDto.builder()
                     .id(healthFacilityDao.getId())
                     .facilityName(healthFacilityDao.getFacilityName())
-                    .imgUrl(healthFacilityDao.getImgUrl())
                     .streetName(healthFacilityDao.getStreetName())
                     .officeNumber(healthFacilityDao.getOfficeNumber())
                     .villageName(healthFacilityDao.getVillageName())
@@ -205,6 +244,7 @@ public class HealthFacilityService {
                     .city(healthFacilityDao.getCity())
                     .province(healthFacilityDao.getProvince())
                     .postalCode(healthFacilityDao.getPostalCode())
+                    .image(healthFacilityImageDto)
                     .profile(profileDto)
                     .build();
             return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, facilityDto, HttpStatus.OK);
