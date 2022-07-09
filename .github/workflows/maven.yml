@@ -1,9 +1,14 @@
 name: Spring Boot Capstone
 
+#on:
+#  pull_request:
+#    branches:
+#      - development
+
 on:
-  pull_request:
+  push:
     branches:
-      - development
+      - feature/base64
 
 jobs:
   run_test:
@@ -44,7 +49,7 @@ jobs:
           java-version: 11
           distribution: 'adopt'
       - name: Maven Build
-        run: mvn clean package -Dmaven.test.skip=true
+        run: mvn clean package -Dmaven.test.skip=false
       - name: Login to Dockerhub
         uses: docker/login-action@v1
         with:

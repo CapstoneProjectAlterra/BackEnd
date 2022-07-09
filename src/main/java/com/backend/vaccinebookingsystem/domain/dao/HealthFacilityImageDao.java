@@ -21,7 +21,7 @@ public class HealthFacilityImageDao extends BaseDao {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long facilityId;
 
-    @Column(name = "base64")
+    @Column(name = "base_64")
     @Lob
     private String base64;
 
