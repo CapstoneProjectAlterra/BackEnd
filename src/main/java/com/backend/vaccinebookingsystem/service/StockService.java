@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -130,6 +131,7 @@ public class StockService {
         }
     }
 
+    @Transactional
     public ResponseEntity<Object> searchStockById(Long facilityId, Long vaccineId) {
         try {
             log.info("Getting a Stock by id");
@@ -177,6 +179,7 @@ public class StockService {
         }
     }
 
+    @Transactional
     public ResponseEntity<Object> getAllStocks() {
         try {
             log.info("Getting all of Stocks");
@@ -224,6 +227,7 @@ public class StockService {
         }
     }
 
+    @Transactional
     public ResponseEntity<Object> updateStockById(Long facilityId, Long vaccineId, FacilityVaccineDto facilityVaccineDto) {
         try {
             log.info("Updating a Stock by id");
