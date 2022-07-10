@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -113,6 +114,7 @@ public class BookingDetailService {
         }
     }
 
+    @Transactional
     public ResponseEntity<Object> searchBookingDetailById(Long bookingId, Long familyId) {
         try {
             log.info("Getting a Booking Detail by id");
@@ -255,6 +257,7 @@ public class BookingDetailService {
         }
     }
 
+    @Transactional
     public ResponseEntity<Object> updateBookingDetailById(Long bookingId, Long familyId, BookingDetailDto bookingDetailDto) {
         try {
             log.info("Updating a Booking Detail by id");
