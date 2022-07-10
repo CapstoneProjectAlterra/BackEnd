@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,7 @@ public class BookingService {
     @Autowired
     private UserRepository userRepository;
 
+    @Transactional
     public ResponseEntity<Object> createBooking(BookingDto bookingDto) {
         try {
             log.info("Creating new Booking. Value {}", bookingDto);
