@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AuthenticationService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">vaccine-booking-system</a> &gt; <a href="index.source.html" class="el_package">com.backend.vaccinebookingsystem.service</a> &gt; <span class="el_source">AuthenticationService.java</span></div><h1>AuthenticationService.java</h1><pre class="source lang-java linenums">package com.backend.vaccinebookingsystem.service;
+
+import com.backend.vaccinebookingsystem.constant.AppConstant;
+import com.backend.vaccinebookingsystem.domain.dao.FamilyDao;
+import com.backend.vaccinebookingsystem.domain.dao.ProfileDao;
+import com.backend.vaccinebookingsystem.domain.dao.UserDao;
+import com.backend.vaccinebookingsystem.domain.dao.UserDetailsDao;
+import com.backend.vaccinebookingsystem.domain.dto.*;
+import com.backend.vaccinebookingsystem.repository.FamilyRepository;
+import com.backend.vaccinebookingsystem.repository.ProfileRepository;
+import com.backend.vaccinebookingsystem.repository.UserRepository;
+import com.backend.vaccinebookingsystem.util.ResponseUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+<span class="fc" id="L29">@Slf4j</span>
+@Service
+<span class="fc" id="L31">public class AuthenticationService {</span>
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private ProfileRepository profileRepository;
+    @Autowired
+    private FamilyRepository familyRepository;
+
+    public ResponseEntity&lt;Object&gt; register(UserDto userDto) {
+        try {
+<span class="nc" id="L52">            log.info(&quot;Creating a new user&quot;);</span>
+
+<span class="nc" id="L54">            Optional&lt;UserDao&gt; optionalUserDao = userRepository.findByUsername(userDto.getUsername());</span>
+
+<span class="nc bnc" id="L56" title="All 2 branches missed.">            if (optionalUserDao.isPresent()) {</span>
+<span class="nc" id="L57">                log.info(&quot;Username already exists&quot;);</span>
+<span class="nc" id="L58">                return ResponseUtil.build(AppConstant.ResponseCode.ALREADY_EXISTS, null, HttpStatus.CONFLICT);</span>
+            }
+
+<span class="nc" id="L61">            UserDao userDao = UserDao.builder()</span>
+<span class="nc" id="L62">                    .username(userDto.getUsername())</span>
+<span class="nc" id="L63">                    .name(userDto.getName())</span>
+<span class="nc" id="L64">                    .email(userDto.getEmail())</span>
+<span class="nc" id="L65">                    .password(passwordEncoder.encode(userDto.getPassword()))</span>
+<span class="nc" id="L66">                    .profile(ProfileDao.builder()</span>
+<span class="nc" id="L67">                            .role(userDto.getProfile().getRole())</span>
+<span class="nc" id="L68">                            .build())</span>
+<span class="nc" id="L69">                    .build();</span>
+
+<span class="nc" id="L71">            userRepository.save(userDao);</span>
+
+<span class="nc" id="L73">            Optional&lt;ProfileDao&gt; optionalProfileDao = profileRepository.findById(userDao.getProfile().getUserId());</span>
+
+<span class="nc" id="L75">            log.info(&quot;Creating Some Family Data when register&quot;);</span>
+<span class="nc" id="L76">            FamilyDao familyDao = FamilyDao.builder()</span>
+<span class="nc" id="L77">                    .NIK(userDto.getUsername())</span>
+<span class="nc" id="L78">                    .name(userDto.getName())</span>
+<span class="nc" id="L79">                    .email(userDto.getEmail())</span>
+<span class="nc" id="L80">                    .profile(optionalProfileDao.get())</span>
+<span class="nc" id="L81">                    .build();</span>
+
+<span class="nc" id="L83">            familyRepository.save(familyDao);</span>
+
+<span class="nc" id="L85">            UserDto dto = UserDto.builder()</span>
+<span class="nc" id="L86">                    .id(userDao.getId())</span>
+<span class="nc" id="L87">                    .username(userDao.getUsername())</span>
+<span class="nc" id="L88">                    .name(userDao.getName())</span>
+<span class="nc" id="L89">                    .email(userDao.getEmail())</span>
+<span class="nc" id="L90">                    .password(userDao.getPassword())</span>
+<span class="nc" id="L91">                    .profile(ProfileDto.builder()</span>
+<span class="nc" id="L92">                            .userId(userDao.getProfile().getUserId())</span>
+<span class="nc" id="L93">                            .role(userDao.getProfile().getRole())</span>
+<span class="nc" id="L94">                            .build())</span>
+<span class="nc" id="L95">                    .build();</span>
+
+<span class="nc" id="L97">            return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, dto, HttpStatus.OK);</span>
+<span class="nc" id="L98">        } catch (Exception e) {</span>
+<span class="nc" id="L99">            log.error(&quot;An error occurred in creating a new User. Error {}&quot;, e.getMessage());</span>
+<span class="nc" id="L100">            return ResponseUtil.build(AppConstant.ResponseCode.UNKNOWN_ERROR, null, HttpStatus.INTERNAL_SERVER_ERROR);</span>
+        }
+    }
+
+    public ResponseEntity&lt;Object&gt; authenticateUser(UsernamePassword usernamePassword) {
+        try {
+<span class="nc" id="L106">            log.info(&quot;Generating JWT token&quot;);</span>
+<span class="nc" id="L107">            Authentication authentication = authenticationManager.authenticate(</span>
+                    new UsernamePasswordAuthenticationToken(
+<span class="nc" id="L109">                            usernamePassword.getUsername(), usernamePassword.getPassword()</span>
+                    )
+            );
+
+<span class="nc" id="L113">            SecurityContextHolder.getContext().setAuthentication(authentication);</span>
+
+<span class="nc" id="L115">            String jwt = jwtTokenProvider.generateJwtToken(authentication);</span>
+
+<span class="nc" id="L117">            UserDetailsDao userDetailsDao = (UserDetailsDao) authentication.getPrincipal();</span>
+
+<span class="nc" id="L119">            List&lt;String&gt; roles = userDetailsDao.getAuthorities().stream()</span>
+<span class="nc" id="L120">                    .map(GrantedAuthority::getAuthority)</span>
+<span class="nc" id="L121">                    .collect(Collectors.toList());</span>
+
+<span class="nc" id="L123">            JwtResponse tokenResponse = JwtResponse.builder()</span>
+<span class="nc" id="L124">                    .userId(userDetailsDao.getId())</span>
+<span class="nc" id="L125">                    .username(usernamePassword.getUsername())</span>
+<span class="nc" id="L126">                    .token(jwt)</span>
+<span class="nc" id="L127">                    .roles(roles)</span>
+<span class="nc" id="L128">                    .build();</span>
+
+<span class="nc" id="L130">            return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, tokenResponse, HttpStatus.OK);</span>
+<span class="nc" id="L131">        } catch (Exception badCredentialsException) {</span>
+//            throw new RuntimeException(badCredentialsException.getMessage(), badCredentialsException);
+<span class="nc" id="L133">            log.error(&quot;An error occurred in Authenticate User. Error {}&quot;, badCredentialsException.getMessage());</span>
+<span class="nc" id="L134">            return ResponseUtil.build(AppConstant.ResponseCode.DATA_NOT_FOUND, null, HttpStatus.BAD_REQUEST);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

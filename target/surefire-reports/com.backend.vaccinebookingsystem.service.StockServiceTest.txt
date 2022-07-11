@@ -1,0 +1,8 @@
+-------------------------------------------------------------------------------
+Test set: com.backend.vaccinebookingsystem.service.StockServiceTest
+-------------------------------------------------------------------------------
+Tests run: 6, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.848 s <<< FAILURE! - in com.backend.vaccinebookingsystem.service.StockServiceTest
+createStockSuccess_Test  Time elapsed: 0.068 s  <<< ERROR!
+java.lang.NullPointerException
+	at com.backend.vaccinebookingsystem.service.StockServiceTest.createStockSuccess_Test(StockServiceTest.java:257)
+

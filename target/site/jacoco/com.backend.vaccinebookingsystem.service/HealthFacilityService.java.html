@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HealthFacilityService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">vaccine-booking-system</a> &gt; <a href="index.source.html" class="el_package">com.backend.vaccinebookingsystem.service</a> &gt; <span class="el_source">HealthFacilityService.java</span></div><h1>HealthFacilityService.java</h1><pre class="source lang-java linenums">package com.backend.vaccinebookingsystem.service;
+
+import com.backend.vaccinebookingsystem.constant.AppConstant;
+import com.backend.vaccinebookingsystem.domain.dao.HealthFacilityDao;
+import com.backend.vaccinebookingsystem.domain.dao.HealthFacilityImageDao;
+import com.backend.vaccinebookingsystem.domain.dao.ProfileDao;
+import com.backend.vaccinebookingsystem.domain.dto.HealthFacilityDto;
+import com.backend.vaccinebookingsystem.domain.dto.HealthFacilityImageDto;
+import com.backend.vaccinebookingsystem.domain.dto.ProfileDto;
+import com.backend.vaccinebookingsystem.repository.HealthFacilityImageRepository;
+import com.backend.vaccinebookingsystem.repository.HealthFacilityRepository;
+import com.backend.vaccinebookingsystem.repository.ProfileRepository;
+import com.backend.vaccinebookingsystem.util.ResponseUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+<span class="fc" id="L24">@Slf4j</span>
+@Service
+<span class="fc" id="L26">public class HealthFacilityService {</span>
+
+    @Autowired
+    private HealthFacilityRepository healthFacilityRepository;
+
+    @Autowired
+    private ProfileRepository profileRepository;
+
+    @Autowired
+    private HealthFacilityImageRepository healthFacilityImageRepository;
+
+
+    public ResponseEntity&lt;Object&gt; createHealthFacility(HealthFacilityDto healthFacilityDto) {
+        try {
+<span class="fc" id="L40">            log.info(&quot;Creating new health facility&quot;);</span>
+<span class="fc" id="L41">            Optional&lt;HealthFacilityDao&gt; optionalHealthFacilityDao = healthFacilityRepository.findHealthFacilityDaoByFacilityName(healthFacilityDto.getFacilityName());</span>
+
+<span class="pc bpc" id="L43" title="1 of 2 branches missed.">            if (optionalHealthFacilityDao.isPresent()) {</span>
+<span class="fc" id="L44">                log.info(&quot;Health Facility already exists&quot;);</span>
+<span class="fc" id="L45">                return ResponseUtil.build(AppConstant.ResponseCode.ALREADY_EXISTS, null, HttpStatus.CONFLICT);</span>
+            }
+
+<span class="nc" id="L48">            Optional&lt;ProfileDao&gt; optionalProfileDao = profileRepository.findById(healthFacilityDto.getProfile().getUserId());</span>
+
+<span class="nc bnc" id="L50" title="All 2 branches missed.">            if (optionalProfileDao.isEmpty()) {</span>
+<span class="nc" id="L51">                log.info(&quot;Profile not found&quot;);</span>
+<span class="nc" id="L52">                return ResponseUtil.build(AppConstant.ResponseCode.DATA_NOT_FOUND, null, HttpStatus.BAD_REQUEST);</span>
+            }
+
+<span class="nc" id="L55">            log.info(&quot;Profile found&quot;);</span>
+
+<span class="nc" id="L57">            HealthFacilityDao healthFacilityDao = HealthFacilityDao.builder()</span>
+<span class="nc" id="L58">                    .facilityName(healthFacilityDto.getFacilityName())</span>
+<span class="nc" id="L59">                    .streetName(healthFacilityDto.getStreetName())</span>
+<span class="nc" id="L60">                    .officeNumber(healthFacilityDto.getOfficeNumber())</span>
+<span class="nc" id="L61">                    .villageName(healthFacilityDto.getVillageName())</span>
+<span class="nc" id="L62">                    .district(healthFacilityDto.getDistrict())</span>
+<span class="nc" id="L63">                    .city(healthFacilityDto.getCity())</span>
+<span class="nc" id="L64">                    .province(healthFacilityDto.getProvince())</span>
+<span class="nc" id="L65">                    .postalCode(healthFacilityDto.getPostalCode())</span>
+<span class="nc" id="L66">                    .image(HealthFacilityImageDao.builder()</span>
+<span class="nc" id="L67">                            .base64(healthFacilityDto.getImage().getBase64())</span>
+<span class="nc" id="L68">                            .contentType(healthFacilityDto.getImage().getContentType())</span>
+<span class="nc" id="L69">                            .build())</span>
+<span class="nc" id="L70">                    .profile(optionalProfileDao.get())</span>
+<span class="nc" id="L71">                    .build();</span>
+<span class="nc" id="L72">            healthFacilityRepository.save(healthFacilityDao);</span>
+
+<span class="nc" id="L74">            ProfileDto profileDto = ProfileDto.builder()</span>
+<span class="nc" id="L75">                    .userId(healthFacilityDao.getProfile().getUserId())</span>
+<span class="nc" id="L76">                    .role(healthFacilityDao.getProfile().getRole())</span>
+<span class="nc" id="L77">                    .build();</span>
+
+<span class="nc" id="L79">            HealthFacilityImageDto healthFacilityImageDto = HealthFacilityImageDto.builder()</span>
+<span class="nc" id="L80">                    .facilityId(healthFacilityDao.getImage().getFacilityId())</span>
+<span class="nc" id="L81">                    .base64(healthFacilityDao.getImage().getBase64())</span>
+<span class="nc" id="L82">                    .contentType(healthFacilityDao.getImage().getContentType())</span>
+<span class="nc" id="L83">                    .build();</span>
+
+<span class="nc" id="L85">            HealthFacilityDto facilityDto = HealthFacilityDto.builder()</span>
+<span class="nc" id="L86">                    .id(healthFacilityDao.getId())</span>
+<span class="nc" id="L87">                    .facilityName(healthFacilityDao.getFacilityName())</span>
+<span class="nc" id="L88">                    .streetName(healthFacilityDao.getStreetName())</span>
+<span class="nc" id="L89">                    .officeNumber(healthFacilityDao.getOfficeNumber())</span>
+<span class="nc" id="L90">                    .villageName(healthFacilityDao.getVillageName())</span>
+<span class="nc" id="L91">                    .district(healthFacilityDao.getDistrict())</span>
+<span class="nc" id="L92">                    .city(healthFacilityDao.getCity())</span>
+<span class="nc" id="L93">                    .province(healthFacilityDao.getProvince())</span>
+<span class="nc" id="L94">                    .postalCode(healthFacilityDao.getPostalCode())</span>
+<span class="nc" id="L95">                    .image(healthFacilityImageDto)</span>
+<span class="nc" id="L96">                    .profile(profileDto)</span>
+<span class="nc" id="L97">                    .build();</span>
+<span class="nc" id="L98">            return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, facilityDto, HttpStatus.OK);</span>
+<span class="nc" id="L99">        } catch (Exception e) {</span>
+<span class="nc" id="L100">            log.error(&quot;An error occurred in creating new Health Facility. Error: {}&quot;, e.getMessage());</span>
+<span class="nc" id="L101">            return ResponseUtil.build(AppConstant.ResponseCode.UNKNOWN_ERROR, null, HttpStatus.INTERNAL_SERVER_ERROR);</span>
+        }
+    }
+
+    public ResponseEntity&lt;Object&gt; getHealthFacilityById(Long id) {
+        try {
+<span class="fc" id="L107">            log.info(&quot;Getting a Health Facility by id&quot;);</span>
+<span class="fc" id="L108">            Optional&lt;HealthFacilityDao&gt; optionalHealthFacilityDao = healthFacilityRepository.findById(id);</span>
+
+<span class="fc" id="L110">            Optional&lt;ProfileDao&gt; optionalProfileDao = profileRepository.findById(optionalHealthFacilityDao.get().getProfile().getUserId());</span>
+
+<span class="pc bpc" id="L112" title="2 of 4 branches missed.">            if (optionalHealthFacilityDao.isEmpty() || optionalProfileDao.isEmpty()) {</span>
+<span class="nc" id="L113">                log.info(&quot;Health Facility not found&quot;);</span>
+<span class="nc" id="L114">                return ResponseUtil.build(AppConstant.ResponseCode.DATA_NOT_FOUND, null, HttpStatus.BAD_REQUEST);</span>
+            }
+
+<span class="fc" id="L117">            log.info(&quot;Health Facility found&quot;);</span>
+<span class="fc" id="L118">            ProfileDto profileDto = ProfileDto.builder()</span>
+<span class="fc" id="L119">                    .userId(optionalProfileDao.get().getUserId())</span>
+<span class="fc" id="L120">                    .role(optionalProfileDao.get().getRole())</span>
+<span class="fc" id="L121">                    .build();</span>
+
+<span class="fc" id="L123">            HealthFacilityImageDto healthFacilityImageDto = HealthFacilityImageDto.builder()</span>
+<span class="fc" id="L124">                    .facilityId(optionalHealthFacilityDao.get().getImage().getFacilityId())</span>
+<span class="fc" id="L125">                    .base64(optionalHealthFacilityDao.get().getImage().getBase64())</span>
+<span class="fc" id="L126">                    .contentType(optionalHealthFacilityDao.get().getImage().getContentType())</span>
+<span class="fc" id="L127">                    .build();</span>
+
+<span class="fc" id="L129">            HealthFacilityDto facilityDto = HealthFacilityDto.builder()</span>
+<span class="fc" id="L130">                    .id(optionalHealthFacilityDao.get().getId())</span>
+<span class="fc" id="L131">                    .facilityName(optionalHealthFacilityDao.get().getFacilityName())</span>
+<span class="fc" id="L132">                    .streetName(optionalHealthFacilityDao.get().getStreetName())</span>
+<span class="fc" id="L133">                    .officeNumber(optionalHealthFacilityDao.get().getOfficeNumber())</span>
+<span class="fc" id="L134">                    .villageName(optionalHealthFacilityDao.get().getVillageName())</span>
+<span class="fc" id="L135">                    .district(optionalHealthFacilityDao.get().getDistrict())</span>
+<span class="fc" id="L136">                    .city(optionalHealthFacilityDao.get().getCity())</span>
+<span class="fc" id="L137">                    .province(optionalHealthFacilityDao.get().getProvince())</span>
+<span class="fc" id="L138">                    .postalCode(optionalHealthFacilityDao.get().getPostalCode())</span>
+<span class="fc" id="L139">                    .image(healthFacilityImageDto)</span>
+<span class="fc" id="L140">                    .profile(profileDto)</span>
+<span class="fc" id="L141">                    .build();</span>
+<span class="fc" id="L142">            return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, facilityDto, HttpStatus.OK);</span>
+<span class="nc" id="L143">        } catch (Exception e) {</span>
+<span class="nc" id="L144">            log.error(&quot;An error occurred in getting a Health Facility by id. Error {}&quot;, e.getMessage());</span>
+<span class="nc" id="L145">            throw e;</span>
+        }
+    }
+
+    public ResponseEntity&lt;Object&gt; getAllHealthFacilities() {
+        try {
+<span class="fc" id="L151">            log.info(&quot;Getting all of Health Facilities&quot;);</span>
+            List&lt;HealthFacilityDao&gt; healthFacilityDaoList;
+<span class="fc" id="L153">            List&lt;HealthFacilityDto&gt; healthFacilityDtos = new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L155">            healthFacilityDaoList = healthFacilityRepository.findAll();</span>
+
+<span class="fc bfc" id="L157" title="All 2 branches covered.">            for (HealthFacilityDao healthFacilityDao : healthFacilityDaoList) {</span>
+<span class="fc" id="L158">                Optional&lt;ProfileDao&gt; optionalProfileDao = profileRepository.findById(healthFacilityDao.getProfile().getUserId());</span>
+
+<span class="fc" id="L160">                ProfileDto profileDto = ProfileDto.builder()</span>
+<span class="fc" id="L161">                        .userId(optionalProfileDao.get().getUserId())</span>
+<span class="fc" id="L162">                        .role(optionalProfileDao.get().getRole())</span>
+<span class="fc" id="L163">                        .build();</span>
+
+<span class="fc" id="L165">                HealthFacilityImageDto healthFacilityImageDto = HealthFacilityImageDto.builder()</span>
+<span class="fc" id="L166">                        .facilityId(healthFacilityDao.getImage().getFacilityId())</span>
+<span class="fc" id="L167">                        .base64(healthFacilityDao.getImage().getBase64())</span>
+<span class="fc" id="L168">                        .contentType(healthFacilityDao.getImage().getContentType())</span>
+<span class="fc" id="L169">                        .build();</span>
+
+<span class="fc" id="L171">                healthFacilityDtos.add(HealthFacilityDto.builder()</span>
+<span class="fc" id="L172">                        .id(healthFacilityDao.getId())</span>
+<span class="fc" id="L173">                        .facilityName(healthFacilityDao.getFacilityName())</span>
+<span class="fc" id="L174">                        .streetName(healthFacilityDao.getStreetName())</span>
+<span class="fc" id="L175">                        .officeNumber(healthFacilityDao.getOfficeNumber())</span>
+<span class="fc" id="L176">                        .villageName(healthFacilityDao.getVillageName())</span>
+<span class="fc" id="L177">                        .district(healthFacilityDao.getDistrict())</span>
+<span class="fc" id="L178">                        .city(healthFacilityDao.getCity())</span>
+<span class="fc" id="L179">                        .province(healthFacilityDao.getProvince())</span>
+<span class="fc" id="L180">                        .postalCode(healthFacilityDao.getPostalCode())</span>
+<span class="fc" id="L181">                        .image(healthFacilityImageDto)</span>
+<span class="fc" id="L182">                        .profile(profileDto)</span>
+<span class="fc" id="L183">                        .build());</span>
+<span class="fc" id="L184">            }</span>
+
+<span class="fc" id="L186">            return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, healthFacilityDtos, HttpStatus.OK);</span>
+<span class="nc" id="L187">        } catch (Exception e) {</span>
+<span class="nc" id="L188">            log.error(&quot;An error occurred in getting all of Health Facilities. Error {}&quot;, e.getMessage());</span>
+<span class="nc" id="L189">            return ResponseUtil.build(AppConstant.ResponseCode.UNKNOWN_ERROR, null, HttpStatus.INTERNAL_SERVER_ERROR);</span>
+        }
+    }
+
+    public ResponseEntity&lt;Object&gt; updateHealthFacilityById(Long id, HealthFacilityDto healthFacilityDto) {
+        try {
+<span class="nc" id="L195">            log.info(&quot;Updating a Health Facility by id&quot;);</span>
+<span class="nc" id="L196">            Optional&lt;HealthFacilityDao&gt; optionalHealthFacilityDao = healthFacilityRepository.findById(id);</span>
+
+<span class="nc" id="L198">            Optional&lt;ProfileDao&gt; optionalProfileDao = profileRepository.findById(optionalHealthFacilityDao.get().getProfile().getUserId());</span>
+
+<span class="nc" id="L200">            Optional&lt;HealthFacilityImageDao&gt; optionalHealthFacilityImageDao = healthFacilityImageRepository.findById(optionalHealthFacilityDao.get().getImage().getFacilityId());</span>
+
+<span class="nc bnc" id="L202" title="All 4 branches missed.">            if (optionalProfileDao.isEmpty() || optionalHealthFacilityImageDao.isEmpty()) {</span>
+<span class="nc" id="L203">                log.info(&quot;Health Facility not found&quot;);</span>
+<span class="nc" id="L204">                return ResponseUtil.build(AppConstant.ResponseCode.DATA_NOT_FOUND, null, HttpStatus.BAD_REQUEST);</span>
+            }
+
+<span class="nc" id="L207">            log.info(&quot;Health Facility found&quot;);</span>
+
+<span class="nc" id="L209">            HealthFacilityImageDao healthFacilityImageDao = optionalHealthFacilityImageDao.get();</span>
+<span class="nc" id="L210">            healthFacilityImageDao.setBase64(healthFacilityDto.getImage().getBase64());</span>
+<span class="nc" id="L211">            healthFacilityImageDao.setContentType(healthFacilityDto.getImage().getContentType());</span>
+
+<span class="nc" id="L213">            HealthFacilityDao healthFacilityDao = optionalHealthFacilityDao.get();</span>
+<span class="nc" id="L214">            healthFacilityDao.setFacilityName(healthFacilityDto.getFacilityName());</span>
+<span class="nc" id="L215">            healthFacilityDao.setStreetName(healthFacilityDto.getStreetName());</span>
+<span class="nc" id="L216">            healthFacilityDao.setOfficeNumber(healthFacilityDto.getOfficeNumber());</span>
+<span class="nc" id="L217">            healthFacilityDao.setVillageName(healthFacilityDto.getVillageName());</span>
+<span class="nc" id="L218">            healthFacilityDao.setDistrict(healthFacilityDto.getDistrict());</span>
+<span class="nc" id="L219">            healthFacilityDao.setCity(healthFacilityDto.getCity());</span>
+<span class="nc" id="L220">            healthFacilityDao.setProvince(healthFacilityDto.getProvince());</span>
+<span class="nc" id="L221">            healthFacilityDao.setPostalCode(healthFacilityDto.getPostalCode());</span>
+<span class="nc" id="L222">            healthFacilityDao.setImage(healthFacilityImageDao);</span>
+<span class="nc" id="L223">            healthFacilityDao.setProfile(optionalProfileDao.get());</span>
+<span class="nc" id="L224">            healthFacilityRepository.save(healthFacilityDao);</span>
+
+<span class="nc" id="L226">            ProfileDto profileDto = ProfileDto.builder()</span>
+<span class="nc" id="L227">                    .userId(optionalProfileDao.get().getUserId())</span>
+<span class="nc" id="L228">                    .role(optionalProfileDao.get().getRole())</span>
+<span class="nc" id="L229">                    .build();</span>
+
+<span class="nc" id="L231">            HealthFacilityImageDto healthFacilityImageDto = HealthFacilityImageDto.builder()</span>
+<span class="nc" id="L232">                    .facilityId(healthFacilityDao.getImage().getFacilityId())</span>
+<span class="nc" id="L233">                    .base64(healthFacilityDao.getImage().getBase64())</span>
+<span class="nc" id="L234">                    .contentType(healthFacilityDao.getImage().getContentType())</span>
+<span class="nc" id="L235">                    .build();</span>
+
+<span class="nc" id="L237">            HealthFacilityDto facilityDto = HealthFacilityDto.builder()</span>
+<span class="nc" id="L238">                    .id(healthFacilityDao.getId())</span>
+<span class="nc" id="L239">                    .facilityName(healthFacilityDao.getFacilityName())</span>
+<span class="nc" id="L240">                    .streetName(healthFacilityDao.getStreetName())</span>
+<span class="nc" id="L241">                    .officeNumber(healthFacilityDao.getOfficeNumber())</span>
+<span class="nc" id="L242">                    .villageName(healthFacilityDao.getVillageName())</span>
+<span class="nc" id="L243">                    .district(healthFacilityDao.getDistrict())</span>
+<span class="nc" id="L244">                    .city(healthFacilityDao.getCity())</span>
+<span class="nc" id="L245">                    .province(healthFacilityDao.getProvince())</span>
+<span class="nc" id="L246">                    .postalCode(healthFacilityDao.getPostalCode())</span>
+<span class="nc" id="L247">                    .image(healthFacilityImageDto)</span>
+<span class="nc" id="L248">                    .profile(profileDto)</span>
+<span class="nc" id="L249">                    .build();</span>
+<span class="nc" id="L250">            return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, facilityDto, HttpStatus.OK);</span>
+<span class="nc" id="L251">        } catch (Exception e) {</span>
+<span class="nc" id="L252">            log.error(&quot;An error occurred in Updating Health Facility by id. Error {}&quot;, e.getMessage());</span>
+<span class="nc" id="L253">            throw e;</span>
+        }
+    }
+
+    public ResponseEntity&lt;Object&gt; deleteHealthFacilityById(Long id) {
+        try {
+<span class="fc" id="L259">            log.info(&quot;Deleting a Health Facility by id&quot;);</span>
+<span class="fc" id="L260">            Optional&lt;HealthFacilityDao&gt; optionalHealthFacilityDao = healthFacilityRepository.findById(id);</span>
+<span class="pc bpc" id="L261" title="1 of 2 branches missed.">            if (optionalHealthFacilityDao.isEmpty()) {</span>
+<span class="nc" id="L262">                log.info(&quot;Health Facility not found&quot;);</span>
+<span class="nc" id="L263">                return ResponseUtil.build(AppConstant.ResponseCode.DATA_NOT_FOUND, null, HttpStatus.BAD_REQUEST);</span>
+            }
+
+<span class="fc" id="L266">            log.info(&quot;Health Facility found&quot;);</span>
+<span class="fc" id="L267">            healthFacilityRepository.delete(optionalHealthFacilityDao.get());</span>
+<span class="fc" id="L268">            return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, null, HttpStatus.OK);</span>
+<span class="nc" id="L269">        } catch (Exception e) {</span>
+<span class="nc" id="L270">            log.error(&quot;An error occurred in deleting Health Facility by id. Error {}&quot;, e.getMessage());</span>
+<span class="nc" id="L271">            throw e;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

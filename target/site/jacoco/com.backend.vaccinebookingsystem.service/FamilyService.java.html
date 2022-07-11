@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FamilyService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">vaccine-booking-system</a> &gt; <a href="index.source.html" class="el_package">com.backend.vaccinebookingsystem.service</a> &gt; <span class="el_source">FamilyService.java</span></div><h1>FamilyService.java</h1><pre class="source lang-java linenums">package com.backend.vaccinebookingsystem.service;
+
+import com.backend.vaccinebookingsystem.constant.AppConstant;
+import com.backend.vaccinebookingsystem.domain.dao.FamilyDao;
+import com.backend.vaccinebookingsystem.domain.dao.ProfileDao;
+import com.backend.vaccinebookingsystem.domain.dao.UserDao;
+import com.backend.vaccinebookingsystem.domain.dto.FamilyDto;
+import com.backend.vaccinebookingsystem.domain.dto.ProfileDto;
+import com.backend.vaccinebookingsystem.repository.FamilyRepository;
+import com.backend.vaccinebookingsystem.repository.ProfileRepository;
+import com.backend.vaccinebookingsystem.repository.UserRepository;
+import com.backend.vaccinebookingsystem.util.ResponseUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+<span class="fc" id="L23">@Slf4j</span>
+@Service
+<span class="fc" id="L25">public class FamilyService {</span>
+
+    @Autowired
+    private FamilyRepository familyRepository;
+
+    @Autowired
+    private ProfileRepository profileRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    public ResponseEntity&lt;Object&gt; createFamily(FamilyDto familyDto) {
+        try {
+<span class="fc" id="L38">            log.info(&quot;Creating new Family&quot;);</span>
+<span class="fc" id="L39">            Optional&lt;ProfileDao&gt; optionalProfileDao = profileRepository.findById(familyDto.getProfile().getUserId());</span>
+
+<span class="pc bpc" id="L41" title="1 of 2 branches missed.">            if (optionalProfileDao.isEmpty()) {</span>
+<span class="nc" id="L42">                log.info(&quot;Profile not found&quot;);</span>
+<span class="nc" id="L43">                return ResponseUtil.build(AppConstant.ResponseCode.DATA_NOT_FOUND, null, HttpStatus.BAD_REQUEST);</span>
+            }
+
+<span class="fc" id="L46">            log.info(&quot;Profile found&quot;);</span>
+
+<span class="fc" id="L48">            FamilyDao familyDao = FamilyDao.builder()</span>
+<span class="fc" id="L49">                    .statusInFamily(familyDto.getStatusInFamily())</span>
+<span class="fc" id="L50">                    .NIK(familyDto.getNIK())</span>
+<span class="fc" id="L51">                    .name(familyDto.getName())</span>
+<span class="fc" id="L52">                    .email(familyDto.getEmail())</span>
+<span class="fc" id="L53">                    .phoneNumber(familyDto.getPhoneNumber())</span>
+<span class="fc" id="L54">                    .gender(familyDto.getGender())</span>
+<span class="fc" id="L55">                    .placeOfBirth((familyDto.getPlaceOfBirth()))</span>
+<span class="fc" id="L56">                    .dateOfBirth(familyDto.getDateOfBirth())</span>
+<span class="fc" id="L57">                    .residenceAddress(familyDto.getResidenceAddress())</span>
+<span class="fc" id="L58">                    .idCardAddress(familyDto.getIdCardAddress())</span>
+<span class="fc" id="L59">                    .profile(optionalProfileDao.get())</span>
+<span class="fc" id="L60">                    .build();</span>
+<span class="fc" id="L61">            familyRepository.save(familyDao);</span>
+
+<span class="fc" id="L63">            ProfileDto profileDto = ProfileDto.builder()</span>
+<span class="fc" id="L64">                    .userId(optionalProfileDao.get().getUserId())</span>
+<span class="fc" id="L65">                    .role(optionalProfileDao.get().getRole())</span>
+<span class="fc" id="L66">                    .build();</span>
+
+<span class="fc" id="L68">            FamilyDto dto = FamilyDto.builder()</span>
+<span class="fc" id="L69">                    .id(familyDao.getId())</span>
+<span class="fc" id="L70">                    .statusInFamily(familyDao.getStatusInFamily())</span>
+<span class="fc" id="L71">                    .NIK(familyDao.getNIK())</span>
+<span class="fc" id="L72">                    .name(familyDao.getName())</span>
+<span class="fc" id="L73">                    .email(familyDao.getEmail())</span>
+<span class="fc" id="L74">                    .phoneNumber(familyDao.getPhoneNumber())</span>
+<span class="fc" id="L75">                    .gender(familyDao.getGender())</span>
+<span class="fc" id="L76">                    .placeOfBirth(familyDao.getPlaceOfBirth())</span>
+<span class="fc" id="L77">                    .dateOfBirth(familyDao.getDateOfBirth())</span>
+<span class="fc" id="L78">                    .residenceAddress(familyDao.getResidenceAddress())</span>
+<span class="fc" id="L79">                    .idCardAddress(familyDao.getIdCardAddress())</span>
+<span class="fc" id="L80">                    .profile(profileDto)</span>
+<span class="fc" id="L81">                    .build();</span>
+<span class="fc" id="L82">            return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, dto, HttpStatus.OK);</span>
+<span class="fc" id="L83">        } catch (Exception e) {</span>
+<span class="fc" id="L84">            log.error(&quot;An error occurred in creating new Family. Error: {}&quot;, e.getMessage());</span>
+<span class="fc" id="L85">            return ResponseUtil.build(AppConstant.ResponseCode.UNKNOWN_ERROR, null, HttpStatus.INTERNAL_SERVER_ERROR);</span>
+        }
+    }
+
+    public ResponseEntity&lt;Object&gt; getFamilyById(Long id) {
+        try {
+<span class="fc" id="L91">            log.info(&quot;Getting a Family by id&quot;);</span>
+<span class="fc" id="L92">            Optional&lt;FamilyDao&gt; optionalFamilyDao = familyRepository.findById(id);</span>
+
+<span class="fc" id="L94">            Optional&lt;ProfileDao&gt; optionalProfileDao = profileRepository.findById(optionalFamilyDao.get().getProfile().getUserId());</span>
+
+<span class="pc bpc" id="L96" title="2 of 4 branches missed.">            if (optionalFamilyDao.isEmpty() || optionalProfileDao.isEmpty()) {</span>
+<span class="nc" id="L97">                log.info(&quot;Family not found&quot;);</span>
+<span class="nc" id="L98">                return ResponseUtil.build(AppConstant.ResponseCode.DATA_NOT_FOUND, null, HttpStatus.BAD_REQUEST);</span>
+            }
+
+<span class="fc" id="L101">            log.info(&quot;Family found&quot;);</span>
+
+<span class="fc" id="L103">            ProfileDto profileDto = ProfileDto.builder()</span>
+<span class="fc" id="L104">                    .userId(optionalProfileDao.get().getUserId())</span>
+<span class="fc" id="L105">                    .role(optionalProfileDao.get().getRole())</span>
+<span class="fc" id="L106">                    .build();</span>
+
+<span class="fc" id="L108">            FamilyDto dto = FamilyDto.builder()</span>
+<span class="fc" id="L109">                    .id(optionalFamilyDao.get().getId())</span>
+<span class="fc" id="L110">                    .statusInFamily(optionalFamilyDao.get().getStatusInFamily())</span>
+<span class="fc" id="L111">                    .NIK(optionalFamilyDao.get().getNIK())</span>
+<span class="fc" id="L112">                    .name(optionalFamilyDao.get().getName())</span>
+<span class="fc" id="L113">                    .email(optionalFamilyDao.get().getEmail())</span>
+<span class="fc" id="L114">                    .phoneNumber(optionalFamilyDao.get().getPhoneNumber())</span>
+<span class="fc" id="L115">                    .gender(optionalFamilyDao.get().getGender())</span>
+<span class="fc" id="L116">                    .placeOfBirth(optionalFamilyDao.get().getPlaceOfBirth())</span>
+<span class="fc" id="L117">                    .dateOfBirth(optionalFamilyDao.get().getDateOfBirth())</span>
+<span class="fc" id="L118">                    .residenceAddress(optionalFamilyDao.get().getResidenceAddress())</span>
+<span class="fc" id="L119">                    .idCardAddress(optionalFamilyDao.get().getIdCardAddress())</span>
+<span class="fc" id="L120">                    .profile(profileDto)</span>
+<span class="fc" id="L121">                    .build();</span>
+
+<span class="fc" id="L123">            return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, dto, HttpStatus.OK);</span>
+<span class="nc" id="L124">        } catch (Exception e) {</span>
+<span class="nc" id="L125">            log.error(&quot;An error occurred in getting a Family by id. Error {}&quot;, e.getMessage());</span>
+<span class="nc" id="L126">            throw e;</span>
+        }
+    }
+
+    public ResponseEntity&lt;Object&gt; getAllFamilies() {
+        try {
+<span class="fc" id="L132">            log.info(&quot;Getting all of Families&quot;);</span>
+            List&lt;FamilyDao&gt; familyDaoList;
+<span class="fc" id="L134">            List&lt;FamilyDto&gt; familyDtos = new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L136">            familyDaoList = familyRepository.findAll();</span>
+
+<span class="fc bfc" id="L138" title="All 2 branches covered.">            for (FamilyDao familyDao : familyDaoList) {</span>
+<span class="fc" id="L139">                Optional&lt;ProfileDao&gt; optionalProfileDao = profileRepository.findById(familyDao.getProfile().getUserId());</span>
+
+<span class="fc" id="L141">                ProfileDto profileDto = ProfileDto.builder()</span>
+<span class="fc" id="L142">                        .userId(optionalProfileDao.get().getUserId())</span>
+<span class="fc" id="L143">                        .role(optionalProfileDao.get().getRole())</span>
+<span class="fc" id="L144">                        .build();</span>
+
+<span class="fc" id="L146">                familyDtos.add(FamilyDto.builder()</span>
+<span class="fc" id="L147">                                .id(familyDao.getId())</span>
+<span class="fc" id="L148">                                .statusInFamily(familyDao.getStatusInFamily())</span>
+<span class="fc" id="L149">                                .NIK(familyDao.getNIK())</span>
+<span class="fc" id="L150">                                .name(familyDao.getName())</span>
+<span class="fc" id="L151">                                .email(familyDao.getEmail())</span>
+<span class="fc" id="L152">                                .phoneNumber(familyDao.getPhoneNumber())</span>
+<span class="fc" id="L153">                                .gender(familyDao.getGender())</span>
+<span class="fc" id="L154">                                .placeOfBirth(familyDao.getPlaceOfBirth())</span>
+<span class="fc" id="L155">                                .dateOfBirth(familyDao.getDateOfBirth())</span>
+<span class="fc" id="L156">                                .residenceAddress(familyDao.getResidenceAddress())</span>
+<span class="fc" id="L157">                                .idCardAddress(familyDao.getIdCardAddress())</span>
+<span class="fc" id="L158">                                .profile(profileDto)</span>
+<span class="fc" id="L159">                        .build());</span>
+<span class="fc" id="L160">            }</span>
+
+<span class="fc" id="L162">            return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, familyDtos, HttpStatus.OK);</span>
+<span class="nc" id="L163">        } catch (Exception e) {</span>
+<span class="nc" id="L164">            log.error(&quot;An error occurred in getting all of Families. Error {}&quot;, e.getMessage());</span>
+<span class="nc" id="L165">            return ResponseUtil.build(AppConstant.ResponseCode.UNKNOWN_ERROR, null, HttpStatus.INTERNAL_SERVER_ERROR);</span>
+        }
+    }
+
+    public ResponseEntity&lt;Object&gt; updateFamilyById(Long id, FamilyDto familyDto) {
+        try {
+<span class="nc" id="L171">            log.info(&quot;Updating a Family by id&quot;);</span>
+<span class="nc" id="L172">            Optional&lt;FamilyDao&gt; optionalFamilyDao = familyRepository.findById(id);</span>
+
+<span class="nc" id="L174">            Optional&lt;ProfileDao&gt; optionalProfileDao = profileRepository.findById(familyDto.getProfile().getUserId());</span>
+
+<span class="nc bnc" id="L176" title="All 4 branches missed.">            if (optionalFamilyDao.isEmpty() || optionalProfileDao.isEmpty()) {</span>
+<span class="nc" id="L177">                log.info(&quot;Family not found&quot;);</span>
+<span class="nc" id="L178">                return ResponseUtil.build(AppConstant.ResponseCode.DATA_NOT_FOUND, null, HttpStatus.BAD_REQUEST);</span>
+            }
+
+<span class="nc" id="L181">            Optional&lt;UserDao&gt; optionalUserDao = userRepository.findByUsername(optionalFamilyDao.get().getNIK());</span>
+
+<span class="nc" id="L183">            log.info(&quot;Family found&quot;);</span>
+<span class="nc" id="L184">            FamilyDao familyDao = optionalFamilyDao.get();</span>
+<span class="nc" id="L185">            familyDao.setStatusInFamily(familyDto.getStatusInFamily());</span>
+<span class="nc" id="L186">            familyDao.setNIK(familyDto.getNIK());</span>
+<span class="nc" id="L187">            familyDao.setName(familyDto.getName());</span>
+<span class="nc" id="L188">            familyDao.setEmail(familyDto.getEmail());</span>
+<span class="nc" id="L189">            familyDao.setPhoneNumber(familyDto.getPhoneNumber());</span>
+<span class="nc" id="L190">            familyDao.setGender(familyDto.getGender());</span>
+<span class="nc" id="L191">            familyDao.setPlaceOfBirth(familyDto.getPlaceOfBirth());</span>
+<span class="nc" id="L192">            familyDao.setDateOfBirth(familyDto.getDateOfBirth());</span>
+<span class="nc" id="L193">            familyDao.setResidenceAddress(familyDto.getResidenceAddress());</span>
+<span class="nc" id="L194">            familyDao.setIdCardAddress(familyDto.getIdCardAddress());</span>
+<span class="nc" id="L195">            familyDao.setProfile(optionalProfileDao.get());</span>
+<span class="nc" id="L196">            familyRepository.save(familyDao);</span>
+
+<span class="nc bnc" id="L198" title="All 2 branches missed.">            if (optionalUserDao.isPresent()) {</span>
+<span class="nc" id="L199">                log.info(&quot;User found&quot;);</span>
+<span class="nc" id="L200">                UserDao userDao = optionalUserDao.get();</span>
+<span class="nc" id="L201">                userDao.setUsername(familyDto.getNIK());</span>
+<span class="nc" id="L202">                userDao.setName(familyDto.getName());</span>
+<span class="nc" id="L203">                userDao.setEmail(familyDto.getEmail());</span>
+
+<span class="nc" id="L205">                userRepository.save(userDao);</span>
+            }
+
+<span class="nc" id="L208">            ProfileDto profileDto = ProfileDto.builder()</span>
+<span class="nc" id="L209">                    .userId(optionalProfileDao.get().getUserId())</span>
+<span class="nc" id="L210">                    .role(optionalProfileDao.get().getRole())</span>
+<span class="nc" id="L211">                    .build();</span>
+
+<span class="nc" id="L213">            FamilyDto dto = FamilyDto.builder()</span>
+<span class="nc" id="L214">                    .id(familyDao.getId())</span>
+<span class="nc" id="L215">                    .statusInFamily(familyDao.getStatusInFamily())</span>
+<span class="nc" id="L216">                    .NIK(familyDao.getNIK())</span>
+<span class="nc" id="L217">                    .name(familyDao.getName())</span>
+<span class="nc" id="L218">                    .email(familyDao.getEmail())</span>
+<span class="nc" id="L219">                    .phoneNumber(familyDao.getPhoneNumber())</span>
+<span class="nc" id="L220">                    .gender(familyDao.getGender())</span>
+<span class="nc" id="L221">                    .placeOfBirth(familyDao.getPlaceOfBirth())</span>
+<span class="nc" id="L222">                    .dateOfBirth(familyDao.getDateOfBirth())</span>
+<span class="nc" id="L223">                    .residenceAddress(familyDao.getResidenceAddress())</span>
+<span class="nc" id="L224">                    .idCardAddress(familyDao.getIdCardAddress())</span>
+<span class="nc" id="L225">                    .profile(profileDto)</span>
+<span class="nc" id="L226">                    .build();</span>
+<span class="nc" id="L227">            return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, dto, HttpStatus.OK);</span>
+<span class="nc" id="L228">        } catch (Exception e) {</span>
+<span class="nc" id="L229">            log.error(&quot;An error occurred in Updating Family by id. Error {}&quot;, e.getMessage());</span>
+<span class="nc" id="L230">            throw e;</span>
+        }
+    }
+
+    public ResponseEntity&lt;Object&gt; deleteFamilyById(Long id) {
+        try {
+<span class="fc" id="L236">            log.info(&quot;Deleting a Family by id&quot;);</span>
+<span class="fc" id="L237">            Optional&lt;FamilyDao&gt; optionalFamilyDao = familyRepository.findById(id);</span>
+<span class="pc bpc" id="L238" title="1 of 2 branches missed.">            if (optionalFamilyDao.isEmpty()) {</span>
+<span class="nc" id="L239">                log.info(&quot;Family not found&quot;);</span>
+<span class="nc" id="L240">                return ResponseUtil.build(AppConstant.ResponseCode.DATA_NOT_FOUND, null, HttpStatus.BAD_REQUEST);</span>
+            }
+
+<span class="fc" id="L243">            log.info(&quot;Family found&quot;);</span>
+<span class="fc" id="L244">            familyRepository.delete(optionalFamilyDao.get());</span>
+<span class="fc" id="L245">            return ResponseUtil.build(AppConstant.ResponseCode.SUCCESS, null, HttpStatus.OK);</span>
+<span class="nc" id="L246">        } catch (Exception e) {</span>
+<span class="nc" id="L247">            log.error(&quot;An error occurred in deleting Family by id. Error {}&quot;, e.getMessage());</span>
+<span class="nc" id="L248">            throw e;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
