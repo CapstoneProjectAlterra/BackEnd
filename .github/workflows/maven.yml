@@ -1,9 +1,14 @@
 name: Spring Boot Capstone
 
+#on:
+#  pull_request:
+#    branches:
+#      - development
+
 on:
-  pull_request:
+  push:
     branches:
-      - development
+      - feature/booking_lob
 
 jobs:
   run_test:
