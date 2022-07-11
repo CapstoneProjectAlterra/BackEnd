@@ -279,6 +279,7 @@ public class StockService {
         }
     }
 
+    @Transactional
     public ResponseEntity<Object> deleteStockById(Long facilityId, Long vaccineId) {
         try {
             log.info("Deleting a Stock by id");
