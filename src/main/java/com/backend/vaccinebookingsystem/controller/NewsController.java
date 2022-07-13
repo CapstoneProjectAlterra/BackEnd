@@ -1,6 +1,5 @@
 package com.backend.vaccinebookingsystem.controller;
 
-import com.backend.vaccinebookingsystem.domain.dto.BookingDto;
 import com.backend.vaccinebookingsystem.domain.dto.NewsDto;
 import com.backend.vaccinebookingsystem.service.NewsService;
 import io.swagger.annotations.ApiResponse;
@@ -8,7 +7,6 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,7 +23,6 @@ public class NewsController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @PostMapping(value = "")
-    @PreAuthorize("hasAuthority('USER') or hasAuthority('HEALTH_ADMIN') or hasAuthority('ADMIN')")
     public ResponseEntity<Object> createNewNews(@RequestBody NewsDto newsDto) {
         return newsService.createNews(newsDto);
     }
@@ -36,7 +33,6 @@ public class NewsController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @GetMapping(value = "")
-    @PreAuthorize("hasAuthority('USER') or hasAuthority('HEALTH_ADMIN') or hasAuthority('ADMIN')")
     public ResponseEntity<Object> getAllNews() {
         return newsService.getAllNews();
     }
