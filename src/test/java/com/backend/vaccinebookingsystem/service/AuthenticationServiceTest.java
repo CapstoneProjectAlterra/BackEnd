@@ -1,5 +1,12 @@
 package com.backend.vaccinebookingsystem.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.backend.vaccinebookingsystem.constant.AppConstant;
 import com.backend.vaccinebookingsystem.domain.common.ApiResponse;
 import com.backend.vaccinebookingsystem.domain.common.ApiResponseStatus;
@@ -10,7 +17,15 @@ import com.backend.vaccinebookingsystem.domain.dto.JwtResponse;
 import com.backend.vaccinebookingsystem.domain.dto.JwtTokenProvider;
 import com.backend.vaccinebookingsystem.domain.dto.UserDto;
 import com.backend.vaccinebookingsystem.domain.dto.UsernamePassword;
+import com.backend.vaccinebookingsystem.repository.FamilyRepository;
+import com.backend.vaccinebookingsystem.repository.ProfileRepository;
 import com.backend.vaccinebookingsystem.repository.UserRepository;
+
+import java.time.LocalDateTime;
+
+import java.util.ArrayList;
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,14 +37,9 @@ import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import java.util.ArrayList;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
 
 @ContextConfiguration(classes = {AuthenticationService.class})
 @ExtendWith(SpringExtension.class)
@@ -41,7 +51,16 @@ class AuthenticationServiceTest {
     private AuthenticationService authenticationService;
 
     @MockBean
+    private FamilyRepository familyRepository;
+
+    @MockBean
     private JwtTokenProvider jwtTokenProvider;
+
+    @MockBean
+    private PasswordEncoder passwordEncoder;
+
+    @MockBean
+    private ProfileRepository profileRepository;
 
     @MockBean
     private UserRepository userRepository;
@@ -83,23 +102,40 @@ class AuthenticationServiceTest {
         
         ApiResponseStatus status = ((ApiResponse<Object>) actualRegisterResult.getBody()).getStatus();
         
-        assertEquals(AppConstant.ResponseCode.ALREADY_EXISTS.getCode(), status.getCode());
-        
+        assertEquals("ALREADY_EXISTS", status.getCode());
+
         verify(userRepository).findByUsername((String) any());
     }
 
     @Test
     void authenticateUser_Test() throws AuthenticationException {
         when(jwtTokenProvider.generateJwtToken((Authentication) any())).thenReturn("ABC123");
-        
         when(authenticationManager.authenticate((Authentication) any()))
                 .thenReturn(new TestingAuthenticationToken("Principal", "Credentials"));
-        
         ResponseEntity<Object> actualAuthenticateUserResult = authenticationService
                 .authenticateUser(new UsernamePassword("dimas", "iloveyou"));
-        
+
         assertEquals(HttpStatus.BAD_REQUEST, actualAuthenticateUserResult.getStatusCode());
-        
+
+        ApiResponseStatus status = ((ApiResponse<Object>) actualAuthenticateUserResult.getBody()).getStatus();
+
+        assertEquals(AppConstant.ResponseCode.DATA_NOT_FOUND.getCode(), status.getCode());
+
+        verify(jwtTokenProvider).generateJwtToken((Authentication) any());
+        verify(authenticationManager).authenticate((Authentication) any());
+    }
+
+    @Test
+    void authenticateUserException_Test() throws AuthenticationException {
+        when(jwtTokenProvider.generateJwtToken((Authentication) any())).thenReturn("ABC123");
+        when(authenticationManager.authenticate((Authentication) any()))
+                .thenReturn(new TestingAuthenticationToken(new UserDetailsDao(), "Credentials"));
+        ResponseEntity<Object> actualAuthenticateUserResult = authenticationService
+                .authenticateUser(new UsernamePassword("dimas", "iloveyou"));
+        assertTrue(actualAuthenticateUserResult.hasBody());
+        assertTrue(actualAuthenticateUserResult.getHeaders().isEmpty());
+        assertEquals(HttpStatus.BAD_REQUEST, actualAuthenticateUserResult.getStatusCode());
+        assertNull(((ApiResponse<Object>) actualAuthenticateUserResult.getBody()).getData());
         ApiResponseStatus status = ((ApiResponse<Object>) actualAuthenticateUserResult.getBody()).getStatus();
         
         assertEquals(AppConstant.ResponseCode.DATA_NOT_FOUND.getCode(), status.getCode());
@@ -109,7 +145,7 @@ class AuthenticationServiceTest {
     }
 
     @Test
-    void authenticateUser_Test3() throws AuthenticationException {
+    void authenticateUserSuccess_Test() throws AuthenticationException {
         when(jwtTokenProvider.generateJwtToken((Authentication) any())).thenReturn("ABC123");
 
         ArrayList<GrantedAuthority> grantedAuthorityList = new ArrayList<>();
@@ -117,7 +153,6 @@ class AuthenticationServiceTest {
         when(authenticationManager.authenticate((Authentication) any()))
                 .thenReturn(new TestingAuthenticationToken(new UserDetailsDao(123L, "dimas", "Generating JWT token",
                         "jane.doe@example.org", "iloveyou", grantedAuthorityList), "Credentials"));
-
         ResponseEntity<Object> actualAuthenticateUserResult = authenticationService
                 .authenticateUser(new UsernamePassword("dimas", "iloveyou"));
 
@@ -128,9 +163,10 @@ class AuthenticationServiceTest {
         ApiResponseStatus status = ((ApiResponse<Object>) actualAuthenticateUserResult.getBody()).getStatus();
 
         assertEquals(AppConstant.ResponseCode.SUCCESS.getCode(), status.getCode());
+        assertEquals(123L, ((JwtResponse) data).getUserId().longValue());
         assertEquals("ABC123", ((JwtResponse) data).getToken());
-        assertEquals(grantedAuthorityList, ((JwtResponse) data).getRoles());
         assertEquals("dimas", ((JwtResponse) data).getUsername());
+        assertEquals(grantedAuthorityList, ((JwtResponse) data).getRoles());
 
         verify(jwtTokenProvider).generateJwtToken((Authentication) any());
         verify(authenticationManager).authenticate((Authentication) any());
