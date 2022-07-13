@@ -8,7 +8,7 @@ name: Spring Boot Capstone
 on:
   push:
     branches:
-      - feature/jacoco_fix
+      - feature/booking_lob
 
 jobs:
   run_test:

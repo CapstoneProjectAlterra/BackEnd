@@ -333,6 +333,7 @@ public class BookingDetailService {
         }
     }
 
+    @Transactional
     public ResponseEntity<Object> deleteBookingDetailById(Long bookingId, Long familyId) {
         try {
             log.info("Deleting a Booking Detail by id");
