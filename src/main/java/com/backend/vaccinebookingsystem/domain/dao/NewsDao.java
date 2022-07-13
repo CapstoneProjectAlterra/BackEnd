@@ -9,7 +9,7 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -25,11 +25,8 @@ public class NewsDao extends BaseDao {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "img")
-    private String img;
-
-    @Column(name = "date")
-    private LocalDate date;
+    @Column(name = "author")
+    private String author;
 
     @Column(name = "title")
     private String title;
@@ -37,6 +34,12 @@ public class NewsDao extends BaseDao {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "author")
-    private String author;
+    @Column(name = "url")
+    private String url;
+
+    @Column(name = "url_to_image")
+    private String urlToImage;
+
+    @Column(name = "published_at")
+    private LocalDateTime publishedAt;
 }
