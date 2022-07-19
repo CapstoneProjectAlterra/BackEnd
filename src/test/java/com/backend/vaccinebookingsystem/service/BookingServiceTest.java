@@ -4,31 +4,18 @@ import com.backend.vaccinebookingsystem.constant.AppConstant;
 import com.backend.vaccinebookingsystem.domain.common.ApiResponse;
 import com.backend.vaccinebookingsystem.domain.common.ApiResponseStatus;
 import com.backend.vaccinebookingsystem.domain.dao.*;
-import com.backend.vaccinebookingsystem.domain.dao.BookingDao;
-import com.backend.vaccinebookingsystem.domain.dao.HealthFacilityDao;
-import com.backend.vaccinebookingsystem.domain.dao.HealthFacilityImageDao;
-import com.backend.vaccinebookingsystem.domain.dao.ProfileDao;
-import com.backend.vaccinebookingsystem.domain.dao.ScheduleDao;
-import com.backend.vaccinebookingsystem.domain.dao.UserDao;
-import com.backend.vaccinebookingsystem.domain.dao.VaccineTypeDao;
 import com.backend.vaccinebookingsystem.domain.dto.BookingDto;
-import com.backend.vaccinebookingsystem.domain.dto.ScheduleDto;
 import com.backend.vaccinebookingsystem.repository.BookingRepository;
 import com.backend.vaccinebookingsystem.repository.ScheduleRepository;
 import com.backend.vaccinebookingsystem.repository.UserRepository;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
@@ -36,11 +23,10 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.when;
 
-@ContextConfiguration(classes = {BookingService.class})
-@ExtendWith(SpringExtension.class)
+
+@ExtendWith(MockitoExtension.class)
+@SpringBootTest(classes = BookingService.class)
 class BookingServiceTest {
     @MockBean
     private BookingRepository bookingRepository;

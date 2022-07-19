@@ -4,29 +4,18 @@ import com.backend.vaccinebookingsystem.constant.AppConstant;
 import com.backend.vaccinebookingsystem.domain.common.ApiResponse;
 import com.backend.vaccinebookingsystem.domain.common.ApiResponseStatus;
 import com.backend.vaccinebookingsystem.domain.dao.*;
-import com.backend.vaccinebookingsystem.domain.dao.HealthFacilityDao;
-import com.backend.vaccinebookingsystem.domain.dao.ProfileDao;
-import com.backend.vaccinebookingsystem.domain.dao.ScheduleDao;
-import com.backend.vaccinebookingsystem.domain.dao.UserDao;
-import com.backend.vaccinebookingsystem.domain.dao.VaccineTypeDao;
-import com.backend.vaccinebookingsystem.domain.dto.HealthFacilityDto;
 import com.backend.vaccinebookingsystem.domain.dto.ScheduleDto;
 import com.backend.vaccinebookingsystem.repository.HealthFacilityRepository;
 import com.backend.vaccinebookingsystem.repository.ScheduleRepository;
 import com.backend.vaccinebookingsystem.repository.VaccineTypeRepository;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
@@ -35,11 +24,10 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.when;
 
-@ContextConfiguration(classes = {ScheduleService.class})
-@ExtendWith(SpringExtension.class)
+
+@ExtendWith(MockitoExtension.class)
+@SpringBootTest(classes = ScheduleService.class)
 class ScheduleServiceTest {
     @MockBean
     private HealthFacilityRepository healthFacilityRepository;
