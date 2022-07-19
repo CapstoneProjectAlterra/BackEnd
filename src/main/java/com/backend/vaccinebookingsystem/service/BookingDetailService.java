@@ -33,6 +33,7 @@ public class BookingDetailService {
     @Autowired
     private FamilyRepository familyRepository;
 
+    @Transactional
     public ResponseEntity<Object> createBookingDetail(BookingDetailDto bookingDetailDto) {
         try {
             log.info("Creating new Booking Detail");
