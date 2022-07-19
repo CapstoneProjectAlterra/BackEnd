@@ -33,15 +33,17 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@ContextConfiguration(classes = {StockService.class})
-@ExtendWith(SpringExtension.class)
+
+@ExtendWith(MockitoExtension.class)
+@SpringBootTest(classes = StockService.class)
 class StockServiceTest {
     @MockBean
     private HealthFacilityRepository healthFacilityRepository;
@@ -56,175 +58,328 @@ class StockServiceTest {
     private VaccineTypeRepository vaccineTypeRepository;
 
     @Test
-    void createStockSuccess_Test() {
+    void createStock_Test() {
         HealthFacilityImageDao healthFacilityImageDao = new HealthFacilityImageDao();
         healthFacilityImageDao.setBase64("Base64");
         healthFacilityImageDao.setContentType("text/plain");
+        healthFacilityImageDao.setCreatedAt(null);
+        healthFacilityImageDao.setCreatedBy("Jan 1, 2020 8:00am GMT+0100");
         healthFacilityImageDao.setFacility(new HealthFacilityDao());
         healthFacilityImageDao.setFacilityId(123L);
+        healthFacilityImageDao.setIsDeleted(true);
+        healthFacilityImageDao.setUpdatedAt(null);
 
         ProfileDao profileDao = new ProfileDao();
+        profileDao.setCreatedAt(null);
+        profileDao.setCreatedBy("Jan 1, 2020 8:00am GMT+0100");
         profileDao.setFamilyDaoList(new ArrayList<>());
         profileDao.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao.setIsDeleted(true);
         profileDao.setRole(AppConstant.ProfileRole.USER);
+        profileDao.setUpdatedAt(null);
         profileDao.setUser(new UserDao());
         profileDao.setUserId(123L);
 
         HealthFacilityDao healthFacilityDao = new HealthFacilityDao();
+        healthFacilityDao.setCity("Oxford");
+        healthFacilityDao.setCreatedAt(LocalDateTime.of(1, 1, 1, 1, 1));
+        healthFacilityDao.setCreatedBy("Jan 1, 2020 8:00am GMT+0100");
+        healthFacilityDao.setDistrict("District");
         healthFacilityDao.setFacilityName("Facility Name");
         healthFacilityDao.setFacilityVaccineDaoList(new ArrayList<>());
         healthFacilityDao.setId(123L);
         healthFacilityDao.setImage(healthFacilityImageDao);
+        healthFacilityDao.setIsDeleted(true);
+        healthFacilityDao.setOfficeNumber("42");
+        healthFacilityDao.setPostalCode(1);
         healthFacilityDao.setProfile(profileDao);
+        healthFacilityDao.setProvince("Province");
         healthFacilityDao.setScheduleDaoList(new ArrayList<>());
+        healthFacilityDao.setStreetName("Street Name");
+        healthFacilityDao.setUpdatedAt(LocalDateTime.of(1, 1, 1, 1, 1));
+        healthFacilityDao.setVillageName("Village Name");
 
         HealthFacilityImageDao healthFacilityImageDao1 = new HealthFacilityImageDao();
         healthFacilityImageDao1.setBase64("Base64");
         healthFacilityImageDao1.setContentType("text/plain");
+        healthFacilityImageDao1.setCreatedAt(LocalDateTime.of(1, 1, 1, 1, 1));
+        healthFacilityImageDao1.setCreatedBy("Jan 1, 2020 8:00am GMT+0100");
         healthFacilityImageDao1.setFacility(healthFacilityDao);
         healthFacilityImageDao1.setFacilityId(123L);
+        healthFacilityImageDao1.setIsDeleted(true);
+        healthFacilityImageDao1.setUpdatedAt(LocalDateTime.of(1, 1, 1, 1, 1));
 
         ProfileDao profileDao1 = new ProfileDao();
+        profileDao1.setCreatedAt(null);
+        profileDao1.setCreatedBy("Jan 1, 2020 8:00am GMT+0100");
         profileDao1.setFamilyDaoList(new ArrayList<>());
         profileDao1.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao1.setIsDeleted(true);
         profileDao1.setRole(AppConstant.ProfileRole.USER);
+        profileDao1.setUpdatedAt(null);
         profileDao1.setUser(new UserDao());
         profileDao1.setUserId(123L);
 
         UserDao userDao = new UserDao();
         userDao.setBookingDaoList(new ArrayList<>());
+        userDao.setCreatedAt(LocalDateTime.of(1, 1, 1, 1, 1));
+        userDao.setCreatedBy("Jan 1, 2020 8:00am GMT+0100");
+        userDao.setEmail("jane.doe@example.org");
         userDao.setId(123L);
+        userDao.setIsDeleted(true);
         userDao.setName("Name");
+        userDao.setPassword("iloveyou");
         userDao.setProfile(profileDao1);
+        userDao.setUpdatedAt(LocalDateTime.of(1, 1, 1, 1, 1));
+        userDao.setUsername("janedoe");
 
         ProfileDao profileDao2 = new ProfileDao();
+        profileDao2.setCreatedAt(LocalDateTime.of(1, 1, 1, 1, 1));
+        profileDao2.setCreatedBy("Jan 1, 2020 8:00am GMT+0100");
         profileDao2.setFamilyDaoList(new ArrayList<>());
         profileDao2.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao2.setIsDeleted(true);
         profileDao2.setRole(AppConstant.ProfileRole.USER);
+        profileDao2.setUpdatedAt(LocalDateTime.of(1, 1, 1, 1, 1));
         profileDao2.setUser(userDao);
         profileDao2.setUserId(123L);
 
         HealthFacilityDao healthFacilityDao1 = new HealthFacilityDao();
+        healthFacilityDao1.setCity("Oxford");
+        healthFacilityDao1.setCreatedAt(LocalDateTime.of(1, 1, 1, 1, 1));
+        healthFacilityDao1.setCreatedBy("Jan 1, 2020 8:00am GMT+0100");
+        healthFacilityDao1.setDistrict("District");
         healthFacilityDao1.setFacilityName("Facility Name");
         healthFacilityDao1.setFacilityVaccineDaoList(new ArrayList<>());
         healthFacilityDao1.setId(123L);
         healthFacilityDao1.setImage(healthFacilityImageDao1);
+        healthFacilityDao1.setIsDeleted(true);
+        healthFacilityDao1.setOfficeNumber("42");
+        healthFacilityDao1.setPostalCode(1);
         healthFacilityDao1.setProfile(profileDao2);
+        healthFacilityDao1.setProvince("Province");
         healthFacilityDao1.setScheduleDaoList(new ArrayList<>());
-
+        healthFacilityDao1.setStreetName("Street Name");
+        healthFacilityDao1.setUpdatedAt(LocalDateTime.of(1, 1, 1, 1, 1));
+        healthFacilityDao1.setVillageName("Village Name");
         Optional<HealthFacilityDao> ofResult = Optional.of(healthFacilityDao1);
         when(healthFacilityRepository.findById((Long) any())).thenReturn(ofResult);
 
         HealthFacilityImageDao healthFacilityImageDao2 = new HealthFacilityImageDao();
         healthFacilityImageDao2.setBase64("Base64");
         healthFacilityImageDao2.setContentType("text/plain");
+        healthFacilityImageDao2.setCreatedAt(null);
+        healthFacilityImageDao2.setCreatedBy("Jan 1, 2020 8:00am GMT+0100");
         healthFacilityImageDao2.setFacility(new HealthFacilityDao());
         healthFacilityImageDao2.setFacilityId(123L);
+        healthFacilityImageDao2.setIsDeleted(true);
+        healthFacilityImageDao2.setUpdatedAt(null);
 
         ProfileDao profileDao3 = new ProfileDao();
+        profileDao3.setCreatedAt(null);
+        profileDao3.setCreatedBy("Jan 1, 2020 8:00am GMT+0100");
         profileDao3.setFamilyDaoList(new ArrayList<>());
         profileDao3.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao3.setIsDeleted(true);
         profileDao3.setRole(AppConstant.ProfileRole.USER);
+        profileDao3.setUpdatedAt(null);
         profileDao3.setUser(new UserDao());
         profileDao3.setUserId(123L);
 
         HealthFacilityDao healthFacilityDao2 = new HealthFacilityDao();
+        healthFacilityDao2.setCity("Oxford");
+        healthFacilityDao2.setCreatedAt(LocalDateTime.of(1, 1, 1, 1, 1));
+        healthFacilityDao2.setCreatedBy("Jan 1, 2020 8:00am GMT+0100");
+        healthFacilityDao2.setDistrict("District");
         healthFacilityDao2.setFacilityName("Facility Name");
         healthFacilityDao2.setFacilityVaccineDaoList(new ArrayList<>());
         healthFacilityDao2.setId(123L);
         healthFacilityDao2.setImage(healthFacilityImageDao2);
+        healthFacilityDao2.setIsDeleted(true);
+        healthFacilityDao2.setOfficeNumber("42");
+        healthFacilityDao2.setPostalCode(1);
         healthFacilityDao2.setProfile(profileDao3);
+        healthFacilityDao2.setProvince("Province");
         healthFacilityDao2.setScheduleDaoList(new ArrayList<>());
+        healthFacilityDao2.setStreetName("Street Name");
+        healthFacilityDao2.setUpdatedAt(LocalDateTime.of(1, 1, 1, 1, 1));
+        healthFacilityDao2.setVillageName("Village Name");
 
         HealthFacilityImageDao healthFacilityImageDao3 = new HealthFacilityImageDao();
         healthFacilityImageDao3.setBase64("Base64");
         healthFacilityImageDao3.setContentType("text/plain");
+        healthFacilityImageDao3.setCreatedAt(LocalDateTime.of(1, 1, 1, 1, 1));
+        healthFacilityImageDao3.setCreatedBy("Jan 1, 2020 8:00am GMT+0100");
         healthFacilityImageDao3.setFacility(healthFacilityDao2);
         healthFacilityImageDao3.setFacilityId(123L);
+        healthFacilityImageDao3.setIsDeleted(true);
+        healthFacilityImageDao3.setUpdatedAt(LocalDateTime.of(1, 1, 1, 1, 1));
 
         ProfileDao profileDao4 = new ProfileDao();
+        profileDao4.setCreatedAt(null);
+        profileDao4.setCreatedBy("Jan 1, 2020 8:00am GMT+0100");
         profileDao4.setFamilyDaoList(new ArrayList<>());
         profileDao4.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao4.setIsDeleted(true);
         profileDao4.setRole(AppConstant.ProfileRole.USER);
+        profileDao4.setUpdatedAt(null);
         profileDao4.setUser(new UserDao());
         profileDao4.setUserId(123L);
 
         UserDao userDao1 = new UserDao();
         userDao1.setBookingDaoList(new ArrayList<>());
+        userDao1.setCreatedAt(LocalDateTime.of(1, 1, 1, 1, 1));
+        userDao1.setCreatedBy("Jan 1, 2020 8:00am GMT+0100");
+        userDao1.setEmail("jane.doe@example.org");
         userDao1.setId(123L);
+        userDao1.setIsDeleted(true);
         userDao1.setName("Name");
+        userDao1.setPassword("iloveyou");
         userDao1.setProfile(profileDao4);
+        userDao1.setUpdatedAt(LocalDateTime.of(1, 1, 1, 1, 1));
+        userDao1.setUsername("janedoe");
 
         ProfileDao profileDao5 = new ProfileDao();
+        profileDao5.setCreatedAt(LocalDateTime.of(1, 1, 1, 1, 1));
+        profileDao5.setCreatedBy("Jan 1, 2020 8:00am GMT+0100");
         profileDao5.setFamilyDaoList(new ArrayList<>());
         profileDao5.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao5.setIsDeleted(true);
         profileDao5.setRole(AppConstant.ProfileRole.USER);
+        profileDao5.setUpdatedAt(LocalDateTime.of(1, 1, 1, 1, 1));
         profileDao5.setUser(userDao1);
         profileDao5.setUserId(123L);
 
         HealthFacilityDao healthFacilityDao3 = new HealthFacilityDao();
+        healthFacilityDao3.setCity("Oxford");
+        healthFacilityDao3.setCreatedAt(LocalDateTime.of(1, 1, 1, 1, 1));
+        healthFacilityDao3.setCreatedBy("Jan 1, 2020 8:00am GMT+0100");
+        healthFacilityDao3.setDistrict("District");
         healthFacilityDao3.setFacilityName("Facility Name");
         healthFacilityDao3.setFacilityVaccineDaoList(new ArrayList<>());
         healthFacilityDao3.setId(123L);
         healthFacilityDao3.setImage(healthFacilityImageDao3);
+        healthFacilityDao3.setIsDeleted(true);
+        healthFacilityDao3.setOfficeNumber("42");
+        healthFacilityDao3.setPostalCode(1);
         healthFacilityDao3.setProfile(profileDao5);
+        healthFacilityDao3.setProvince("Province");
         healthFacilityDao3.setScheduleDaoList(new ArrayList<>());
+        healthFacilityDao3.setStreetName("Street Name");
+        healthFacilityDao3.setUpdatedAt(LocalDateTime.of(1, 1, 1, 1, 1));
+        healthFacilityDao3.setVillageName("Village Name");
 
         VaccineTypeDao vaccineTypeDao = new VaccineTypeDao();
+        vaccineTypeDao.setCreatedAt(LocalDateTime.of(1, 1, 1, 1, 1));
+        vaccineTypeDao.setCreatedBy("Jan 1, 2020 8:00am GMT+0100");
         vaccineTypeDao.setFacilityVaccineDaoList(new ArrayList<>());
         vaccineTypeDao.setId(123L);
+        vaccineTypeDao.setIsDeleted(true);
         vaccineTypeDao.setScheduleDaoList(new ArrayList<>());
+        vaccineTypeDao.setUpdatedAt(LocalDateTime.of(1, 1, 1, 1, 1));
         vaccineTypeDao.setVaccineName("Vaccine Name");
 
         FacilityVaccineDao facilityVaccineDao = new FacilityVaccineDao();
+        facilityVaccineDao.setCreatedAt(LocalDateTime.of(1, 1, 1, 1, 1));
+        facilityVaccineDao.setCreatedBy("Jan 1, 2020 8:00am GMT+0100");
         facilityVaccineDao.setFacility(healthFacilityDao3);
         facilityVaccineDao.setFacilityId(123L);
+        facilityVaccineDao.setIsDeleted(true);
+        facilityVaccineDao.setStock(1);
+        facilityVaccineDao.setUpdatedAt(LocalDateTime.of(1, 1, 1, 1, 1));
         facilityVaccineDao.setVaccine(vaccineTypeDao);
         facilityVaccineDao.setVaccineId(123L);
 
         HealthFacilityDao healthFacilityDao4 = new HealthFacilityDao();
+        healthFacilityDao4.setCity("Oxford");
+        healthFacilityDao4.setCreatedAt(null);
+        healthFacilityDao4.setCreatedBy("Jan 1, 2020 8:00am GMT+0100");
+        healthFacilityDao4.setDistrict("District");
         healthFacilityDao4.setFacilityName("Facility Name");
         healthFacilityDao4.setFacilityVaccineDaoList(new ArrayList<>());
         healthFacilityDao4.setId(123L);
         healthFacilityDao4.setImage(new HealthFacilityImageDao());
+        healthFacilityDao4.setIsDeleted(true);
+        healthFacilityDao4.setOfficeNumber("42");
+        healthFacilityDao4.setPostalCode(1);
         healthFacilityDao4.setProfile(new ProfileDao());
+        healthFacilityDao4.setProvince("Province");
         healthFacilityDao4.setScheduleDaoList(new ArrayList<>());
+        healthFacilityDao4.setStreetName("Street Name");
+        healthFacilityDao4.setUpdatedAt(null);
+        healthFacilityDao4.setVillageName("Village Name");
 
         HealthFacilityImageDao healthFacilityImageDao4 = new HealthFacilityImageDao();
         healthFacilityImageDao4.setBase64("Base64");
         healthFacilityImageDao4.setContentType("text/plain");
+        healthFacilityImageDao4.setCreatedAt(LocalDateTime.of(1, 1, 1, 1, 1));
+        healthFacilityImageDao4.setCreatedBy("Jan 1, 2020 8:00am GMT+0100");
         healthFacilityImageDao4.setFacility(healthFacilityDao4);
         healthFacilityImageDao4.setFacilityId(123L);
+        healthFacilityImageDao4.setIsDeleted(true);
+        healthFacilityImageDao4.setUpdatedAt(LocalDateTime.of(1, 1, 1, 1, 1));
 
         UserDao userDao2 = new UserDao();
         userDao2.setBookingDaoList(new ArrayList<>());
+        userDao2.setCreatedAt(null);
+        userDao2.setCreatedBy("Jan 1, 2020 8:00am GMT+0100");
+        userDao2.setEmail("jane.doe@example.org");
         userDao2.setId(123L);
+        userDao2.setIsDeleted(true);
         userDao2.setName("Name");
+        userDao2.setPassword("iloveyou");
         userDao2.setProfile(new ProfileDao());
+        userDao2.setUpdatedAt(null);
+        userDao2.setUsername("janedoe");
 
         ProfileDao profileDao6 = new ProfileDao();
+        profileDao6.setCreatedAt(LocalDateTime.of(1, 1, 1, 1, 1));
+        profileDao6.setCreatedBy("Jan 1, 2020 8:00am GMT+0100");
         profileDao6.setFamilyDaoList(new ArrayList<>());
         profileDao6.setHealthFacilityDaoList(new ArrayList<>());
+        profileDao6.setIsDeleted(true);
         profileDao6.setRole(AppConstant.ProfileRole.USER);
+        profileDao6.setUpdatedAt(LocalDateTime.of(1, 1, 1, 1, 1));
         profileDao6.setUser(userDao2);
         profileDao6.setUserId(123L);
 
         HealthFacilityDao healthFacilityDao5 = new HealthFacilityDao();
+        healthFacilityDao5.setCity("Oxford");
+        healthFacilityDao5.setCreatedAt(LocalDateTime.of(1, 1, 1, 1, 1));
+        healthFacilityDao5.setCreatedBy("Jan 1, 2020 8:00am GMT+0100");
+        healthFacilityDao5.setDistrict("District");
         healthFacilityDao5.setFacilityName("Facility Name");
         healthFacilityDao5.setFacilityVaccineDaoList(new ArrayList<>());
         healthFacilityDao5.setId(123L);
         healthFacilityDao5.setImage(healthFacilityImageDao4);
+        healthFacilityDao5.setIsDeleted(true);
+        healthFacilityDao5.setOfficeNumber("42");
+        healthFacilityDao5.setPostalCode(1);
         healthFacilityDao5.setProfile(profileDao6);
+        healthFacilityDao5.setProvince("Province");
         healthFacilityDao5.setScheduleDaoList(new ArrayList<>());
+        healthFacilityDao5.setStreetName("Street Name");
+        healthFacilityDao5.setUpdatedAt(LocalDateTime.of(1, 1, 1, 1, 1));
+        healthFacilityDao5.setVillageName("Village Name");
 
         VaccineTypeDao vaccineTypeDao1 = new VaccineTypeDao();
+        vaccineTypeDao1.setCreatedAt(LocalDateTime.of(1, 1, 1, 1, 1));
+        vaccineTypeDao1.setCreatedBy("Jan 1, 2020 8:00am GMT+0100");
         vaccineTypeDao1.setFacilityVaccineDaoList(new ArrayList<>());
         vaccineTypeDao1.setId(123L);
+        vaccineTypeDao1.setIsDeleted(true);
         vaccineTypeDao1.setScheduleDaoList(new ArrayList<>());
+        vaccineTypeDao1.setUpdatedAt(LocalDateTime.of(1, 1, 1, 1, 1));
+        vaccineTypeDao1.setVaccineName("Vaccine Name");
 
         FacilityVaccineDao facilityVaccineDao1 = new FacilityVaccineDao();
+        facilityVaccineDao1.setCreatedAt(LocalDateTime.of(1, 1, 1, 1, 1));
+        facilityVaccineDao1.setCreatedBy("Jan 1, 2020 8:00am GMT+0100");
         facilityVaccineDao1.setFacility(healthFacilityDao5);
         facilityVaccineDao1.setFacilityId(123L);
+        facilityVaccineDao1.setIsDeleted(true);
+        facilityVaccineDao1.setStock(1);
+        facilityVaccineDao1.setUpdatedAt(LocalDateTime.of(1, 1, 1, 1, 1));
         facilityVaccineDao1.setVaccine(vaccineTypeDao1);
         facilityVaccineDao1.setVaccineId(123L);
 
@@ -233,9 +388,14 @@ class StockServiceTest {
         when(stockRepository.findByFacilityIdAndAndVaccineId((Long) any(), (Long) any())).thenReturn(ofResult1);
 
         VaccineTypeDao vaccineTypeDao2 = new VaccineTypeDao();
+        vaccineTypeDao2.setCreatedAt(LocalDateTime.of(1, 1, 1, 1, 1));
+        vaccineTypeDao2.setCreatedBy("Jan 1, 2020 8:00am GMT+0100");
         vaccineTypeDao2.setFacilityVaccineDaoList(new ArrayList<>());
         vaccineTypeDao2.setId(123L);
+        vaccineTypeDao2.setIsDeleted(true);
         vaccineTypeDao2.setScheduleDaoList(new ArrayList<>());
+        vaccineTypeDao2.setUpdatedAt(LocalDateTime.of(1, 1, 1, 1, 1));
+        vaccineTypeDao2.setVaccineName("Vaccine Name");
 
         Optional<VaccineTypeDao> ofResult2 = Optional.of(vaccineTypeDao2);
         when(vaccineTypeRepository.findById((Long) any())).thenReturn(ofResult2);
@@ -250,15 +410,23 @@ class StockServiceTest {
 
         assertEquals(123L, ((FacilityVaccineDto) data).getVaccineId().longValue());
         assertEquals(123L, ((FacilityVaccineDto) data).getFacilityId().longValue());
-
         assertEquals(AppConstant.ResponseCode.SUCCESS.getCode(), status.getCode());
+        assertNull(((FacilityVaccineDto) data).getStock());
 
         HealthFacilityDto facility = ((FacilityVaccineDto) data).getFacility();
         assertEquals(1, facility.getPostalCode().intValue());
-        assertEquals(123L, facility.getId().longValue());
 
         VaccineTypeDto vaccine = ((FacilityVaccineDto) data).getVaccine();
         assertEquals(123L, vaccine.getId().longValue());
+        assertEquals("Village Name", facility.getVillageName());
+        assertEquals("42", facility.getOfficeNumber());
+        assertEquals(123L, facility.getId().longValue());
+        assertEquals("District", facility.getDistrict());
+        assertEquals("Facility Name", facility.getFacilityName());
+        assertEquals("Vaccine Name", vaccine.getVaccineName());
+        assertEquals("Province", facility.getProvince());
+        assertEquals("Street Name", facility.getStreetName());
+        assertEquals("Oxford", facility.getCity());
 
         ProfileDto profile = facility.getProfile();
         assertEquals(AppConstant.ProfileRole.USER, profile.getRole());

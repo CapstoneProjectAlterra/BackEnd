@@ -11,12 +11,13 @@ import com.backend.vaccinebookingsystem.repository.ProfileRepository;
 import com.backend.vaccinebookingsystem.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
@@ -26,8 +27,9 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-@ContextConfiguration(classes = {UserService.class})
-@ExtendWith(SpringExtension.class)
+
+@ExtendWith(MockitoExtension.class)
+@SpringBootTest(classes = UserService.class)
 class UserServiceTest {
 
     @MockBean
