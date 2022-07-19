@@ -37,12 +37,6 @@ public class BookingDetailService {
     public ResponseEntity<Object> createBookingDetail(BookingDetailDto bookingDetailDto) {
         try {
             log.info("Creating new Booking Detail");
-            Optional<BookingDetailDao> optionalBookingDetailDao = bookingDetailRepository.findTopByFamilyId(bookingDetailDto.getFamilyId());
-
-            if (optionalBookingDetailDao.isPresent()) {
-                log.info("The User has been vaccinated");
-                return ResponseUtil.build(AppConstant.ResponseCode.UNKNOWN_ERROR, null, HttpStatus.INTERNAL_SERVER_ERROR);
-            }
 
             Optional<BookingDao> optionalBookingDao = bookingRepository.findById(bookingDetailDto.getBookingId());
 
