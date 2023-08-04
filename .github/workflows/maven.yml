@@ -66,19 +66,19 @@ jobs:
       - name: Copy environment file via ssh
         uses: appleboy/scp-action@master
         with:
-          host: ${{ secrets.EC2_SSH_HOST }}
+          host: ${{ secrets.SSH_HOST }}
           port: 22
-          username: ${{ secrets.EC2_SSH_USERNAME }}
-          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: .dev.env, .sit.env
-          target: /home/${{ secrets.EC2_SSH_USERNAME }}
+          target: /home/${{ secrets.SSH_USER }}
       - name: Deploy using ssh
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.EC2_SSH_HOST }}
+          host: ${{ secrets.SSH_HOST }}
           port: 22
-          username: ${{ secrets.EC2_SSH_USERNAME }}
-          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             docker stop capstone-project capstone-coverage capstone-project-dev
             docker rmi dimsen0/capstone-project:latest dimsen0/capstone-coverage:latest
