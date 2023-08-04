@@ -70,7 +70,7 @@ jobs:
           port: 22
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: .dev.env, .sit.env
+          source: .dev.env
           target: /home/${{ secrets.SSH_USER }}
       - name: Deploy using ssh
         uses: appleboy/ssh-action@master
@@ -80,10 +80,9 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            docker stop capstone-project capstone-coverage capstone-project-dev
+            docker stop capstone-project capstone-coverage
             docker rmi dimsen0/capstone-project:latest dimsen0/capstone-coverage:latest
             docker pull dimsen0/capstone-project:latest
             docker pull dimsen0/capstone-coverage:latest
             docker run -d --rm --name capstone-coverage -p 8000:80 dimsen0/capstone-coverage:latest
             docker run -d --rm --name capstone-project -p 80:8080 --env-file=.dev.env --network capstone_network dimsen0/capstone-project:latest
-            docker run -d --rm --name capstone-project-dev -p 8080:8080 --env-file=.sit.env --network capstone_network dimsen0/capstone-project:latest
