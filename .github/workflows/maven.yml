@@ -8,7 +8,7 @@ on:
 jobs:
   run_test:
     name: Unit Test
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - run: echo "Start Unit Test"
       - uses: actions/checkout@v3
@@ -33,7 +33,7 @@ jobs:
           tags: dimsen0/capstone-coverage:latest
   build:
     name: Build
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     needs: run_test
     steps:
       - run: echo "Start Build Package"
@@ -58,7 +58,7 @@ jobs:
           tags: dimsen0/capstone-project:latest
   deployment:
     name: Deploy container using SSH
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     needs: build
     steps:
       - run: echo "Start deploy container"
